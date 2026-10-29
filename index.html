@@ -7,7 +7,7 @@
 <title>ZHANNAOHUA — 产品与界面设计（草稿）</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;500&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 <style>
 /* ============ tokens ============ */
 :root{
@@ -319,121 +319,194 @@ html[data-theme="dark"] .case .case__media{background:linear-gradient(150deg,#10
 
 /* ============ Sandbox ============ */
 .sandbox__title{
-  margin:14px 0 10px; font-family:var(--serif); font-weight:400;
-  font-size:clamp(34px,5.6vw,88px); line-height:1.04; letter-spacing:-.022em;
+  margin:14px 0 10px;
+  font-family:"ZCOOL KuaiLe",var(--serif); font-weight:400;
+  font-size:clamp(34px,5.6vw,88px); line-height:1.18; letter-spacing:.01em;
+  color:#5cc6f2;
+  text-shadow:0 0 34px rgba(92,198,242,.35);
 }
+html[data-theme="light"] .sandbox__title{color:#0d6ba6; text-shadow:0 2px 0 rgba(13,107,166,.12)}
+.sandbox__hint{font-family:"ZCOOL KuaiLe",var(--sans); letter-spacing:.08em; font-size:12.5px}
 
 .sandbox__hint{margin:clamp(16px,2vw,26px) 0 0; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
-/* ---- 泳池：卡片浮在水面上 ---- */
-.pool{
-  position:relative; margin-top:clamp(24px,3.4vw,44px);
-  border-radius:clamp(18px,2.6vw,32px);
-  padding:clamp(10px,1.8vw,24px);
-  overflow:hidden;
+/* ---- 童话水箱：4:3、正面开窗、水满 ---- */
+.tank{
+  --ink:#123c58;
+  --box:#fdfaf2;
+  --box-2:#ece2d0;
+  --water-a:#a6e4ff;
+  --water-b:#49b3ea;
+  --water-c:#1782c6;
+  --water-d:#0a5f9e;
+  --line:rgba(18,60,88,.34);
+  position:relative;
+  margin:clamp(26px,3.6vw,46px) auto 0;
+  max-width:980px;
+  padding:26px 26px 0 0;
+  font-family:"ZCOOL KuaiLe","Inter",sans-serif;
+}
+html[data-theme="dark"] .tank{
+  --ink:#9fdcff;
+  --box:#15374f;
+  --box-2:#0a1f30;
+  --water-a:#8fd8f8;
+  --water-b:#38a8e4;
+  --water-c:#1176b0;
+  --water-d:#085588;
+  --line:rgba(255,255,255,.44);
+}
+.tank__body{
+  position:relative;
+  aspect-ratio:4/3;
+  padding:13px;
+  border-radius:30px;
+  border:2.5px solid var(--ink);
+  background:linear-gradient(180deg,#fffdf8 0%,var(--box) 42%,var(--box-2) 100%);
+  box-shadow:
+    0 44px 64px -36px rgba(0,0,0,.6),
+    0 12px 24px -18px rgba(0,0,0,.4),
+    inset 0 3px 0 rgba(255,255,255,.95),
+    inset 0 -5px 0 rgba(18,60,88,.08);
+}
+html[data-theme="dark"] .tank__body{
+  background:linear-gradient(180deg,#1b405c 0%,var(--box) 44%,var(--box-2) 100%);
+  box-shadow:0 48px 70px -40px rgba(0,0,0,.95), inset 0 2px 0 rgba(255,255,255,.16);
+}
+.tank__glass{
+  position:absolute; inset:13px;
+  border-radius:22px; overflow:hidden;
+  background:var(--water-c);
+  box-shadow:
+    inset 0 0 0 2px rgba(18,60,88,.4),
+    inset 0 16px 34px rgba(6,54,88,.32),
+    inset 0 -16px 36px rgba(4,40,70,.42);
+}
+html[data-theme="dark"] .tank__glass{box-shadow:inset 0 0 0 2px rgba(0,0,0,.45), inset 0 16px 34px rgba(0,0,0,.3), inset 0 -16px 36px rgba(0,0,0,.4)}
+.tank__water{
+  position:absolute; inset:0;
   background:
-    radial-gradient(105% 78% at 50% -18%, rgba(96,136,255,.22), transparent 62%),
-    radial-gradient(90% 66% at 50% 116%, rgba(34,56,199,.26), transparent 68%),
-    linear-gradient(180deg,#06080f,#020308);
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 50px 90px -50px rgba(0,0,0,.9);
+    radial-gradient(78% 44% at 50% -8%, rgba(255,255,255,.7), transparent 62%),
+    linear-gradient(180deg,var(--water-a) 0%,var(--water-b) 30%,var(--water-c) 70%,var(--water-d) 100%);
 }
-/* 水面涟漪 */
-.pool::before{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background:repeating-radial-gradient(ellipse 72% 34% at 50% -6%,
-    rgba(255,255,255,.09) 0 1px, transparent 1px 24px);
-  opacity:.75;
-  animation:ripple 16s ease-in-out infinite alternate;
+.tank__caustics{
+  position:absolute; left:-8%; top:-8%; width:116%; height:116%;
+  mix-blend-mode:screen; opacity:.9; pointer-events:none;
+  animation:causticSway 26s ease-in-out infinite alternate;
 }
-@keyframes ripple{
-  from{ transform:translateY(0) scale(1) }
-  to{ transform:translateY(12px) scale(1.03) }
+@keyframes causticSway{
+  from{ transform:translate(-1.6%,-1.2%) scale(1.02) rotate(-.4deg) }
+  to{ transform:translate(1.8%,1.4%) scale(1.07) rotate(.5deg) }
 }
-/* 水面光斑 */
-.pool::after{
-  content:""; position:absolute; inset:0; pointer-events:none;
+.tank__ray{
+  position:absolute; top:-12%; bottom:-12%; width:15%; pointer-events:none;
+  background:linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0) 68%);
+  filter:blur(12px); transform:skewX(-13deg); mix-blend-mode:screen; opacity:.55;
+  animation:rayFlicker 11s ease-in-out infinite alternate;
+}
+.tank__ray--1{left:12%}
+.tank__ray--2{left:58%; width:10%; opacity:.4; animation-delay:-4s}
+@keyframes rayFlicker{ 50%{ opacity:.28 } }
+.tank__surface{
+  position:absolute; left:0; right:0; top:0; height:5px; z-index:45;
+  background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,.98) 10%, #fff 50%, rgba(255,255,255,.98) 90%, transparent 100%);
+  box-shadow:0 0 26px 8px rgba(215,248,255,.9), 0 6px 50px 14px rgba(150,220,255,.35);
+  animation:surfaceGlow 6s ease-in-out infinite alternate;
+}
+@keyframes surfaceGlow{ from{opacity:.8} to{opacity:1} }
+.tank__surface::after{
+  content:""; position:absolute; left:0; right:0; top:4px; height:14px;
+  background:repeating-linear-gradient(180deg, rgba(255,255,255,.55) 0 1px, transparent 1px 4px);
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent);
+  mask-image:linear-gradient(180deg,#000,transparent);
+  animation:surfaceWave 8s ease-in-out infinite alternate;
+}
+@keyframes surfaceWave{ from{ transform:translateX(0) } to{ transform:translateX(14px) } }
+.tank__sheen{
+  position:absolute; inset:0; z-index:60; pointer-events:none;
   background:
-    radial-gradient(58% 26% at 20% 10%, rgba(120,165,255,.16), transparent 70%),
-    radial-gradient(46% 22% at 80% 20%, rgba(90,205,215,.10), transparent 72%),
-    radial-gradient(72% 32% at 50% 98%, rgba(40,70,190,.26), transparent 70%);
-  mix-blend-mode:screen;
+    linear-gradient(114deg, rgba(255,255,255,.42) 0%, rgba(255,255,255,.12) 11%, transparent 26%,
+                              transparent 70%, rgba(255,255,255,.12) 86%, transparent 100%),
+    linear-gradient(180deg, rgba(255,255,255,.2), transparent 14%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.35), inset 0 -44px 70px -34px rgba(4,36,64,.4);
 }
-html[data-theme="light"] .pool::after{
-  background:
-    radial-gradient(58% 26% at 20% 10%, rgba(255,255,255,.85), transparent 70%),
-    radial-gradient(46% 22% at 80% 20%, rgba(190,225,255,.55), transparent 72%),
-    radial-gradient(72% 32% at 50% 98%, rgba(120,160,240,.32), transparent 70%);
-  mix-blend-mode:normal;
+.tank__bubbles{position:absolute; inset:0; z-index:50; pointer-events:none; overflow:hidden}
+.tank__bubbles span{
+  position:absolute; left:var(--l); top:100%;
+  width:var(--s,10px); height:var(--s,10px); border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #fff 0%, rgba(255,255,255,.5) 52%, rgba(255,255,255,.12) 100%);
+  border:1px solid rgba(255,255,255,.55);
+  animation:rise var(--d,11s) linear infinite;
+  animation-delay:var(--dl,0s);
+  transform:translateX(0);
+  opacity:0;
 }
-html[data-theme="light"] .pool{
-  background:
-    radial-gradient(105% 78% at 50% -18%, rgba(132,170,255,.42), transparent 62%),
-    radial-gradient(90% 66% at 50% 116%, rgba(34,56,199,.16), transparent 68%),
-    linear-gradient(180deg,#eef3fc,#e2e9f7);
-  border-color:rgba(12,20,50,.09);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 40px 70px -46px rgba(20,30,60,.45);
+@keyframes rise{
+  0%{ top:100%; opacity:0; transform:translateX(0) scale(.8) }
+  12%{ opacity:.95 }
+  85%{ opacity:.65 }
+  100%{ top:3%; opacity:0; transform:translateX(var(--dx,16px)) scale(1.15) }
 }
-html[data-theme="light"] .pool::before{
-  background:repeating-radial-gradient(ellipse 72% 34% at 50% -6%,
-    rgba(30,50,120,.08) 0 1px, transparent 1px 26px);
+.crew{
+  position:absolute; z-index:40; pointer-events:none;
+  filter:drop-shadow(0 12px 14px rgba(5,44,74,.35));
 }
+.crew--octo{ width:11%; left:6%; top:9%; animation:crewBob 7.5s ease-in-out infinite }
+.crew--fish{ width:13%; right:5%; top:55%; animation:crewBob 9.5s ease-in-out infinite reverse }
+@keyframes crewBob{ 50%{ translate:0 -14px; rotate:2deg } }
 
 .board{
-  position:relative; height:clamp(300px,37vw,470px);
+  position:absolute; inset:0; z-index:3;
   touch-action:none; user-select:none;
 }
 .board__card{
   position:absolute; left:0; top:0;
-  width:clamp(112px,17.5%,232px); aspect-ratio:4/3;
-  border-radius:8px; overflow:hidden;
-  border:1px solid rgba(255,255,255,.16);
-  background:linear-gradient(140deg,var(--c1,#e7e9f3),var(--c2,#c9cee2));
-  box-shadow:0 20px 40px -22px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.18) inset;
-  transform:translate3d(var(--x),var(--y),0);
+  width:clamp(102px,18.5%,196px); aspect-ratio:4/3;
+  border-radius:15px; overflow:hidden;
+  border:2px solid rgba(18,60,88,.5);
+  background:linear-gradient(152deg,var(--c1,#cfefff),var(--c2,#8fd4f7));
+  box-shadow:0 18px 26px -16px rgba(8,74,124,.45), inset 0 2px 0 rgba(255,255,255,.7);
+  transform:translate3d(var(--x),var(--y),0) perspective(820px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
   rotate:calc(var(--r) * 1deg);
   cursor:grab;
-  animation:bob var(--dur,7s) ease-in-out infinite;
+  animation:bob var(--dur,9s) ease-in-out infinite;
   animation-delay:var(--delay,0s);
-  -webkit-box-reflect:below -3px linear-gradient(to bottom, transparent 50%, rgba(170,200,255,.2));
   will-change:translate;
   transition:box-shadow .3s var(--ease);
 }
-html[data-theme="light"] .board__card{
-  border-color:rgba(255,255,255,.75);
-  -webkit-box-reflect:below -3px linear-gradient(to bottom, transparent 50%, rgba(30,50,120,.14));
+html[data-theme="dark"] .board__card{
+  border-color:rgba(210,240,255,.45);
+  box-shadow:0 18px 28px -16px rgba(2,32,60,.55), inset 0 2px 0 rgba(255,255,255,.35);
 }
 @keyframes bob{
   0%,100%{ translate:0 0 }
-  50%{ translate:0 -10px }
+  50%{ translate:0 -15px }
 }
 .board__card.is-drag{
-  cursor:grabbing; animation-play-state:paused; scale:1.04;
-  box-shadow:0 40px 70px -24px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.22);
+  cursor:grabbing; animation-play-state:paused; scale:1.06; opacity:1 !important; filter:none !important;
+  box-shadow:0 34px 44px -18px rgba(2,20,40,.6), 0 0 0 3px rgba(255,255,255,.5);
 }
-/* 松手后飘回原位 */
-.board__card.is-settle{ transition:transform 1.15s cubic-bezier(.22,.61,.36,1), box-shadow .3s var(--ease) }
+.board__card.is-settle{ transition:transform 1.3s cubic-bezier(.22,.61,.36,1), box-shadow .3s var(--ease) }
 .board__card span{
-  position:absolute; left:8px; bottom:8px; z-index:3;
-  padding:3px 6px; border-radius:4px;
-  font-size:10px; letter-spacing:.12em; text-transform:uppercase;
-  color:rgba(255,255,255,.9); background:rgba(4,6,12,.45);
-  -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  position:absolute; left:7px; bottom:7px; z-index:3;
+  padding:2px 7px; border-radius:999px;
+  font-family:"ZCOOL KuaiLe",var(--sans); font-size:10.5px; letter-spacing:.03em;
+  color:#0d3d5c; background:rgba(255,255,255,.78);
+  border:1.5px solid rgba(18,60,88,.25);
 }
-/* 卡片内的抽象“界面”图形，四种变体循环 */
-.board__card::before{content:""; position:absolute; inset:16% 15%; border-radius:5px; opacity:.9}
-.board__card:nth-child(4n+1)::before{background:repeating-linear-gradient(to bottom, rgba(255,255,255,.5) 0 4px, transparent 4px 12px)}
+.board__card::before{content:""; position:absolute; inset:16% 15%; border-radius:6px; opacity:1}
+.board__card:nth-child(4n+1)::before{background:repeating-linear-gradient(to bottom, var(--line) 0 4px, transparent 4px 12px)}
 .board__card:nth-child(4n+2)::before{
   background:
-    radial-gradient(circle at 50% 42%, rgba(255,255,255,.6) 0 20%, transparent 21%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.28) 0 2px, transparent 2px 13px);
+    radial-gradient(circle at 50% 40%, transparent 0 17%, var(--line) 18% 21%, transparent 22%),
+    repeating-linear-gradient(90deg, var(--line) 0 2px, transparent 2px 14px);
 }
 .board__card:nth-child(4n+3)::before{
   background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.3) 0 2px, transparent 2px 15px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.3) 0 2px, transparent 2px 15px);
+    repeating-linear-gradient(0deg, var(--line) 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(90deg, var(--line) 0 2px, transparent 2px 16px);
 }
-.board__card:nth-child(4n+4)::before{background:linear-gradient(155deg, rgba(255,255,255,.45), rgba(255,255,255,0) 62%)}
-.board__card i{position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.1),transparent 55%); z-index:2}
+.board__card:nth-child(4n+4)::before{background:linear-gradient(155deg, var(--line), transparent 62%)}
+.board__card i{position:absolute; inset:0; background:linear-gradient(140deg,rgba(255,255,255,.26),transparent 55%); z-index:2}
 
 /* ============ Contact ============ */
 .contact{padding:clamp(80px,11vw,170px) var(--pad) 0; text-align:center; position:relative; z-index:1}
@@ -506,12 +579,19 @@ html[data-theme="light"] .board__card{
   .case__desc{max-width:none}
   .timeline__row{grid-template-columns:1fr; gap:4px}
   .timeline__year{font-size:18px}
-  .pool{padding:10px; border-radius:18px}
-  .board{height:auto; display:grid; grid-template-columns:1fr 1fr; gap:9px; touch-action:auto}
-  /* Chrome 不认 -webkit-box-reflect:none，用全透明遮罩关掉倒影 */
-  .board__card{position:relative; width:auto; transform:none !important; rotate:none; animation:none;
-    -webkit-box-reflect:below 0 linear-gradient(transparent, transparent); aspect-ratio:4/3}
-  .pool::after{background:radial-gradient(46% 9% at 50% 100%, rgba(40,70,190,.2), transparent 70%)}
+  .tank{padding:18px 18px 0 0; max-width:none}
+  .tank__top{height:18px; left:-6px; right:18px}
+  .tank__side{top:18px; width:18px; bottom:-8px}
+  .tank__body{padding:9px; aspect-ratio:auto; border-radius:24px; border-width:2px}
+  .tank__glass{position:relative; inset:auto; border-radius:16px}
+  .tank__water{position:absolute; inset:0}
+  .board{position:relative; inset:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+    padding:16px 13px; height:auto; touch-action:auto}
+  .board__card{position:relative; width:auto; transform:none !important; rotate:none; animation:none; aspect-ratio:4/3}
+  .board__card span{font-size:9px; padding:1px 5px; left:4px; bottom:4px}
+  .crew--octo{display:none}
+  .crew--fish{display:none}
+  .tank__ray{display:none}
   .case__media{aspect-ratio:4/3}
   .fui{width:88%; height:74%; aspect-ratio:auto}
   .fui__main{padding:10px 12px; gap:7px}
@@ -724,20 +804,63 @@ html[data-theme="light"] .board__card{
     <h2 class="sandbox__title">练兵场。<br>没有客户，只有手感。</h2>
     <p class="sandbox__hint">拖动试试 · 松手会飘回水面</p>
 
-    <div class="pool">
-      <div class="board" id="board">
-        <div class="board__card" style="--x:0;--y:0;--r:-3;--c1:#3a4668;--c2:#1b2036"><i></i><span>Kanban</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:1.6;--c1:#514339;--c2:#2a241e"><i></i><span>Search</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:-1.2;--c1:#33534b;--c2:#1a2a27"><i></i><span>Table</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:2.4;--c1:#1f4a43;--c2:#0f2420"><i></i><span>Banking</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:2.1;--c1:#64434f;--c2:#2c1f26"><i></i><span>Salon</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:-2.2;--c1:#333947;--c2:#161a22"><i></i><span>Icons</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:1.4;--c1:#42355c;--c2:#1e1930"><i></i><span>Cabin</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:-2.6;--c1:#28404d;--c2:#111c24"><i></i><span>Smart home</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:1.1;--c1:#544834;--c2:#251f16"><i></i><span>Brand</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:-1.6;--c1:#2c2c36;--c2:#141419"><i></i><span>Pricing</span></div>
-        <div class="board__card" style="--x:0;--y:0;--r:2.8;--c1:#384761;--c2:#1a2130"><i></i><span>Form</span></div>
+    <div class="tank">
+      <div class="tank__body">
+        <div class="tank__glass">
+          <div class="tank__water">
+            <canvas class="tank__caustics" id="caustics" aria-hidden="true"></canvas>
+            <span class="tank__ray tank__ray--1"></span>
+            <span class="tank__ray tank__ray--2"></span>
+            <span class="tank__surface"></span>
+          </div>
+          <div class="board" id="board">
+            <div class="board__card" style="--x:0;--y:0;--r:-3;--c1:#b6e0fb;--c2:#6fbdea"><i></i><span>Kanban</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:1.8;--c1:#ffe0a8;--c2:#ffc76b"><i></i><span>Search</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:-1.4;--c1:#b7ecd6;--c2:#74cf9f"><i></i><span>Table</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:2.2;--c1:#ffc9dc;--c2:#ff97b8"><i></i><span>Banking</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:2.0;--c1:#d6cbff;--c2:#a892f2"><i></i><span>Salon</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:-2.3;--c1:#fff3a3;--c2:#ffdf4d"><i></i><span>Icons</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:1.5;--c1:#ffcdb3;--c2:#ff9e73"><i></i><span>Cabin</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:-2.6;--c1:#c9eeb4;--c2:#91d269"><i></i><span>Smart home</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:1.2;--c1:#b8e2f7;--c2:#7cc4e8"><i></i><span>Brand</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:-1.7;--c1:#ffd2b3;--c2:#ffab7a"><i></i><span>Pricing</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:2.6;--c1:#dcd1ff;--c2:#b09cf2"><i></i><span>Form</span></div>
+            <div class="board__card" style="--x:0;--y:0;--r:-1.2;--c1:#c9f0ea;--c2:#7fd6c7"><i></i><span>Grid</span></div>
+          </div>
+
+          <svg class="crew crew--octo" viewBox="0 0 120 120" aria-hidden="true">
+            <path d="M60 16c23 0 37 16 37 36 0 10-4 16-9 18-4 2-8 1-11-1-3-2-6-2-9 0-2 2-5 3-8 3s-6-1-8-3c-3-2-6-2-9 0-3 2-7 3-11 1-5-2-9-8-9-18 0-20 14-36 37-36z" fill="#ffcf5c"/>
+            <path d="M40 88c-2 8-6 14-12 17M56 92c0 8-1 14-4 19M72 92c1 8 3 14 7 18M88 87c3 8 8 13 14 16"
+                  stroke="#e8a93c" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <circle cx="47" cy="50" r="5.5" fill="#123c58"/>
+            <circle cx="75" cy="50" r="5.5" fill="#123c58"/>
+            <circle cx="35" cy="62" r="5.5" fill="#ff9aa2" opacity=".85"/>
+            <circle cx="87" cy="62" r="5.5" fill="#ff9aa2" opacity=".85"/>
+            <path d="M52 68c3 3 13 3 16 0" stroke="#123c58" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          </svg>
+
+          <svg class="crew crew--fish" viewBox="0 0 130 80" aria-hidden="true">
+            <path d="M30 40c13-17 39-23 56-15 8 4 14 10 17 15-3 5-9 11-17 15-17 8-43 2-56-15z" fill="#8ed3f7"/>
+            <path d="M32 40 8 20v40z" fill="#63b8e6"/>
+            <circle cx="80" cy="34" r="4.5" fill="#123c58"/>
+            <path d="M52 22c4-6 12-6 14 0" stroke="#63b8e6" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <circle cx="66" cy="46" r="4" fill="#ffb3c8" opacity=".8"/>
+          </svg>
+
+          <div class="tank__bubbles" aria-hidden="true">
+            <span style="--l:72%;--s:12px;--d:12s;--dl:0s;--dx:22px"></span>
+            <span style="--l:80%;--s:7px;--d:15s;--dl:-4s;--dx:-14px"></span>
+            <span style="--l:66%;--s:9px;--d:18s;--dl:-8s;--dx:10px"></span>
+            <span style="--l:88%;--s:5px;--d:11s;--dl:-2s;--dx:-8px"></span>
+            <span style="--l:24%;--s:8px;--d:16s;--dl:-11s;--dx:16px"></span>
+            <span style="--l:44%;--s:6px;--d:14s;--dl:-6s;--dx:-12px"></span>
+          </div>
+
+          <span class="tank__sheen"></span>
+        </div>
       </div>
+      <span class="tank__top"></span>
+      <span class="tank__side"></span>
     </div>
   </section>
 
@@ -932,9 +1055,9 @@ const isMobile = () => innerWidth <= 760;
 
 /* 卡片在池子里聚成一堆（百分比），行间略有重叠 */
 const spots = [
-  [8, 4], [30, 1], [52, 6], [73, 2],
-  [14, 30], [36, 34], [57, 28], [77, 33],
-  [7, 57], [29, 60], [51, 55], [72, 59]
+  [12, 7], [30, 2], [48, 9], [65, 4],
+  [8, 34], [26, 38], [44, 32], [62, 36],
+  [4, 62], [22, 66], [40, 61], [58, 65]
 ];
 
 function layoutCards() {
@@ -948,8 +1071,12 @@ function layoutCards() {
     c.style.setProperty('--x', x + 'px');
     c.style.setProperty('--y', y + 'px');
     c.dataset.hx = x; c.dataset.hy = y;          /* 记录原位，松手后飘回 */
-    c.style.setProperty('--dur', (6 + (i % 5) * 0.8).toFixed(1) + 's');
-    c.style.setProperty('--delay', (-(i * 1.13)).toFixed(2) + 's');
+    c.style.setProperty('--dur', (8 + (i % 5) * 1.1).toFixed(1) + 's');
+    c.style.setProperty('--delay', (-(i * 1.37)).toFixed(2) + 's');
+    /* 每张卡在水里有点角度，不是平贴在玻璃上 */
+    c.style.setProperty('--rx', ((i % 3) - 1) * 2.5 + 'deg');
+    c.style.setProperty('--ry', (((i * 7) % 11) - 5) + 'deg');
+    
     c.style.zIndex = String(10 + i);
   });
 }
@@ -995,6 +1122,49 @@ board.addEventListener('pointerup', () => {
   drag = null;
 });
 board.addEventListener('pointercancel', () => { if (drag) { settleBack(drag.card); drag = null; } });
+
+/* ---------- 水下焦散光网（canvas 生成） ---------- */
+function drawCaustics() {
+  const cv = document.getElementById('caustics');
+  if (!cv) return;
+  const w = cv.offsetWidth, h = cv.offsetHeight;
+  if (!w || !h) return;
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(h * dpr);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  const step = Math.max(72, Math.min(w, h) / 6.2);
+  ctx.lineWidth = Math.max(1.5, step * 0.05);
+  ctx.filter = `blur(${Math.max(1, step * 0.03)}px)`;
+  const cols = Math.ceil(w / step) + 2, rows = Math.ceil(h / step) + 2;
+  for (let ry = -1; ry < rows; ry++) {
+    for (let rx = -1; rx < cols; rx++) {
+      const cx = rx * step + Math.random() * step * 0.55;
+      const cy = ry * step + Math.random() * step * 0.55;
+      const base = step * (0.4 + Math.random() * 0.24);
+      const n = 12 + Math.floor(Math.random() * 6);
+      const ph = Math.random() * 6.283;
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) {
+        const a = i / n * Math.PI * 2;
+        const rr = base * (0.74 + 0.26 * Math.sin(a * 3 + ph) + 0.1 * Math.sin(a * 5 - ph * 1.7));
+        const px = cx + Math.cos(a) * rr;
+        const py = cy + Math.sin(a) * rr * 0.94;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(255,255,255,' + (0.2 + Math.random() * 0.32).toFixed(2) + ')';
+      ctx.stroke();
+    }
+  }
+  ctx.filter = 'none';
+  ctx.globalCompositeOperation = 'source-over';
+}
 
 /* ---------- 交互小件 ---------- */
 let toastTimer;
@@ -1045,8 +1215,12 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 /* ---------- init ---------- */
 layoutCards();
-addEventListener('resize', () => { clearTimeout(layoutCards._t); layoutCards._t = setTimeout(layoutCards, 200); });
-addEventListener('load', layoutCards);
+drawCaustics();
+addEventListener('resize', () => {
+  clearTimeout(layoutCards._t);
+  layoutCards._t = setTimeout(() => { layoutCards(); drawCaustics(); }, 220);
+});
+addEventListener('load', () => { layoutCards(); drawCaustics(); });
 </script>
 </body>
 </html>
