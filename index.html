@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#000000">
 <title>ZHANNAOHUA — 产品与界面设计（草稿）</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,12 +21,12 @@
 html[data-theme="light"]{
   --bg:#fff; --fg:#0a0a0a; --muted:#6e6e73; --faint:rgba(10,10,10,.32);
   --line:rgba(0,0,0,.13); --card:#fff; --soft:rgba(0,0,0,.045);
-  --wave:rgba(0,0,0,.075);
+  --wave:rgba(0,0,0,.062);
 }
 html[data-theme="dark"]{
   --bg:#000; --fg:#f4f4f5; --muted:#8d8d95; --faint:rgba(244,244,245,.3);
   --line:rgba(255,255,255,.15); --card:#0c0c10; --soft:rgba(255,255,255,.055);
-  --wave:rgba(255,255,255,.085);
+  --wave:rgba(255,255,255,.072);
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -150,6 +150,7 @@ html[data-theme="dark"] .i-moon{display:none}
   pointer-events:none;
 }
 .hero__fig svg{width:100%; height:auto; color:var(--fg); opacity:.42; display:block}
+html[data-theme="light"] .hero__fig svg{opacity:.3}
 .hero__fig::after{
   content:"替换为你的照片 · 3:4";
   position:absolute; left:50%; bottom:8%; transform:translateX(-50%);
@@ -228,7 +229,8 @@ html[data-theme="dark"] .i-moon{display:none}
 .case:nth-of-type(3) .case__media{background:linear-gradient(150deg,#f0f7f4,#e2eeea 60%,#eef4ff)}
 .case:nth-of-type(4) .case__media{background:linear-gradient(150deg,#fff5ee,#ffe9dc 60%,#f6e8ff)}
 .case:nth-of-type(5) .case__media{background:linear-gradient(150deg,#f5f5f7,#e9e9ee 60%,#eef0ff)}
-html[data-theme="dark"] .case__media{background:linear-gradient(150deg,#101018,#0a0a10 60%,#12101c)}
+/* 特异性要压过上面的 .case:nth-of-type(n) 浅色占位 */
+html[data-theme="dark"] .case .case__media{background:linear-gradient(150deg,#101018,#0a0a10 60%,#12101c)}
 
 /* 假界面骨架（占位用，替换成真实截图） */
 .fui{
@@ -705,7 +707,6 @@ let waveRaf;
 /* ---------- 主题 ---------- */
 const root = document.documentElement;
 const KEY = 'znh.theme';
-const mq = matchMedia('(prefers-color-scheme: light)');
 const stored = () => { try { const v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : null; } catch { return null; } };
 const params = new URLSearchParams(location.search);
 
@@ -715,7 +716,8 @@ function applyTheme(t, remember) {
   document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'light' ? '#ffffff' : '#000000');
   drawWaves();
 }
-applyTheme(params.get('theme') || stored() || (mq.matches ? 'light' : 'dark'), false);
+/* 默认深色；用户手动切换过则以记忆为准 */
+applyTheme(params.get('theme') || stored() || 'dark', false);
 
 document.getElementById('theme-btn').addEventListener('click', () => {
   applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark', true);
@@ -729,11 +731,15 @@ function drawWaves() {
   cv.width = w * dpr; cv.height = h * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   const color = getComputedStyle(root).getPropertyValue('--wave').trim() || 'rgba(0,0,0,.07)';
-  const gap = 16;
+  /* 窄屏适当放宽，避免细线糊成一片 */
+  const gap = w < 700 ? 13 : 8.5;
   const t0 = performance.now();
-  const amp = 16;
+  const amp = 17;
+  let last = 0;
 
   function frame(now) {
+    if (now - last < 33) { waveRaf = requestAnimationFrame(frame); return; }
+    last = now;
     const t = (now - t0) / 1000;
     ctx.clearRect(0, 0, w, h);
     ctx.strokeStyle = color;
@@ -741,9 +747,9 @@ function drawWaves() {
     ctx.beginPath();
     for (let x = gap / 2; x < w; x += gap) {
       ctx.moveTo(x, -10);
-      for (let y = 0; y <= h + 10; y += 14) {
+      for (let y = 0; y <= h + 10; y += 12) {
         const dx = Math.sin(y * 0.0075 + t * 0.22 + x * 0.012) * amp
-                 + Math.sin(y * 0.021 - t * 0.15 + x * 0.03) * 5;
+                 + Math.sin(y * 0.021 - t * 0.15 + x * 0.03) * 4.6;
         ctx.lineTo(x + dx, y);
       }
     }
@@ -756,7 +762,7 @@ function drawWaves() {
     ctx.strokeStyle = color; ctx.lineWidth = 1;
     for (let x = gap / 2; x < w; x += gap) {
       ctx.beginPath();
-      for (let y = 0; y <= h; y += 14) {
+      for (let y = 0; y <= h; y += 12) {
         const dx = Math.sin(y * 0.0075 + x * 0.012) * amp;
         y === 0 ? ctx.moveTo(x + dx, y) : ctx.lineTo(x + dx, y);
       }
