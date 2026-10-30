@@ -289,11 +289,14 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
 .case__num{color:var(--faint); font-variant-numeric:tabular-nums}
 .case__desc{max-width:36ch; margin:0; font-size:14px; line-height:1.62; color:var(--muted)}
 .case__title{
+  position:relative; z-index:1;
   max-width:20ch; margin:clamp(26px,3.6vw,48px) 0 clamp(22px,3vw,36px);
   font-family:var(--serif); font-weight:400;
   font-size:clamp(34px,5.6vw,90px); line-height:1.02; letter-spacing:-.02em;
 }
 .case__link{display:block}
+.case__link{transition:transform .5s var(--ease-out)}
+.case__link:hover{transform:translateY(-4px)}
 .case__link:hover .case__media{transform:scale(1.006)}
 .case__link:hover .case__cta{opacity:1; transform:none}
 .case__cta{
@@ -303,9 +306,11 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
   color:var(--blue);
 }
 .case__media{
-  position:relative; aspect-ratio:16/9;
-  display:grid; place-items:center;
-  transition:transform .6s var(--ease);
+  position:relative; z-index:2;
+  display:grid; place-items:start center;   /* 顶部对齐，负 margin 才生效 */
+  /* 向上侵入标题区域，让标题下半被图片压住 */
+  margin-top:calc(-1 * clamp(44px, 4.9vw, 78px));   /* 注意：-clamp() 是无效值 */
+  transition:transform .6s var(--ease-out);
 }
 
 /* 假界面骨架（占位用，替换成真实截图） */
@@ -314,7 +319,14 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
   transition:transform .6s var(--ease-out); will-change:transform;
   background:var(--card); border:1px solid var(--line);
   box-shadow:0 42px 70px -34px rgba(6,44,78,.42), 0 3px 12px rgba(0,0,0,.06);
+  position:relative;
   display:flex; flex-direction:column;
+}
+/* 顶边融进页面背景，让下面的标题"透"出来 */
+.fui::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:20%;
+  background:linear-gradient(to bottom, var(--bg) 0%, color-mix(in srgb, var(--bg) 55%, transparent) 45%, transparent 100%);
+  pointer-events:none; z-index:4;
 }
 .fui__bar{display:flex; align-items:center; gap:5px; padding:9px 12px; border-bottom:1px solid var(--line)}
 .fui__bar span{width:6px; height:6px; border-radius:50%; background:var(--soft)}
@@ -1643,18 +1655,29 @@ document.getElementById('year').textContent = new Date().getFullYear();
   }, { passive: true });
 })();
 
-/* ---------- 案例封面跟随光标（图内视差） ---------- */
+/* ---------- 案例封面：hover 时 3D 倾斜 + 放大 ---------- */
 (function initCaseParallax(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!matchMedia('(hover: hover)').matches) return;
   document.querySelectorAll('.case__media').forEach(media => {
     const fui = media.querySelector('.fui');
     if (!fui) return;
+    let raf = 0, txf = '';
+    const apply = () => { raf = 0; fui.style.transform = txf; };
+    media.addEventListener('pointerenter', () => { fui.classList.add('is-tilt'); }, { passive: true });
     media.addEventListener('pointermove', e => {
       const r = media.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width - .5;
       const py = (e.clientY - r.top) / r.height - .5;
-      fui.style.transform = 'translate(' + (-px * 18).toFixed(1) + 'px,' + (-py * 13).toFixed(1) + 'px) scale(1.025)';
+      txf = 'perspective(1100px) translate3d(' + (-px * 18).toFixed(1) + 'px,' + (-py * 12).toFixed(1) + 'px,0)'
+          + ' rotateX(' + (-py * 6.5).toFixed(2) + 'deg) rotateY(' + (px * 8).toFixed(2) + 'deg) scale(1.05)';
+      if (!raf) raf = requestAnimationFrame(apply);
     }, { passive: true });
-    media.addEventListener('pointerleave', () => { fui.style.transform = ''; });
+    media.addEventListener('pointerleave', () => {
+      fui.classList.remove('is-tilt');
+      txf = '';
+      if (!raf) raf = requestAnimationFrame(apply);
+    });
   });
 })();
 
