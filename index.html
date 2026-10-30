@@ -505,14 +505,16 @@ html[data-theme="light"] .sandbox__title{color:#0d6ba6; text-shadow:0 2px 0 rgba
 /* ============ Sandbox：散落的作品墙 ============ */
 .board{
   --line:rgba(18,60,88,.3);
-  position:relative;
-  margin-top:clamp(26px,3.6vw,52px);
-  height:clamp(480px, 47vw, 700px);
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:clamp(12px, 1.9vw, 28px);
+  max-width:980px;
+  margin:clamp(26px,3.6vw,52px) auto 0;
   touch-action:none; user-select:none;
 }
 .board__card{
-  position:absolute; left:0; top:0;
-  width:clamp(112px,16.5%,236px); aspect-ratio:4/3;
+  position:relative;
+  width:100%; aspect-ratio:4/3;
   border-radius:14px; overflow:hidden;
   border:1px solid var(--line);
   background:linear-gradient(152deg,var(--c1,#cfefff),var(--c2,#8fd4f7));
@@ -520,7 +522,7 @@ html[data-theme="light"] .sandbox__title{color:#0d6ba6; text-shadow:0 2px 0 rgba
     0 28px 44px -24px rgba(6,40,72,.45),
     0 3px 8px rgba(0,0,0,.05),
     inset 0 2px 0 rgba(255,255,255,.7);
-  transform:translate3d(var(--x),var(--y),0);
+  transform:translate(var(--dx,0px), var(--dy,0px));
   rotate:calc(var(--r) * 1deg);
   cursor:grab;
   animation:bob var(--dur,9s) ease-in-out infinite;
@@ -535,7 +537,7 @@ html[data-theme="dark"] .board__card{
 }
 @keyframes bob{
   0%,100%{ translate:0 0 }
-  50%{ translate:0 -12px }
+  50%{ translate:0 -8px }
 }
 .board__card:hover{
   scale:1.03;
@@ -643,10 +645,8 @@ html[data-theme="dark"] .board__card{
   .case__desc{max-width:none}
   .timeline__row{grid-template-columns:1fr; gap:4px}
   .timeline__year{font-size:18px}
-  .board{position:relative; display:grid; grid-template-columns:1fr 1fr; gap:10px;
-    height:auto; margin-top:24px; touch-action:auto}
-  .board__card{position:relative; width:auto; transform:none !important; rotate:none;
-    animation:none; aspect-ratio:4/3}
+  .board{display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:none; margin-top:24px; touch-action:auto}
+  .board__card{width:100%; transform:none !important; rotate:none; animation:none; aspect-ratio:4/3}
   .board__card span{font-size:9px; padding:1px 5px; left:5px; bottom:5px}
   .case__media{aspect-ratio:4/3}
   .fui{width:88%; height:74%; aspect-ratio:auto}
@@ -1130,29 +1130,24 @@ const isMobile = () => innerWidth <= 760;
 
 /* 卡片在池子里聚成一堆（百分比），行间略有重叠 */
 const spots = [
-  [3, 3], [29, 0], [55, 5], [80, 1],
-  [6, 36], [32, 39], [58, 34], [83, 40],
-  [2, 69], [28, 72], [54, 67], [79, 73]
+  [10, 2], [32, 0], [54, 3], [76, 1],
+  [11, 37], [33, 39], [55, 36], [77, 38],
+  [9, 71], [31, 73], [53, 70], [75, 72]
 ];
 
 function layoutCards() {
   if (isMobile()) return;
-  const H = board.clientHeight, W = board.clientWidth;
-  const cw = cards[0].offsetWidth, ch = cards[0].offsetHeight;
   cards.forEach((c, i) => {
-    const [px, py] = spots[i % spots.length];
-    const x = Math.max(0, Math.min(px / 100 * W, W - cw - 2));
-    const y = Math.max(0, Math.min(py / 100 * H, H - ch - 2));
-    c.style.setProperty('--x', x + 'px');
-    c.style.setProperty('--y', y + 'px');
-    c.dataset.hx = x; c.dataset.hy = y;          /* 记录原位，松手后飘回 */
+    /* 网格负责定位，这里只给每张一点随机错位和角度，制造"散落"感 */
+    const dx = ((i % 3) - 1) * 7 + ((i % 2) ? 4 : -4);
+    const dy = ((i % 4) - 1.5) * 6;
+    c.style.setProperty('--dx', dx + 'px');
+    c.style.setProperty('--dy', dy + 'px');
+    c.dataset.hx = dx; c.dataset.hy = dy;
     c.style.setProperty('--dur', (8 + (i % 5) * 1.1).toFixed(1) + 's');
     c.style.setProperty('--delay', (-(i * 1.37)).toFixed(2) + 's');
-    /* 每张卡在水里有点角度，不是平贴在玻璃上 */
-    c.style.setProperty('--rx', ((i % 3) - 1) * 2.5 + 'deg');
-    c.style.setProperty('--ry', (((i * 7) % 11) - 5) + 'deg');
-    
-    c.style.zIndex = String(10 + i);
+    c.style.setProperty('--rx', (((i % 3) - 1) * 1.5) + 'deg');
+    c.style.setProperty('--ry', ((((i * 7) % 11) - 5) * 0.6) + 'deg');
   });
 }
 
@@ -1164,8 +1159,8 @@ cards.forEach(card => {
     drag = {
       card,
       startX: e.clientX, startY: e.clientY,
-      ox: parseFloat(getComputedStyle(card).getPropertyValue('--x')),
-      oy: parseFloat(getComputedStyle(card).getPropertyValue('--y')),
+      ox: parseFloat(getComputedStyle(card).getPropertyValue('--dx')) || 0,
+      oy: parseFloat(getComputedStyle(card).getPropertyValue('--dy')) || 0,
       moved: false
     };
     card.classList.add('is-drag');
@@ -1178,14 +1173,14 @@ board.addEventListener('pointermove', e => {
   if (!drag) return;
   const dx = e.clientX - drag.startX, dy = e.clientY - drag.startY;
   if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
-  drag.card.style.setProperty('--x', (drag.ox + dx) + 'px');
-  drag.card.style.setProperty('--y', (drag.oy + dy) + 'px');
+  drag.card.style.setProperty('--dx', (drag.ox + dx) + 'px');
+  drag.card.style.setProperty('--dy', (drag.oy + dy) + 'px');
 });
 function settleBack(card) {
   card.classList.remove('is-drag');
   card.classList.add('is-settle');
-  card.style.setProperty('--x', card.dataset.hx + 'px');
-  card.style.setProperty('--y', card.dataset.hy + 'px');
+  card.style.setProperty('--dx', card.dataset.hx + 'px');
+  card.style.setProperty('--dy', card.dataset.hy + 'px');
   clearTimeout(card._settleT);
   card._settleT = setTimeout(() => card.classList.remove('is-settle'), 1300);
 }
@@ -1483,6 +1478,11 @@ addEventListener('resize', () => {
   layoutCards._t = setTimeout(() => { layoutCards(); drawCaustics(); }, 220);
 });
 addEventListener('load', () => { layoutCards(); drawCaustics(); });
+/* 画布自身的尺寸一变化就重排（首屏高度未定、字体加载完都会触发） */
+if ('ResizeObserver' in window) {
+  const boardRO = new ResizeObserver(() => layoutCards());
+  boardRO.observe(board);
+}
 </script>
 </body>
 </html>
