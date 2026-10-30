@@ -303,25 +303,17 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
   color:var(--blue);
 }
 .case__media{
-  position:relative; aspect-ratio:16/9; border-radius:14px; overflow:hidden;
+  position:relative; aspect-ratio:16/9;
   display:grid; place-items:center;
-  border:1px solid var(--line);
   transition:transform .6s var(--ease);
 }
-/* 每个案例不同的占位色调 */
-.case:nth-of-type(2) .case__media{background:linear-gradient(150deg,#eef1ff,#dfe4fb 60%,#eae6ff)}
-.case:nth-of-type(3) .case__media{background:linear-gradient(150deg,#f0f7f4,#e2eeea 60%,#eef4ff)}
-.case:nth-of-type(4) .case__media{background:linear-gradient(150deg,#fff5ee,#ffe9dc 60%,#f6e8ff)}
-.case:nth-of-type(5) .case__media{background:linear-gradient(150deg,#f5f5f7,#e9e9ee 60%,#eef0ff)}
-/* 特异性要压过上面的 .case:nth-of-type(n) 浅色占位 */
-html[data-theme="dark"] .case .case__media{background:linear-gradient(150deg,#101018,#0a0a10 60%,#12101c)}
 
 /* 假界面骨架（占位用，替换成真实截图） */
 .fui{
   width:76%; aspect-ratio:16/9.6; border-radius:10px; overflow:hidden;
   transition:transform .6s var(--ease-out); will-change:transform;
   background:var(--card); border:1px solid var(--line);
-  box-shadow:0 30px 60px -28px rgba(0,0,0,.38), 0 2px 8px rgba(0,0,0,.05);
+  box-shadow:0 42px 70px -34px rgba(6,44,78,.42), 0 3px 12px rgba(0,0,0,.06);
   display:flex; flex-direction:column;
 }
 .fui__bar{display:flex; align-items:center; gap:5px; padding:9px 12px; border-bottom:1px solid var(--line)}
