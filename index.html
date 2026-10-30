@@ -334,13 +334,13 @@ html[data-theme="light"] .sandbox__title{color:#0d6ba6; text-shadow:0 2px 0 rgba
   --ink:#123c58;
   --box:#fdfaf2;
   --box-2:#ece2d0;
-  --dx:21px;                 /* 内壁水平厚度 = 纵深感 */
-  --dy:42px;                 /* 内壁垂直厚度（越大越俯视） */
+  --dx:26px;                 /* 瓷砖边宽度 = 纵深感 */
+  --dy:46px;                 /* 顶部水面的进深（越大越俯视） */
   --line:rgba(18,60,88,.34);
   position:relative;
   margin:clamp(26px,3.6vw,46px) auto 0;
   max-width:980px;
-  padding:18px 22px 0 0;
+  padding:0;
   font-family:"ZCOOL KuaiLe","Inter",sans-serif;
 }
 html[data-theme="dark"] .tank{
@@ -378,29 +378,6 @@ html[data-theme="light"] .tank__desk-glow{
   background:
     repeating-radial-gradient(ellipse 40% 26% at 50% 8%, rgba(60,150,215,.4) 0 2px, transparent 2px 17px),
     radial-gradient(48% 40% at 50% 10%, rgba(88,178,235,.8), rgba(88,178,235,0) 72%);
-}
-/* 外壳的顶面与右壁 */
-.tank__top{
-  position:absolute; z-index:3; left:-9px; right:22px; top:0; height:18px;
-  transform:skewX(22deg); transform-origin:bottom left;
-  border-radius:5px 8px 0 0;
-  background:linear-gradient(180deg,#fffdf8,#e6eef7 60%,#cdd9e7);
-  box-shadow:inset 0 1px 0 #fff, inset 0 -1px 0 rgba(12,32,60,.12);
-}
-html[data-theme="dark"] .tank__top{
-  background:linear-gradient(180deg,#2b3546,#1b2431 60%,#111821);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
-}
-.tank__side{
-  position:absolute; z-index:3; top:18px; bottom:-4px; right:0; width:22px;
-  transform:skewY(22deg); transform-origin:top left;
-  border-radius:0 5px 5px 0;
-  background:linear-gradient(90deg,#f4f8fc,#dbe4ee 55%,#c2cede);
-  box-shadow:inset -1px 0 0 rgba(255,255,255,.35);
-}
-html[data-theme="dark"] .tank__side{
-  background:linear-gradient(90deg,#1b2331,#121821 60%,#080c11);
-  box-shadow:inset -1px 0 0 rgba(255,255,255,.08);
 }
 /* 箱体正面 */
 .tank__body{
@@ -446,6 +423,22 @@ html[data-theme="dark"] .tank__body{
     inset 26px 0 34px -20px rgba(0,52,90,.55),
     inset -26px 0 34px -20px rgba(0,52,90,.55);
 }
+html[data-theme="dark"] .wall--left{
+  background:
+    repeating-linear-gradient(180deg, rgba(210,240,255,.12) 0 1px, transparent 1px 19px),
+    linear-gradient(90deg,#dae9f3 0%,#bcd2e2 52%,#9db8cd 100%);
+}
+html[data-theme="dark"] .wall--right{
+  background:
+    repeating-linear-gradient(180deg, rgba(210,240,255,.12) 0 1px, transparent 1px 19px),
+    linear-gradient(270deg,#8ba7bd 0%,#adc5d7 52%,#cfe2ef 100%);
+}
+html[data-theme="dark"] .wall--bottom{
+  background:
+    repeating-linear-gradient(90deg, rgba(210,240,255,.1) 0 1px, transparent 1px 27px),
+    repeating-linear-gradient(180deg, rgba(210,240,255,.08) 0 1px, transparent 1px 16px),
+    linear-gradient(180deg,#cfe3f0 0%,#a3bfd3 52%,#7d9cb5 100%);
+}
 html[data-theme="dark"] .tank__back{
   background:
     radial-gradient(64% 34% at 50% 0%, rgba(215,248,255,.42), transparent 64%),
@@ -457,7 +450,7 @@ html[data-theme="dark"] .tank__back{
   clip-path:polygon(0 0, 100% 0, calc(100% - var(--dx)) var(--dy), var(--dx) var(--dy));
   background:
     repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 2px, transparent 2px 30px),
-    linear-gradient(180deg,#b2e4fb 0%,#8fd4f4 32%,#79c8ed 70%,#a3dff8 100%);
+    linear-gradient(180deg,#8ecff0 0%,#71c4ea 32%,#5fb7e2 70%,#83d0f2 100%);
 }
 .wall--top::after{
   content:""; position:absolute; inset:0;
@@ -469,15 +462,22 @@ html[data-theme="dark"] .tank__back{
 @keyframes surfaceShine{ from{opacity:.5} to{opacity:1} }
 .wall--left{
   clip-path:polygon(0 0, var(--dx) var(--dy), var(--dx) calc(100% - var(--dy)), 0 100%);
-  background:linear-gradient(90deg,#2b83b2 0%,#489fd0 58%,#67bfe4 100%);
+  background:
+    repeating-linear-gradient(180deg, rgba(108,152,186,.32) 0 1px, transparent 1px 19px),
+    linear-gradient(90deg,#f7fcff 0%,#e9f3fa 52%,#d5e7f2 100%);
 }
 .wall--right{
   clip-path:polygon(100% 0, 100% 100%, calc(100% - var(--dx)) calc(100% - var(--dy)), calc(100% - var(--dx)) var(--dy));
-  background:linear-gradient(270deg,#1a678f 0%,#2f8abb 55%,#4fa9d4 100%);
+  background:
+    repeating-linear-gradient(180deg, rgba(108,152,186,.34) 0 1px, transparent 1px 19px),
+    linear-gradient(270deg,#bcd4e6 0%,#dcecf7 52%,#f4fbff 100%);
 }
 .wall--bottom{
   clip-path:polygon(var(--dx) calc(100% - var(--dy)), calc(100% - var(--dx)) calc(100% - var(--dy)), 100% 100%, 0 100%);
-  background:linear-gradient(180deg,#3f9cc4 0%,#1f7099 55%,#10506f 100%);
+  background:
+    repeating-linear-gradient(90deg, rgba(100,146,182,.3) 0 1px, transparent 1px 27px),
+    repeating-linear-gradient(180deg, rgba(100,146,182,.22) 0 1px, transparent 1px 16px),
+    linear-gradient(180deg,#eaf5fc 0%,#c8dfee 52%,#9fbdd6 100%);
 }
 /* 水垢：内壁上的水痕、池底积垢、玻璃水渍 */
 .wall--left::after,
@@ -579,7 +579,10 @@ html[data-theme="dark"] .tank__back{
   border-radius:15px; overflow:hidden;
   border:2px solid rgba(18,60,88,.5);
   background:linear-gradient(152deg,var(--c1,#cfefff),var(--c2,#8fd4f7));
-  box-shadow:0 18px 26px -16px rgba(8,74,124,.45), inset 0 2px 0 rgba(255,255,255,.7);
+  box-shadow:
+    0 26px 34px -16px rgba(4,56,96,.5),
+    0 10px 16px -6px rgba(4,56,96,.32),
+    inset 0 2px 0 rgba(255,255,255,.75);
   transform:translate3d(var(--x),var(--y),0) perspective(820px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
   rotate:calc(var(--r) * 1deg);
   cursor:grab;
@@ -590,7 +593,10 @@ html[data-theme="dark"] .tank__back{
 }
 html[data-theme="dark"] .board__card{
   border-color:rgba(210,240,255,.45);
-  box-shadow:0 18px 28px -16px rgba(2,32,60,.55), inset 0 2px 0 rgba(255,255,255,.35);
+  box-shadow:
+    0 26px 36px -16px rgba(0,26,50,.62),
+    0 10px 16px -6px rgba(0,26,50,.42),
+    inset 0 2px 0 rgba(255,255,255,.4);
 }
 @keyframes bob{
   0%,100%{ translate:0 0 }
@@ -985,8 +991,6 @@ html[data-theme="dark"] .board__card{
       </div>
       <span class="tank__desk-shadow"></span>
       <span class="tank__desk-glow"></span>
-      <span class="tank__top"></span>
-      <span class="tank__side"></span>
     </div>
   </section>
 
