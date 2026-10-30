@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#ffffff">
 <title>ZHANNAOHUA — 产品与界面设计（草稿）</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1048,8 +1048,8 @@ function applyTheme(t, remember) {
   document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'light' ? '#ffffff' : '#000000');
   drawWaves();
 }
-/* 默认深色；用户手动切换过则以记忆为准 */
-applyTheme(params.get('theme') || stored() || 'dark', false);
+/* 默认浅色；用户手动切换过则以记忆为准 */
+applyTheme(params.get('theme') || stored() || 'light', false);
 
 document.getElementById('theme-btn').addEventListener('click', () => {
   applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark', true);
