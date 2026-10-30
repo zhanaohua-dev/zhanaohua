@@ -70,6 +70,17 @@ body::after{
     var(--cursor-glow), transparent 70%);
 }
 body.has-cursor-glow::after{opacity:1}
+/* 鼠标拖尾画布 */
+.cursor-trail{
+  position:fixed; inset:0; z-index:66;
+  width:100%; height:100%; pointer-events:none; display:block;
+}
+@media (prefers-reduced-motion:reduce){
+  .cursor-trail{display:none}
+}
+@media (hover:none){
+  .cursor-trail{display:none}
+}
 /* 顶部滚动进度 */
 .progress{
   position:fixed; top:0; left:0; z-index:95; height:2px; width:0;
@@ -248,8 +259,31 @@ html[data-theme="dark"] .i-moon{display:none}
   width:min(50vw,560px); margin:0; transform:translateX(-50%);
   pointer-events:none;
 }
-.hero__fig svg{width:100%; height:auto; color:var(--fg); opacity:.42; display:block}
-html[data-theme="light"] .hero__fig svg{opacity:.3}
+.hero__fig .avatar{width:100%; height:auto; display:block; overflow:visible}
+.hero__fig::after{display:none}
+/* 角色配色：自动反色，深浅主题都成立 */
+.avatar{ --av-blush:#ff8fa3; }
+.avatar__skin{fill:var(--fg)}
+.avatar__eye{fill:var(--bg)}
+.avatar__pupil{fill:var(--fg)}
+.avatar__mouth{stroke:var(--bg)}
+/* 头绕颈部倾斜，眼睛整体可以眨眼 */
+.avatar__head{
+  transform-box:fill-box; transform-origin:50% 88%;
+  transition:transform .55s var(--ease-out);
+}
+.avatar__eyes{
+  transform-box:fill-box; transform-origin:center;
+  transition:transform .1s ease-out;
+}
+.avatar__eyes.is-blinking{transform:scaleY(.06)}
+.avatar__pupil{
+  transform-box:fill-box; transform-origin:center;
+  transition:transform .28s var(--ease-out);
+}
+@media (prefers-reduced-motion:reduce){
+  .avatar__head, .avatar__eyes, .avatar__pupil{transition:none}
+}
 .hero__fig::after{
   content:"替换为你的照片 · 3:4";
   position:absolute; left:50%; bottom:8%; transform:translateX(-50%);
@@ -257,7 +291,7 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
   color:var(--muted); opacity:.55; white-space:nowrap;
 }
 /* 粒子球 */
-.hero__sphere{
+.hero__sphere{display:none;
   position:absolute; left:50%; top:47%; z-index:4;
   width:min(19vw,215px); aspect-ratio:1; transform:translate(-50%,-50%);
   border-radius:50%;
@@ -683,6 +717,7 @@ html[data-theme="dark"] .board__card{
 <body>
 
 <div class="progress" id="progress" aria-hidden="true"></div>
+<canvas class="cursor-trail" id="cursorTrail" aria-hidden="true"></canvas>
 
 <!-- ================= HEADER ================= -->
 <header class="hd" id="hd">
@@ -727,20 +762,35 @@ html[data-theme="dark"] .board__card{
     </h1>
 
     <figure class="hero__fig" aria-hidden="true">
-      <svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMax meet">
-        <defs>
-          <linearGradient id="figFade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="currentColor" stop-opacity=".62"/>
-            <stop offset=".55" stop-color="currentColor" stop-opacity=".26"/>
-            <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <g fill="url(#figFade)">
-          <ellipse cx="150" cy="98" rx="45" ry="53"/>
-          <path d="M150 148c-5 0-30 4-48 14-25 14-38 38-44 68-4 20-6 43-7 62h198c-1-19-3-42-7-62-6-30-19-54-44-68-18-10-43-14-48-14z"/>
+      <svg class="avatar" viewBox="0 0 320 440" preserveAspectRatio="xMidYMax meet">
+        <!-- 身体（不跟随） -->
+        <g class="avatar__body">
+          <path class="avatar__skin" d="M160 244c-78 0-126 50-138 128-4 24-6 46-6 68h288c0-22-2-44-6-68-12-78-60-128-138-128z"/>
+          <!-- 手臂 -->
+          <path class="avatar__skin" d="M70 330c-22 8-34 30-38 58-2 14-2 28-2 40 0 6 4 8 8 8s8-2 8-8c0-12 2-24 6-36 6-20 16-34 28-42z" opacity=".55"/>
+          <path class="avatar__skin" d="M250 330c22 8 34 30 38 58 2 14 2 28 2 40 0 6-4 8-8 8s-8-2-8-8c0-12-2-24-6-36-6-20-16-34-28-42z" opacity=".55"/>
+        </g>
+
+        <!-- 头部（跟随鼠标倾斜） -->
+        <g class="avatar__head">
+          <rect class="avatar__skin" x="136" y="196" width="48" height="58" rx="20"/>
+          <ellipse class="avatar__skin" cx="160" cy="146" rx="90" ry="86"/>
+          <!-- 头发 -->
+          <path class="avatar__skin" d="M70 128c0-50 40-88 90-88s90 38 90 88c-10-26-26-44-46-52-8 16-34 26-62 18-20 6-46 12-72 34z"/>
+          <!-- 眼睛 -->
+          <g class="avatar__eyes">
+            <ellipse class="avatar__eye" cx="124" cy="152" rx="21" ry="24"/>
+            <ellipse class="avatar__eye" cx="196" cy="152" rx="21" ry="24"/>
+            <circle class="avatar__pupil" cx="124" cy="152" r="10"/>
+            <circle class="avatar__pupil" cx="196" cy="152" r="10"/>
+          </g>
+          <!-- 腮红 -->
+          <ellipse cx="88" cy="186" rx="15" ry="9" fill="#ff8fa3" opacity=".32"/>
+          <ellipse cx="232" cy="186" rx="15" ry="9" fill="#ff8fa3" opacity=".32"/>
+          <!-- 嘴 -->
+          <path class="avatar__mouth" d="M146 190c6 8 22 8 28 0" stroke-width="4.5" stroke-linecap="round" fill="none"/>
         </g>
       </svg>
-      <div class="hero__sphere"><i></i><i></i><i></i><i></i></div>
     </figure>
 
     <div class="hero__foot">
@@ -1373,6 +1423,146 @@ document.getElementById('year').textContent = new Date().getFullYear();
       btn.style.setProperty('--btn-fx-y', (e.clientY - r.top) + 'px');
     }, { passive: true });
   });
+})();
+
+/* ---------- 鼠标拖尾：弹簧节点链 ---------- */
+(function initCursorTrail(){
+  const cv = document.getElementById('cursorTrail');
+  if (!cv) return;
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const ctx = cv.getContext('2d');
+  const COUNT = 22;                 /* 尾巴节点数 */
+  const nodes = Array.from({ length: COUNT }, () => ({ x: -9999, y: -9999 }));
+  let mx = -9999, my = -9999, px = -9999, py = -9999;
+  let dpr = 1, w = 0, h = 0;
+
+  const resize = () => {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    w = innerWidth; h = innerHeight;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  resize();
+  addEventListener('resize', resize, { passive: true });
+
+  addEventListener('pointermove', e => {
+    mx = e.clientX; my = e.clientY;
+  }, { passive: true });
+  addEventListener('pointerleave', () => { mx = -9999; my = -9999; }, { passive: true });
+
+  /* 颜色跟随主题 */
+  const rgb = () => document.documentElement.dataset.theme === 'dark'
+    ? '150,200,255' : '34,56,199';
+
+  let last = 0;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (now - last < 16) return;
+    last = now;
+
+    ctx.clearRect(0, 0, w, h);
+    if (mx < -9000) return;
+
+    /* 头节点带一点缓动追鼠标，其余节点追前一个 → 平滑且不断裂 */
+    if (nodes[0].x < -9000) { nodes.forEach(n => { n.x = mx; n.y = my; }); }
+    nodes[0].x += (mx - nodes[0].x) * 0.5;
+    nodes[0].y += (my - nodes[0].y) * 0.5;
+    for (let i = 1; i < COUNT; i++) {
+      nodes[i].x += (nodes[i - 1].x - nodes[i].x) * 0.32;
+      nodes[i].y += (nodes[i - 1].y - nodes[i].y) * 0.32;
+    }
+
+    /* 移动越快越明显，停住时自然收回去 */
+    const speed = Math.min(1, Math.hypot(mx - px, my - py) / 14);
+    px = mx; py = my;
+    const strength = 0.35 + speed * 0.65;
+
+    const c = rgb();
+    ctx.globalCompositeOperation = 'lighter';   /* 重叠处叠加发光 */
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    /* 从尾巴往头画：一段一段，越靠头越粗越亮 */
+    for (let i = COUNT - 1; i >= 1; i--) {
+      const t = 1 - i / COUNT;                 /* 1 = 头部，0 = 尾巴尖 */
+      const a = t * t * 0.5 * strength;
+      if (a < 0.006) continue;
+      ctx.beginPath();
+      ctx.moveTo(nodes[i].x, nodes[i].y);
+      ctx.lineTo(nodes[i - 1].x, nodes[i - 1].y);
+      ctx.lineWidth = 0.6 + t * 9;
+      ctx.strokeStyle = 'rgba(' + c + ',' + a.toFixed(3) + ')';
+      ctx.stroke();
+    }
+    /* 头部一颗亮核 */
+    ctx.beginPath();
+    ctx.arc(nodes[0].x, nodes[0].y, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(' + c + ',' + (0.55 * strength).toFixed(3) + ')';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(nodes[0].x, nodes[0].y, 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,' + (0.5 * strength).toFixed(3) + ')';
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- 首页人物：目光与头部跟随鼠标 ---------- */
+(function initAvatar(){
+  const avatar = document.querySelector('.avatar');
+  if (!avatar) return;
+  const head = avatar.querySelector('.avatar__head');
+  const pupils = [...avatar.querySelectorAll('.avatar__pupil')];
+  const eyes = avatar.querySelector('.avatar__eyes');
+  if (!head || !pupils.length) return;
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  let raf = 0, nx = 0, ny = 0;
+
+  const apply = () => {
+    raf = 0;
+    head.style.transform =
+      'rotate(' + (nx * 4.5).toFixed(2) + 'deg) translate(' +
+      (nx * 7).toFixed(1) + 'px, ' + (ny * 5).toFixed(1) + 'px)';
+    for (const p of pupils) {
+      p.style.transform =
+        'translate(' + (nx * 7.5).toFixed(1) + 'px, ' + (ny * 6.5).toFixed(1) + 'px)';
+    }
+  };
+
+  const onMove = e => {
+    const r = avatar.getBoundingClientRect();
+    if (!r.width) return;
+    /* 以头中心为原点，把光标位置归一化到 -1 ~ 1 */
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height * 0.33;
+    const reach = Math.max(300, Math.min(innerWidth, innerHeight) * 0.8);
+    nx = Math.max(-1, Math.min(1, (e.clientX - cx) / reach));
+    ny = Math.max(-1, Math.min(1, (e.clientY - cy) / reach));
+    if (!raf) raf = requestAnimationFrame(apply);
+  };
+
+  if (fine && !reduced) {
+    addEventListener('pointermove', onMove, { passive: true });
+    addEventListener('pointerleave', () => {
+      nx = 0; ny = 0;
+      if (!raf) raf = requestAnimationFrame(apply);
+    }, { passive: true });
+  }
+
+  /* 随机眨眼 */
+  if (eyes && !reduced) {
+    const blink = () => {
+      eyes.classList.add('is-blinking');
+      setTimeout(() => eyes.classList.remove('is-blinking'), 150);
+      setTimeout(blink, 2400 + Math.random() * 4200);
+    };
+    setTimeout(blink, 1600);
+  }
 })();
 
 /* ---------- Hero 球：随光标视差 ---------- */
