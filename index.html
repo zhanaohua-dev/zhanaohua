@@ -356,6 +356,10 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
   margin-top:0; padding:0;
   border-top:1px solid var(--line);
 }
+/* 大图案例之后的第一行列表，多留一段呼吸空间 */
+.case:not(.case--row) + .case--row{
+  margin-top:clamp(64px, 8vw, 120px);
+}
 .case--row:last-of-type{border-bottom:1px solid var(--line)}
 .case__row{
   position:relative; overflow:visible;
