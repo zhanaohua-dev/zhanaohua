@@ -1450,7 +1450,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
   addEventListener('resize', resize, { passive: true });
 
   const isDark = () => document.documentElement.dataset.theme === 'dark';
-  const rgb = () => isDark() ? '150,200,255' : '36,60,214';
+  const rgb = () => isDark() ? '176,214,255' : '112,148,248';
 
   /* 柔边光斑贴图 */
   let sprite = null, spriteDark = null;
@@ -1459,9 +1459,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
     sc.width = sc.height = 96;
     const sx = sc.getContext('2d');
     const g = sx.createRadialGradient(48, 48, 0, 48, 48, 48);
-    g.addColorStop(0, 'rgba(' + rgb() + ',0.9)');
-    g.addColorStop(0.32, 'rgba(' + rgb() + ',0.45)');
-    g.addColorStop(0.66, 'rgba(' + rgb() + ',0.14)');
+    g.addColorStop(0, 'rgba(' + rgb() + ',0.62)');
+    g.addColorStop(0.32, 'rgba(' + rgb() + ',0.28)');
+    g.addColorStop(0.66, 'rgba(' + rgb() + ',0.09)');
     g.addColorStop(1, 'rgba(' + rgb() + ',0)');
     sx.fillStyle = g;
     sx.fillRect(0, 0, 96, 96);
@@ -1509,7 +1509,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
       const t = (i + 1) / n;                        /* 越靠近头部越大 */
       const life = 1 - (now - p.t) / LIFE;          /* 越老越淡 */
       const r = 5 + t * 17;
-      ctx.globalAlpha = Math.min(1, t * life * 1.5);
+      ctx.globalAlpha = Math.min(1, t * life * 1.15);
       ctx.drawImage(sprite, p.x - r, p.y - r, r * 2, r * 2);
     }
     ctx.globalAlpha = 1;
