@@ -421,12 +421,13 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
 
 /* ============ About ============ */
 .about{
-  display:grid; grid-template-columns:1fr 1fr;
+  display:grid;
+  grid-template-columns:minmax(0,.86fr) minmax(0,1fr);  /* JS 会按文字高度覆盖 */
   gap:clamp(28px,4vw,64px); align-items:start;
 }
 .carousel{position:relative}
 .carousel__frame{
-  position:relative; aspect-ratio:4/3; border-radius:16px; overflow:hidden;
+  position:relative; aspect-ratio:3/4; width:100%; border-radius:16px; overflow:hidden;
   background:var(--soft); border:1px solid var(--line);
 }
 .carousel__slide{
@@ -1697,6 +1698,31 @@ document.getElementById('year').textContent = new Date().getFullYear();
       prev.style.setProperty('--my', y.toFixed(1) + 'px');
     }, { passive: true });
   });
+})();
+
+/* ---------- About 照片：3:4 竖版，高度对齐右侧文字 ---------- */
+(function fitAboutPhoto(){
+  const about = document.querySelector('.about');
+  const text = document.querySelector('.about__text');
+  if (!about || !text) return;
+  let timer = 0;
+  const fit = () => {
+    if (innerWidth <= 900) { about.style.gridTemplateColumns = ''; return; }
+    /* 照片宽 = 文字高 × 0.75；列宽变化会改变换行，迭代几次收敛 */
+    let w = text.getBoundingClientRect().height * 0.75;
+    for (let i = 0; i < 4; i++) {
+      about.style.gridTemplateColumns = Math.round(w) + 'px minmax(0,1fr)';
+      const next = text.getBoundingClientRect().height * 0.75;
+      if (Math.abs(next - w) < 2) { w = next; break; }
+      w = (w + next) / 2;
+    }
+    about.style.gridTemplateColumns = Math.round(w) + 'px minmax(0,1fr)';
+  };
+  const schedule = () => { clearTimeout(timer); timer = setTimeout(fit, 120); };
+  addEventListener('resize', schedule);
+  addEventListener('load', schedule);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  schedule();
 })();
 
 /* ---------- 时间线节点：滚到就点亮 ---------- */
