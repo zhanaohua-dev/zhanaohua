@@ -1425,7 +1425,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
   });
 })();
 
-/* ---------- 鼠标拖尾：弹簧节点链 ---------- */
+/* ---------- 鼠标拖尾：沿真实轨迹采样，光斑相连成雾 ---------- */
 (function initCursorTrail(){
   const cv = document.getElementById('cursorTrail');
   if (!cv) return;
@@ -1433,9 +1433,10 @@ document.getElementById('year').textContent = new Date().getFullYear();
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const ctx = cv.getContext('2d');
-  const COUNT = 22;                 /* 尾巴节点数 */
-  const nodes = Array.from({ length: COUNT }, () => ({ x: -9999, y: -9999 }));
-  let mx = -9999, my = -9999, px = -9999, py = -9999;
+  const MAX_POINTS = 90;      /* 轨迹点上限 */
+  const STEP = 5;             /* 采样间距：保证光斑必然重叠 */
+  const LIFE = 340;           /* 淡出时间(ms) */
+  let trail = [];
   let dpr = 1, w = 0, h = 0;
 
   const resize = () => {
@@ -1448,14 +1449,42 @@ document.getElementById('year').textContent = new Date().getFullYear();
   resize();
   addEventListener('resize', resize, { passive: true });
 
-  addEventListener('pointermove', e => {
-    mx = e.clientX; my = e.clientY;
-  }, { passive: true });
-  addEventListener('pointerleave', () => { mx = -9999; my = -9999; }, { passive: true });
+  const isDark = () => document.documentElement.dataset.theme === 'dark';
+  const rgb = () => isDark() ? '150,200,255' : '36,60,214';
 
-  /* 颜色跟随主题 */
-  const rgb = () => document.documentElement.dataset.theme === 'dark'
-    ? '150,200,255' : '34,56,199';
+  /* 柔边光斑贴图 */
+  let sprite = null, spriteDark = null;
+  const buildSprite = () => {
+    const sc = document.createElement('canvas');
+    sc.width = sc.height = 96;
+    const sx = sc.getContext('2d');
+    const g = sx.createRadialGradient(48, 48, 0, 48, 48, 48);
+    g.addColorStop(0, 'rgba(' + rgb() + ',0.9)');
+    g.addColorStop(0.32, 'rgba(' + rgb() + ',0.45)');
+    g.addColorStop(0.66, 'rgba(' + rgb() + ',0.14)');
+    g.addColorStop(1, 'rgba(' + rgb() + ',0)');
+    sx.fillStyle = g;
+    sx.fillRect(0, 0, 96, 96);
+    spriteDark = isDark();
+    return sc;
+  };
+
+  addEventListener('pointermove', e => {
+    const now = performance.now();
+    const last = trail[trail.length - 1];
+    if (!last) { trail.push({ x: e.clientX, y: e.clientY, t: now }); return; }
+    const dx = e.clientX - last.x, dy = e.clientY - last.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 0.6) return;
+    /* 在两点之间等距插值，无论鼠标多快，点距都不超过 STEP */
+    const steps = Math.min(24, Math.max(1, Math.ceil(dist / STEP)));
+    for (let i = 1; i <= steps; i++) {
+      trail.push({ x: last.x + dx * i / steps, y: last.y + dy * i / steps, t: now });
+    }
+    if (trail.length > MAX_POINTS) trail.splice(0, trail.length - MAX_POINTS);
+  }, { passive: true });
+
+  addEventListener('pointerleave', () => { trail.length = 0; }, { passive: true });
 
   let last = 0;
   function frame(now) {
@@ -1464,47 +1493,26 @@ document.getElementById('year').textContent = new Date().getFullYear();
     last = now;
 
     ctx.clearRect(0, 0, w, h);
-    if (mx < -9000) return;
+    if (!trail.length) return;
+    /* 老于 LIFE 的点移除 */
+    const keep = [];
+    for (const p of trail) if (now - p.t < LIFE) keep.push(p);
+    trail = keep;
+    if (!trail.length) return;
 
-    /* 头节点带一点缓动追鼠标，其余节点追前一个 → 平滑且不断裂 */
-    if (nodes[0].x < -9000) { nodes.forEach(n => { n.x = mx; n.y = my; }); }
-    nodes[0].x += (mx - nodes[0].x) * 0.5;
-    nodes[0].y += (my - nodes[0].y) * 0.5;
-    for (let i = 1; i < COUNT; i++) {
-      nodes[i].x += (nodes[i - 1].x - nodes[i].x) * 0.32;
-      nodes[i].y += (nodes[i - 1].y - nodes[i].y) * 0.32;
+    if (!sprite || spriteDark !== isDark()) sprite = buildSprite();
+    ctx.globalCompositeOperation = isDark() ? 'lighter' : 'source-over';
+
+    const n = trail.length;
+    for (let i = 0; i < n; i++) {
+      const p = trail[i];
+      const t = (i + 1) / n;                        /* 越靠近头部越大 */
+      const life = 1 - (now - p.t) / LIFE;          /* 越老越淡 */
+      const r = 5 + t * 17;
+      ctx.globalAlpha = Math.min(1, t * life * 1.5);
+      ctx.drawImage(sprite, p.x - r, p.y - r, r * 2, r * 2);
     }
-
-    /* 移动越快越明显，停住时自然收回去 */
-    const speed = Math.min(1, Math.hypot(mx - px, my - py) / 14);
-    px = mx; py = my;
-    const strength = 0.35 + speed * 0.65;
-
-    const c = rgb();
-    ctx.globalCompositeOperation = 'lighter';   /* 重叠处叠加发光 */
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    /* 从尾巴往头画：一段一段，越靠头越粗越亮 */
-    for (let i = COUNT - 1; i >= 1; i--) {
-      const t = 1 - i / COUNT;                 /* 1 = 头部，0 = 尾巴尖 */
-      const a = t * t * 0.5 * strength;
-      if (a < 0.006) continue;
-      ctx.beginPath();
-      ctx.moveTo(nodes[i].x, nodes[i].y);
-      ctx.lineTo(nodes[i - 1].x, nodes[i - 1].y);
-      ctx.lineWidth = 0.6 + t * 9;
-      ctx.strokeStyle = 'rgba(' + c + ',' + a.toFixed(3) + ')';
-      ctx.stroke();
-    }
-    /* 头部一颗亮核 */
-    ctx.beginPath();
-    ctx.arc(nodes[0].x, nodes[0].y, 4.5, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(' + c + ',' + (0.55 * strength).toFixed(3) + ')';
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(nodes[0].x, nodes[0].y, 2.2, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,' + (0.5 * strength).toFixed(3) + ')';
-    ctx.fill();
+    ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
   }
   requestAnimationFrame(frame);
