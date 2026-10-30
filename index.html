@@ -425,7 +425,7 @@ html[data-theme="dark"] .tank__body{
   position:absolute; inset:11px;
   border-radius:17px;
   overflow:hidden;
-  background:#082c46;
+  background:#12587f;
   box-shadow:
     inset 0 0 0 1.5px rgba(255,255,255,.22),
     inset 0 0 44px rgba(2,26,48,.55);
@@ -437,25 +437,27 @@ html[data-theme="dark"] .tank__body{
   left:var(--dx); right:var(--dx); top:var(--dy); bottom:var(--dy);
   overflow:hidden;
   background:
-    radial-gradient(64% 32% at 50% 0%, rgba(255,255,255,.45), transparent 62%),
-    linear-gradient(180deg,#93daf6 0%,#52b4e6 24%,#2085c2 56%,#0d6299 84%,#07486f 100%);
+    radial-gradient(64% 34% at 50% 0%, rgba(255,255,255,.62), transparent 64%),
+    linear-gradient(180deg,#cdf2ff 0%,#96dcf8 20%,#5cbee9 50%,#2f9bd2 80%,#1d7cae 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.24),
-    inset 0 16px 28px rgba(0,44,84,.34),
-    inset 0 -14px 26px rgba(0,32,62,.3);
+    inset 0 0 0 1px rgba(255,255,255,.26),
+    inset 0 16px 28px rgba(0,44,84,.3),
+    inset 0 -14px 26px rgba(0,32,62,.26),
+    inset 26px 0 34px -20px rgba(0,52,90,.55),
+    inset -26px 0 34px -20px rgba(0,52,90,.55);
 }
 html[data-theme="dark"] .tank__back{
   background:
-    radial-gradient(64% 32% at 50% 0%, rgba(190,240,255,.3), transparent 62%),
-    linear-gradient(180deg,#6ec8ee 0%,#3195cf 26%,#12699f 58%,#084a74 86%,#052f4d 100%);
+    radial-gradient(64% 34% at 50% 0%, rgba(215,248,255,.42), transparent 64%),
+    linear-gradient(180deg,#b6e9fc 0%,#74c9ee 20%,#3ba1d9 50%,#207fb4 80%,#12608f 100%);
 }
 /* 四面内壁（梯形，形成纵深） */
 .wall{position:absolute; inset:0; display:block}
 .wall--top{                      /* 水面：亮，有波纹 */
   clip-path:polygon(0 0, 100% 0, calc(100% - var(--dx)) var(--dy), var(--dx) var(--dy));
   background:
-    repeating-linear-gradient(90deg, rgba(255,255,255,.16) 0 2px, transparent 2px 30px),
-    linear-gradient(180deg,#8dd6f4 0%,#7dcdf0 30%,#63bce6 70%,#8edaf6 100%);
+    repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 2px, transparent 2px 30px),
+    linear-gradient(180deg,#b2e4fb 0%,#8fd4f4 32%,#79c8ed 70%,#a3dff8 100%);
 }
 .wall--top::after{
   content:""; position:absolute; inset:0;
@@ -467,15 +469,15 @@ html[data-theme="dark"] .tank__back{
 @keyframes surfaceShine{ from{opacity:.5} to{opacity:1} }
 .wall--left{
   clip-path:polygon(0 0, var(--dx) var(--dy), var(--dx) calc(100% - var(--dy)), 0 100%);
-  background:linear-gradient(90deg,#0f6394 0%,#2287bd 58%,#3fa8d6 100%);
+  background:linear-gradient(90deg,#2b83b2 0%,#489fd0 58%,#67bfe4 100%);
 }
 .wall--right{
   clip-path:polygon(100% 0, 100% 100%, calc(100% - var(--dx)) calc(100% - var(--dy)), calc(100% - var(--dx)) var(--dy));
-  background:linear-gradient(270deg,#0a4d78 0%,#1470a4 55%,#2a8fc0 100%);
+  background:linear-gradient(270deg,#1a678f 0%,#2f8abb 55%,#4fa9d4 100%);
 }
 .wall--bottom{
   clip-path:polygon(var(--dx) calc(100% - var(--dy)), calc(100% - var(--dx)) calc(100% - var(--dy)), 100% 100%, 0 100%);
-  background:linear-gradient(180deg,#2f9ccd 0%,#12688f 55%,#07405f 100%);
+  background:linear-gradient(180deg,#3f9cc4 0%,#1f7099 55%,#10506f 100%);
 }
 /* 水垢：内壁上的水痕、池底积垢、玻璃水渍 */
 .wall--left::after,
@@ -491,9 +493,9 @@ html[data-theme="dark"] .tank__back{
 .wall--bottom::after{
   content:""; position:absolute; inset:0;
   background:
-    radial-gradient(26% 58% at 16% 76%, rgba(196,226,205,.5), transparent 72%),
-    radial-gradient(22% 46% at 58% 86%, rgba(206,232,214,.42), transparent 74%),
-    radial-gradient(18% 40% at 84% 70%, rgba(188,222,203,.34), transparent 74%),
+    radial-gradient(26% 58% at 16% 76%, rgba(210,236,220,.34), transparent 72%),
+    radial-gradient(22% 46% at 58% 86%, rgba(220,240,226,.28), transparent 74%),
+    radial-gradient(18% 40% at 84% 70%, rgba(202,232,214,.22), transparent 74%),
     repeating-linear-gradient(180deg, rgba(255,255,255,.22) 0 1px, transparent 1px 12px);
   opacity:.85;
 }
@@ -514,7 +516,7 @@ html[data-theme="dark"] .tank__back{
 /* 焦散光网 */
 .tank__caustics{
   position:absolute; left:-8%; top:-8%; width:116%; height:116%;
-  mix-blend-mode:screen; opacity:.85; pointer-events:none; z-index:1;
+  mix-blend-mode:screen; opacity:.95; pointer-events:none; z-index:1;
   animation:causticSway 26s ease-in-out infinite alternate;
 }
 @keyframes causticSway{
