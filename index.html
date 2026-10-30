@@ -346,7 +346,7 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
 }
 .case--row:last-of-type{border-bottom:1px solid var(--line)}
 .case__row{
-  position:relative;
+  position:relative; overflow:visible;
   display:grid;
   grid-template-columns:minmax(0,210px) minmax(0,1fr) minmax(0,300px);
   gap:clamp(14px,3vw,44px);
@@ -374,22 +374,36 @@ html[data-theme="light"] .hero__fig svg{opacity:.3}
 /* 跟随光标的封面预览 */
 .case__row-preview{
   position:absolute; left:0; top:0; z-index:6;
-  width:clamp(150px,16vw,220px); aspect-ratio:4/3;
+  width:clamp(240px,30vw,420px); aspect-ratio:4/3;
   border-radius:12px; overflow:hidden;
   border:1px solid var(--line);
-  background:linear-gradient(150deg,var(--card),var(--soft));
-  box-shadow:0 26px 44px -22px rgba(0,0,0,.42);
+  background:var(--card);              /* 必须不透明，否则标题会透过来 */
+  box-shadow:0 34px 56px -24px rgba(4,40,72,.5), 0 4px 14px rgba(0,0,0,.06);
   transform:translate(var(--mx,0px), var(--my,0px)) rotate(-5deg) scale(.94);
   opacity:0; pointer-events:none;
   transition:opacity .28s var(--ease-out), transform .18s ease-out;
 }
+/* 顶栏 */
 .case__row-preview::before{
-  content:""; position:absolute; inset:15% 14%; border-radius:5px;
-  background:repeating-linear-gradient(to bottom, rgba(var(--blue-rgb),.26) 0 3px, transparent 3px 10px);
+  content:""; position:absolute; left:0; right:0; top:0; height:11%;
+  background:var(--soft); border-bottom:1px solid var(--line);
 }
+/* 侧栏 + 内容区 */
 .case__row-preview::after{
-  content:""; position:absolute; inset:0;
-  background:linear-gradient(140deg, rgba(255,255,255,.3), transparent 58%);
+  content:""; position:absolute; left:0; top:11%; bottom:0; width:30%;
+  background:
+    repeating-linear-gradient(to bottom,
+      rgba(var(--blue-rgb),.3) 0 3px, transparent 3px 12px) 14% 16% / 72% 62% no-repeat,
+    var(--soft);
+  border-right:1px solid var(--line);
+}
+.case__row-preview{
+  background-image:
+    repeating-linear-gradient(to bottom,
+      rgba(var(--blue-rgb),.22) 0 4px, transparent 4px 15px);
+  background-repeat:no-repeat;
+  background-position:64% 26%;
+  background-size:52% 62%;
 }
 .case__row:hover .case__row-preview{opacity:1; transform:translate(var(--mx,0px), var(--my,0px)) rotate(-4deg) scale(1)}
 
@@ -1653,8 +1667,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
     a.addEventListener('pointermove', e => {
       const r = a.getBoundingClientRect();
       const w = prev.offsetWidth, h = prev.offsetHeight;
-      const x = Math.max(0, Math.min(r.width - w - 20, e.clientX - r.left - w * 0.62));
-      const y = Math.max(-10, Math.min(r.height - h + 10, e.clientY - r.top - h / 2));
+      /* 横向限制在行内，纵向自由跟随光标（可以跨出行外） */
+      const x = Math.max(-40, Math.min(r.width - w + 40, e.clientX - r.left - w * 0.5));
+      const y = e.clientY - r.top - h * 0.5;
       prev.style.setProperty('--mx', x.toFixed(1) + 'px');
       prev.style.setProperty('--my', y.toFixed(1) + 'px');
     }, { passive: true });
