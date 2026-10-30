@@ -502,291 +502,58 @@ html[data-theme="light"] .sandbox__title{color:#0d6ba6; text-shadow:0 2px 0 rgba
 .sandbox__hint{font-family:"ZCOOL KuaiLe",var(--sans); letter-spacing:.08em; font-size:12.5px}
 
 .sandbox__hint{margin:clamp(16px,2vw,26px) 0 0; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
-/* ---- 童话水箱：内腔有纵深（四周能看到箱壁厚度） ---- */
-.tank{
-  --ink:#123c58;
-  --box:#fdfaf2;
-  --box-2:#ece2d0;
-  --dx:26px;                 /* 瓷砖边宽度 = 纵深感 */
-  --dy:46px;                 /* 顶部水面的进深（越大越俯视） */
-  --line:rgba(18,60,88,.34);
-  position:relative;
-  margin:clamp(26px,3.6vw,46px) auto 0;
-  max-width:980px;
-  padding:0;
-  font-family:"ZCOOL KuaiLe","Inter",sans-serif;
-}
-html[data-theme="dark"] .tank{
-  --ink:#9fdcff;
-  --box:#15374f;
-  --box-2:#0a1f30;
-  --line:rgba(255,255,255,.44);
-}
-/* 桌面：落影 + 水光斑 */
-.tank__desk-shadow{
-  position:absolute; left:50%; bottom:-4px; width:68%; height:22px;
-  transform:translateX(-50%); pointer-events:none;
-  background:radial-gradient(50% 50% at 50% 50%, rgba(1,18,34,.8), rgba(1,18,34,0) 74%);
-  filter:blur(13px);
-  z-index:1;
-}
-.tank__desk-glow{
-  position:absolute; left:50%; bottom:-140px; width:100%; height:150px;
-  transform:translateX(-50%); pointer-events:none; border-radius:50%;
-  background:
-    repeating-radial-gradient(ellipse 40% 26% at 50% 4%, rgba(215,250,255,.5) 0 2px, transparent 2px 15px),
-    radial-gradient(44% 46% at 50% 4%, rgba(206,244,255,.95) 0%, rgba(120,205,255,.62) 28%, rgba(84,178,238,0) 64%);
-  filter:blur(10px);
-  z-index:1;
-  animation:deskGlow 16s ease-in-out infinite alternate;
-}
-@keyframes deskGlow{
-  from{ transform:translateX(-50%) scaleX(.97) scaleY(.98) }
-  to{ transform:translateX(-50%) scaleX(1.04) scaleY(1.02) }
-}
-html[data-theme="light"] .tank__desk-shadow{
-  background:radial-gradient(50% 50% at 50% 50%, rgba(20,60,100,.3), rgba(20,60,100,0) 72%);
-}
-html[data-theme="light"] .tank__desk-glow{
-  background:
-    repeating-radial-gradient(ellipse 40% 26% at 50% 8%, rgba(60,150,215,.4) 0 2px, transparent 2px 17px),
-    radial-gradient(48% 40% at 50% 10%, rgba(88,178,235,.8), rgba(88,178,235,0) 72%);
-}
-/* 箱体正面 */
-.tank__body{
-  position:relative;
-  z-index:2;                 /* 箱体压在桌面光斑之上 */
-  aspect-ratio:4/3;
-  padding:11px;
-  border-radius:32px;
-  border:2.5px solid var(--ink);
-  background:linear-gradient(180deg,#fffdf8 0%,var(--box) 40%,var(--box-2) 100%);
-  box-shadow:
-    0 26px 34px -30px rgba(0,0,0,.55),
-    inset 0 3px 0 rgba(255,255,255,.95),
-    inset 0 -5px 0 rgba(18,60,88,.1);
-}
-html[data-theme="dark"] .tank__body{
-  background:linear-gradient(180deg,#1c425e 0%,var(--box) 42%,var(--box-2) 100%);
-  box-shadow:0 30px 40px -34px rgba(0,0,0,.9), inset 0 2px 0 rgba(255,255,255,.18);
-}
-/* 内腔 */
-.tank__cavity{
-  position:absolute; inset:11px;
-  border-radius:17px;
-  overflow:hidden;
-  background:#12587f;
-  box-shadow:
-    inset 0 0 0 1.5px rgba(255,255,255,.22),
-    inset 0 0 44px rgba(2,26,48,.55);
-  isolation:isolate;
-}
-/* 后壁 = 水体（卡片在这里） */
-.tank__back{
-  position:absolute;
-  left:var(--dx); right:var(--dx); top:var(--dy); bottom:var(--dy);
-  overflow:hidden;
-  background:
-    radial-gradient(64% 34% at 50% 0%, rgba(255,255,255,.62), transparent 64%),
-    linear-gradient(180deg,#cdf2ff 0%,#96dcf8 20%,#5cbee9 50%,#2f9bd2 80%,#1d7cae 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.26),
-    inset 0 16px 28px rgba(0,44,84,.3),
-    inset 0 -14px 26px rgba(0,32,62,.26),
-    inset 26px 0 34px -20px rgba(0,52,90,.55),
-    inset -26px 0 34px -20px rgba(0,52,90,.55);
-}
-html[data-theme="dark"] .wall--left{
-  background:
-    repeating-linear-gradient(180deg, rgba(210,240,255,.12) 0 1px, transparent 1px 19px),
-    linear-gradient(90deg,#dae9f3 0%,#bcd2e2 52%,#9db8cd 100%);
-}
-html[data-theme="dark"] .wall--right{
-  background:
-    repeating-linear-gradient(180deg, rgba(210,240,255,.12) 0 1px, transparent 1px 19px),
-    linear-gradient(270deg,#8ba7bd 0%,#adc5d7 52%,#cfe2ef 100%);
-}
-html[data-theme="dark"] .wall--bottom{
-  background:
-    repeating-linear-gradient(90deg, rgba(210,240,255,.1) 0 1px, transparent 1px 27px),
-    repeating-linear-gradient(180deg, rgba(210,240,255,.08) 0 1px, transparent 1px 16px),
-    linear-gradient(180deg,#cfe3f0 0%,#a3bfd3 52%,#7d9cb5 100%);
-}
-html[data-theme="dark"] .tank__back{
-  background:
-    radial-gradient(64% 34% at 50% 0%, rgba(215,248,255,.42), transparent 64%),
-    linear-gradient(180deg,#b6e9fc 0%,#74c9ee 20%,#3ba1d9 50%,#207fb4 80%,#12608f 100%);
-}
-/* 四面内壁（梯形，形成纵深） */
-.wall{position:absolute; inset:0; display:block}
-.wall--top{                      /* 水面：亮，有波纹 */
-  clip-path:polygon(0 0, 100% 0, calc(100% - var(--dx)) var(--dy), var(--dx) var(--dy));
-  background:
-    repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 2px, transparent 2px 30px),
-    linear-gradient(180deg,#8ecff0 0%,#71c4ea 32%,#5fb7e2 70%,#83d0f2 100%);
-}
-.wall--top::after{
-  content:""; position:absolute; inset:0;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.28) 0%, transparent 26%),
-    linear-gradient(180deg, transparent 62%, rgba(255,255,255,.45) 90%, rgba(255,255,255,.75) 100%);
-  animation:surfaceShine 6s ease-in-out infinite alternate;
-}
-@keyframes surfaceShine{ from{opacity:.5} to{opacity:1} }
-.wall--left{
-  clip-path:polygon(0 0, var(--dx) var(--dy), var(--dx) calc(100% - var(--dy)), 0 100%);
-  background:
-    repeating-linear-gradient(180deg, rgba(108,152,186,.32) 0 1px, transparent 1px 19px),
-    linear-gradient(90deg,#f7fcff 0%,#e9f3fa 52%,#d5e7f2 100%);
-}
-.wall--right{
-  clip-path:polygon(100% 0, 100% 100%, calc(100% - var(--dx)) calc(100% - var(--dy)), calc(100% - var(--dx)) var(--dy));
-  background:
-    repeating-linear-gradient(180deg, rgba(108,152,186,.34) 0 1px, transparent 1px 19px),
-    linear-gradient(270deg,#bcd4e6 0%,#dcecf7 52%,#f4fbff 100%);
-}
-.wall--bottom{
-  clip-path:polygon(var(--dx) calc(100% - var(--dy)), calc(100% - var(--dx)) calc(100% - var(--dy)), 100% 100%, 0 100%);
-  background:
-    repeating-linear-gradient(90deg, rgba(100,146,182,.3) 0 1px, transparent 1px 27px),
-    repeating-linear-gradient(180deg, rgba(100,146,182,.22) 0 1px, transparent 1px 16px),
-    linear-gradient(180deg,#eaf5fc 0%,#c8dfee 52%,#9fbdd6 100%);
-}
-/* 水垢：内壁上的水痕、池底积垢、玻璃水渍 */
-.wall--left::after,
-.wall--right::after{
-  content:""; position:absolute; inset:0;
-  background:
-    repeating-linear-gradient(180deg, rgba(255,255,255,.2) 0 1px, transparent 1px 15px),
-    radial-gradient(80% 26% at 50% 88%, rgba(255,255,255,.16), transparent 72%);
-  -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.5) 44%,transparent 92%);
-  mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.5) 44%,transparent 92%);
-  opacity:.42;
-}
-.wall--bottom::after{
-  content:""; position:absolute; inset:0;
-  background:
-    radial-gradient(26% 58% at 16% 76%, rgba(210,236,220,.34), transparent 72%),
-    radial-gradient(22% 46% at 58% 86%, rgba(220,240,226,.28), transparent 74%),
-    radial-gradient(18% 40% at 84% 70%, rgba(202,232,214,.22), transparent 74%),
-    repeating-linear-gradient(180deg, rgba(255,255,255,.22) 0 1px, transparent 1px 12px);
-  opacity:.85;
-}
-.tank__back::before{
-  content:""; position:absolute; left:0; right:0; top:0; height:3px; z-index:5; pointer-events:none;
-  background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,.85) 12%, #fff 50%, rgba(255,255,255,.85) 88%, transparent 100%);
-  opacity:.75;
-}
-.tank__sheen::after{
-  content:""; position:absolute; inset:0;
-  background:
-    radial-gradient(8% 13% at 79% 24%, rgba(255,255,255,.34), transparent 70%),
-    radial-gradient(5% 9% at 24% 74%, rgba(255,255,255,.26), transparent 70%),
-    radial-gradient(11% 7% at 62% 88%, rgba(255,255,255,.16), transparent 72%);
-  filter:blur(7px);
-  opacity:.9;
-}
-/* 焦散光网 */
-.tank__caustics{
-  position:absolute; left:-8%; top:-8%; width:116%; height:116%;
-  mix-blend-mode:screen; opacity:.95; pointer-events:none; z-index:1;
-  animation:causticSway 26s ease-in-out infinite alternate;
-}
-@keyframes causticSway{
-  from{ transform:translate(-1.6%,-1.2%) scale(1.02) rotate(-.4deg) }
-  to{ transform:translate(1.8%,1.4%) scale(1.07) rotate(.5deg) }
-}
-/* 光柱 */
-.tank__ray{
-  position:absolute; top:-12%; bottom:-12%; width:15%; pointer-events:none; z-index:1;
-  background:linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0) 68%);
-  filter:blur(12px); transform:skewX(-13deg); mix-blend-mode:screen; opacity:.55;
-  animation:rayFlicker 11s ease-in-out infinite alternate;
-}
-.tank__ray--1{left:12%}
-.tank__ray--2{left:58%; width:10%; opacity:.4; animation-delay:-4s}
-@keyframes rayFlicker{ 50%{ opacity:.28 } }
-/* 玻璃高光（盖在整块内腔上） */
-.tank__sheen{
-  position:absolute; inset:0; z-index:60; pointer-events:none;
-  background:
-    linear-gradient(114deg, rgba(255,255,255,.40) 0%, rgba(255,255,255,.12) 11%, transparent 26%,
-                              transparent 70%, rgba(255,255,255,.12) 86%, transparent 100%),
-    linear-gradient(180deg, rgba(255,255,255,.18), transparent 14%);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.3), inset 0 -44px 70px -34px rgba(4,36,64,.35);
-}
-/* 气泡 */
-.tank__bubbles{position:absolute; inset:0; z-index:50; pointer-events:none; overflow:hidden}
-.tank__bubbles span{
-  position:absolute; left:var(--l); top:100%;
-  width:var(--s,10px); height:var(--s,10px); border-radius:50%;
-  background:radial-gradient(circle at 32% 28%, #fff 0%, rgba(255,255,255,.5) 52%, rgba(255,255,255,.12) 100%);
-  border:1px solid rgba(255,255,255,.55);
-  animation:rise var(--d,11s) linear infinite;
-  animation-delay:var(--dl,0s);
-  transform:translateX(0); opacity:0;
-}
-@keyframes rise{
-  0%{ top:100%; opacity:0; transform:translateX(0) scale(.8) }
-  12%{ opacity:.95 }
-  85%{ opacity:.65 }
-  100%{ top:3%; opacity:0; transform:translateX(var(--dx2,16px)) scale(1.15) }
-}
-/* 小角色 */
-.crew{
-  position:absolute; z-index:40; pointer-events:none;
-  filter:drop-shadow(0 12px 14px rgba(5,44,74,.35));
-}
-.crew--octo{ width:12%; left:4%; top:6%; animation:crewBob 7.5s ease-in-out infinite }
-.crew--fish{ width:14%; right:3%; top:52%; animation:crewBob 9.5s ease-in-out infinite reverse }
-@keyframes crewBob{ 50%{ translate:0 -14px; rotate:2deg } }
-
-/* 卡片舞台 */
+/* ============ Sandbox：散落的作品墙 ============ */
 .board{
-  position:absolute; inset:0; z-index:3;
+  --line:rgba(18,60,88,.3);
+  position:relative;
+  margin-top:clamp(26px,3.6vw,52px);
+  height:clamp(560px, 55vw, 800px);
   touch-action:none; user-select:none;
 }
 .board__card{
   position:absolute; left:0; top:0;
-  width:clamp(96px,18%,190px); aspect-ratio:4/3;
-  border-radius:15px; overflow:hidden;
-  border:2px solid rgba(18,60,88,.5);
+  width:clamp(130px,20%,280px); aspect-ratio:4/3;
+  border-radius:14px; overflow:hidden;
+  border:1px solid var(--line);
   background:linear-gradient(152deg,var(--c1,#cfefff),var(--c2,#8fd4f7));
   box-shadow:
-    0 26px 34px -16px rgba(4,56,96,.5),
-    0 10px 16px -6px rgba(4,56,96,.32),
-    inset 0 2px 0 rgba(255,255,255,.75);
-  transform:translate3d(var(--x),var(--y),0) perspective(820px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+    0 28px 44px -24px rgba(6,40,72,.45),
+    0 3px 8px rgba(0,0,0,.05),
+    inset 0 2px 0 rgba(255,255,255,.7);
+  transform:translate3d(var(--x),var(--y),0);
   rotate:calc(var(--r) * 1deg);
   cursor:grab;
   animation:bob var(--dur,9s) ease-in-out infinite;
   animation-delay:var(--delay,0s);
   will-change:translate;
-  transition:box-shadow .3s var(--ease);
+  transition:box-shadow .35s var(--ease-out), scale .35s var(--ease-out);
 }
+html[data-theme="dark"] .board{--line:rgba(255,255,255,.42)}
 html[data-theme="dark"] .board__card{
-  border-color:rgba(210,240,255,.45);
-  box-shadow:
-    0 26px 36px -16px rgba(0,26,50,.62),
-    0 10px 16px -6px rgba(0,26,50,.42),
-    inset 0 2px 0 rgba(255,255,255,.4);
+  border-color:rgba(210,240,255,.35);
+  box-shadow:0 28px 46px -24px rgba(0,0,0,.75), inset 0 2px 0 rgba(255,255,255,.28);
 }
 @keyframes bob{
   0%,100%{ translate:0 0 }
-  50%{ translate:0 -15px }
+  50%{ translate:0 -12px }
+}
+.board__card:hover{
+  scale:1.03;
+  box-shadow:0 40px 60px -26px rgba(4,32,60,.5), 0 6px 14px rgba(0,0,0,.06);
 }
 .board__card.is-drag{
-  cursor:grabbing; animation-play-state:paused; scale:1.06; opacity:1 !important; filter:none !important;
-  box-shadow:0 34px 44px -18px rgba(2,20,40,.6), 0 0 0 3px rgba(255,255,255,.5);
+  cursor:grabbing; animation-play-state:paused; scale:1.06; opacity:1 !important;
+  box-shadow:0 48px 70px -28px rgba(2,20,40,.6), 0 0 0 3px rgba(255,255,255,.6);
 }
-.board__card.is-settle{ transition:transform 1.3s cubic-bezier(.22,.61,.36,1), box-shadow .3s var(--ease) }
+.board__card.is-settle{ transition:transform 1.2s cubic-bezier(.22,.61,.36,1), box-shadow .35s var(--ease-out) }
 .board__card span{
-  position:absolute; left:7px; bottom:7px; z-index:3;
-  padding:2px 7px; border-radius:999px;
+  position:absolute; left:9px; bottom:9px; z-index:3;
+  padding:2px 8px; border-radius:999px;
   font-family:"ZCOOL KuaiLe",var(--sans); font-size:10.5px; letter-spacing:.03em;
-  color:#0d3d5c; background:rgba(255,255,255,.78);
-  border:1.5px solid rgba(18,60,88,.25);
+  color:#0d3d5c; background:rgba(255,255,255,.8);
+  border:1.5px solid rgba(18,60,88,.22);
 }
+/* 卡片里的抽象界面线条，四种变体 */
 .board__card::before{content:""; position:absolute; inset:16% 15%; border-radius:6px; opacity:1}
 .board__card:nth-child(4n+1)::before{background:repeating-linear-gradient(to bottom, var(--line) 0 4px, transparent 4px 12px)}
 .board__card:nth-child(4n+2)::before{
@@ -876,20 +643,11 @@ html[data-theme="dark"] .board__card{
   .case__desc{max-width:none}
   .timeline__row{grid-template-columns:1fr; gap:4px}
   .timeline__year{font-size:18px}
-  .tank{padding:0; max-width:none; --dx:10px; --dy:13px}
-  .tank__top, .tank__side{display:none}
-  .tank__desk-glow{bottom:-96px; height:110px; opacity:.75}
-  .tank__desk-shadow{bottom:-2px; height:18px}
-  .tank__body{padding:9px; aspect-ratio:auto; border-radius:24px; border-width:2px}
-  .tank__cavity{position:relative; inset:auto; border-radius:16px}
-  .tank__back{position:relative; left:auto; right:auto; top:auto; bottom:auto}
-  .board{position:relative; inset:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
-    padding:19px 16px 22px; height:auto; touch-action:auto}
-  .board__card{position:relative; width:auto; transform:none !important; rotate:none; animation:none; aspect-ratio:4/3}
-  .board__card span{font-size:9px; padding:1px 5px; left:4px; bottom:4px}
-  .crew--octo{display:none}
-  .crew--fish{display:none}
-  .tank__ray{display:none}
+  .board{position:relative; display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    height:auto; margin-top:24px; touch-action:auto}
+  .board__card{position:relative; width:auto; transform:none !important; rotate:none;
+    animation:none; aspect-ratio:4/3}
+  .board__card span{font-size:9px; padding:1px 5px; left:5px; bottom:5px}
   .case__media{aspect-ratio:4/3}
   .fui{width:88%; height:74%; aspect-ratio:auto}
   .fui__main{padding:10px 12px; gap:7px}
@@ -1107,73 +865,21 @@ html[data-theme="dark"] .board__card{
   <section class="section" id="sandbox">
     <p class="label">Sandbox</p>
     <h2 class="sandbox__title">练兵场。<br>没有客户，只有手感。</h2>
-    <p class="sandbox__hint">拖动试试 · 松手会飘回水面</p>
+    <p class="sandbox__hint">拖动试试 · 松手会飘回原位</p>
 
-    <div class="tank">
-      <div class="tank__body">
-        <div class="tank__cavity">
-
-          <!-- 后壁：水体，卡片在里面 -->
-          <div class="tank__back">
-            <canvas class="tank__caustics" id="caustics" aria-hidden="true"></canvas>
-            <span class="tank__ray tank__ray--1"></span>
-            <span class="tank__ray tank__ray--2"></span>
-
-            <div class="board" id="board">
-          <div class="board__card" style="--x:0;--y:0;--r:-3;--c1:#b6e0fb;--c2:#6fbdea"><i></i><span>Kanban</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:1.8;--c1:#ffe0a8;--c2:#ffc76b"><i></i><span>Search</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:-1.4;--c1:#b7ecd6;--c2:#74cf9f"><i></i><span>Table</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:2.2;--c1:#ffc9dc;--c2:#ff97b8"><i></i><span>Banking</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:2.0;--c1:#d6cbff;--c2:#a892f2"><i></i><span>Salon</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:-2.3;--c1:#fff3a3;--c2:#ffdf4d"><i></i><span>Icons</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:1.5;--c1:#ffcdb3;--c2:#ff9e73"><i></i><span>Cabin</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:-2.6;--c1:#c9eeb4;--c2:#91d269"><i></i><span>Smart home</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:1.2;--c1:#b8e2f7;--c2:#7cc4e8"><i></i><span>Brand</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:-1.7;--c1:#ffd2b3;--c2:#ffab7a"><i></i><span>Pricing</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:2.6;--c1:#dcd1ff;--c2:#b09cf2"><i></i><span>Form</span></div>
-          <div class="board__card" style="--x:0;--y:0;--r:-1.2;--c1:#c9f0ea;--c2:#7fd6c7"><i></i><span>Grid</span></div>
-            </div>
-
-            <svg class="crew crew--octo" viewBox="0 0 120 120" aria-hidden="true">
-                        <path d="M60 16c23 0 37 16 37 36 0 10-4 16-9 18-4 2-8 1-11-1-3-2-6-2-9 0-2 2-5 3-8 3s-6-1-8-3c-3-2-6-2-9 0-3 2-7 3-11 1-5-2-9-8-9-18 0-20 14-36 37-36z" fill="#ffcf5c"/>
-                        <path d="M40 88c-2 8-6 14-12 17M56 92c0 8-1 14-4 19M72 92c1 8 3 14 7 18M88 87c3 8 8 13 14 16"
-                              stroke="#e8a93c" stroke-width="5" stroke-linecap="round" fill="none"/>
-                        <circle cx="47" cy="50" r="5.5" fill="#123c58"/>
-                        <circle cx="75" cy="50" r="5.5" fill="#123c58"/>
-                        <circle cx="35" cy="62" r="5.5" fill="#ff9aa2" opacity=".85"/>
-                        <circle cx="87" cy="62" r="5.5" fill="#ff9aa2" opacity=".85"/>
-                        <path d="M52 68c3 3 13 3 16 0" stroke="#123c58" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-                      </svg>
-
-            <svg class="crew crew--fish" viewBox="0 0 130 80" aria-hidden="true">
-                        <path d="M30 40c13-17 39-23 56-15 8 4 14 10 17 15-3 5-9 11-17 15-17 8-43 2-56-15z" fill="#8ed3f7"/>
-                        <path d="M32 40 8 20v40z" fill="#63b8e6"/>
-                        <circle cx="80" cy="34" r="4.5" fill="#123c58"/>
-                        <path d="M52 22c4-6 12-6 14 0" stroke="#63b8e6" stroke-width="5" fill="none" stroke-linecap="round"/>
-                        <circle cx="66" cy="46" r="4" fill="#ffb3c8" opacity=".8"/>
-                      </svg>
-
-            <div class="tank__bubbles" aria-hidden="true">
-                        <span style="--l:72%;--s:12px;--d:12s;--dl:0s;--dx:22px"></span>
-                        <span style="--l:80%;--s:7px;--d:15s;--dl:-4s;--dx:-14px"></span>
-                        <span style="--l:66%;--s:9px;--d:18s;--dl:-8s;--dx:10px"></span>
-                        <span style="--l:88%;--s:5px;--d:11s;--dl:-2s;--dx:-8px"></span>
-                        <span style="--l:24%;--s:8px;--d:16s;--dl:-11s;--dx:16px"></span>
-                        <span style="--l:44%;--s:6px;--d:14s;--dl:-6s;--dx:-12px"></span>
-                      </div>
-          </div>
-
-          <!-- 四面内壁：制造纵深 -->
-          <span class="wall wall--top"></span>
-          <span class="wall wall--left"></span>
-          <span class="wall wall--right"></span>
-          <span class="wall wall--bottom"></span>
-
-          <span class="tank__sheen"></span>
-        </div>
-      </div>
-      <span class="tank__desk-shadow"></span>
-      <span class="tank__desk-glow"></span>
+    <div class="board" id="board">
+      <div class="board__card" style="--x:0;--y:0;--r:-3;--c1:#b6e0fb;--c2:#6fbdea"><i></i><span>Kanban</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:1.8;--c1:#ffe0a8;--c2:#ffc76b"><i></i><span>Search</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:-1.4;--c1:#b7ecd6;--c2:#74cf9f"><i></i><span>Table</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:2.2;--c1:#ffc9dc;--c2:#ff97b8"><i></i><span>Banking</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:2.0;--c1:#d6cbff;--c2:#a892f2"><i></i><span>Salon</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:-2.3;--c1:#fff3a3;--c2:#ffdf4d"><i></i><span>Icons</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:1.5;--c1:#ffcdb3;--c2:#ff9e73"><i></i><span>Cabin</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:-2.6;--c1:#c9eeb4;--c2:#91d269"><i></i><span>Smart home</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:1.2;--c1:#b8e2f7;--c2:#7cc4e8"><i></i><span>Brand</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:-1.7;--c1:#ffd2b3;--c2:#ffab7a"><i></i><span>Pricing</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:2.6;--c1:#dcd1ff;--c2:#b09cf2"><i></i><span>Form</span></div>
+      <div class="board__card" style="--x:0;--y:0;--r:-1.2;--c1:#c9f0ea;--c2:#7fd6c7"><i></i><span>Grid</span></div>
     </div>
   </section>
 
@@ -1424,9 +1130,9 @@ const isMobile = () => innerWidth <= 760;
 
 /* 卡片在池子里聚成一堆（百分比），行间略有重叠 */
 const spots = [
-  [12, 7], [30, 2], [48, 9], [65, 4],
-  [8, 34], [26, 38], [44, 32], [62, 36],
-  [4, 62], [22, 66], [40, 61], [58, 65]
+  [2, 2], [26, -1], [50, 3], [74, 1],
+  [4, 34], [28, 37], [52, 33], [76, 36],
+  [1, 65], [25, 68], [49, 64], [73, 67]
 ];
 
 function layoutCards() {
@@ -1745,9 +1451,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 /* ---------- 水箱卡片：错峰入场 ---------- */
 (function initCardStagger(){
-  const tank = document.querySelector('.tank');
+  const boardEl = document.getElementById('board');
   const cs = [...document.querySelectorAll('.board__card')];
-  if (!tank || !cs.length) return;
+  if (!boardEl || !cs.length) return;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   let done = false;
   const play = () => {
@@ -1765,7 +1471,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     tio.disconnect();
     play();
   }, { threshold: 0.12 });
-  tio.observe(tank);
+  tio.observe(boardEl);
   setTimeout(play, 5000);   /* 兜底：万一 IO 没触发 */
 })();
 
