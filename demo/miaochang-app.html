@@ -6,7 +6,7 @@
 <title>妙场 · 工作台（可交互 Demo）</title>
 <style>
 /* ==========================================================================
-   妙场 工作台 · 8 屏交互 Demo
+   妙场 工作台 · 14 屏交互 Demo
    画布锁定 1920×1140，色值/字号/间距取自 Figma 文件 QkOKldxyAq8VWDPS5q23X4
    ========================================================================== */
 :root{
@@ -746,6 +746,153 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
 .collectcard small{font-size:12px;color:var(--mute)}
 .collectcard span{margin-left:auto;font-size:13px;color:var(--accent);white-space:nowrap}
 
+/* ================= 视频编辑 ================= */
+.edit{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0}
+.edit__top{height:52px;flex:none;display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 16px}
+.edit__step{font-size:14px;color:var(--accent);letter-spacing:.04em;flex:none}
+.edit__name{font-size:18px;font-weight:400}
+.edit__save{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--mute);flex:none}
+.edit__save i{width:12px;height:12px;border-radius:50%;border:2px solid var(--ok);position:relative;flex:none}
+.edit__save i::after{content:"";position:absolute;inset:2px;border-radius:50%;background:var(--ok)}
+.edit__tools{display:flex;gap:6px;margin-left:auto}
+.etool{width:32px;height:32px;border-radius:6px;background:var(--field);border:1px solid var(--line-2);color:var(--dim);font-size:13px;display:grid;place-items:center;transition:.18s}
+.etool:hover{color:#fff;border-color:#3A4553}
+.etool.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.edit__acts{display:flex;gap:10px;margin-left:14px;flex:none}
+.edit__body{flex:1;display:grid;grid-template-columns:240px minmax(0,1fr) 300px;gap:14px;min-height:0}
+.edit__media{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.edit__media > .asearch{flex:none}
+.edit__mtabs{display:flex;gap:4px;flex:none}
+.edit__mtabs button{flex:1;height:28px;border-radius:6px;font-size:12px;color:var(--mute);background:var(--field);border:1px solid var(--line-2)}
+.edit__mtabs button.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.edit__mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow-y:auto;min-height:0;flex:1 1 auto;padding-right:2px;align-content:start}
+.edit__mgrid figure{margin:0;cursor:pointer}
+.edit__mgrid img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;border:1px solid var(--line-2);transition:.18s}
+.edit__mgrid figure:hover img{border-color:var(--accent)}
+.edit__mgrid figcaption{font-size:11px;color:var(--dim);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.edit__mfoot{margin-top:auto;font-size:11px;color:var(--mute);border-top:1px solid rgba(217,217,217,.08);padding-top:8px;flex:none}
+.edit__stage{display:flex;flex-direction:column;min-height:0}
+.edit__player{position:relative;flex:1;min-height:0;background:#09111a;border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.edit__player > img{width:100%;height:100%;object-fit:cover}
+.edit__badge{position:absolute;left:12px;top:12px;height:22px;padding:0 8px;border-radius:4px;background:rgba(5,15,26,.72);border:1px solid var(--line);font-size:11px;color:var(--dim);display:flex;align-items:center}
+.edit__playerbar{position:absolute;left:0;right:0;bottom:0;height:50px;display:flex;align-items:center;gap:14px;padding:0 16px;background:linear-gradient(180deg,rgba(5,15,26,0),rgba(5,15,26,.94) 45%)}
+.edit__play{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;display:grid;place-items:center;flex:none;transition:filter .18s}
+.edit__play:hover{filter:brightness(1.1)}
+.edit__time{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;flex:none}
+.edit__seek{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.22);overflow:hidden}
+.edit__seek i{display:block;height:100%;background:var(--accent)}
+.edit__pcfg{font-size:11px;color:var(--mute);flex:none}
+.edit__props{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;min-height:0}
+.edit__ptabs{display:flex;gap:6px;flex:none}
+.edit__ptabs button{flex:1;height:28px;border-radius:6px;font-size:12px;color:var(--mute);background:var(--field);border:1px solid var(--line-2)}
+.edit__ptabs button.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.edit__pname b{display:block;font-size:15px;font-weight:400;margin-bottom:3px}
+.edit__pname small{font-size:11px;color:var(--mute)}
+.epfield label{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-bottom:7px}
+.epfield label span{color:var(--dim)}
+.esel{height:34px;border-radius:6px;background:var(--field);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:13px;color:var(--dim);cursor:pointer}
+.esel:hover{border-color:#3A4553}
+.esel i{font-style:normal;color:var(--mute);font-size:11px}
+.eslider{position:relative;height:6px;border-radius:3px;background:#2A3442}
+.eslider i{position:absolute;left:0;top:0;height:6px;border-radius:3px;background:var(--accent)}
+.eslider em{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--accent);transform:translate(-50%,-50%)}
+.epswitch{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--dim)}
+
+/* 时间线 */
+.edit__timeline{height:316px;flex:none;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.tl__bar{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--mute);flex:none}
+.tl__title{font-size:14px;color:var(--text)}
+.tl__hint{color:var(--mute)}
+.tl__zoom{display:flex;align-items:center;gap:8px;margin-left:auto}
+.tl__zoom button{width:20px;height:20px;border-radius:4px;border:1px solid var(--line-2);color:var(--dim);font-size:12px;display:grid;place-items:center}
+.tl__zoomline{width:90px;height:3px;border-radius:2px;background:#2A3442}
+.tl__zoomline i{display:block;height:3px;border-radius:2px;background:var(--accent)}
+.tl__total{font-variant-numeric:tabular-nums}
+.tl__ruler{display:flex;justify-content:space-between;font-size:10px;color:var(--faint);border-bottom:1px solid rgba(217,217,217,.08);padding-bottom:6px;flex:none}
+.tl__ruler i{font-style:normal;font-variant-numeric:tabular-nums}
+.tl__tracks{position:relative;flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;padding-top:20px}
+.tl__track{position:relative;flex:none}
+.tl__lane{position:relative;background:var(--field);border:1px solid var(--line-2);border-radius:6px;overflow:hidden}
+.tl__tag{position:absolute;right:8px;top:3px;font-size:10px;color:var(--mute);z-index:3;pointer-events:none;background:rgba(5,15,26,.55);border-radius:3px;padding:0 4px}
+.tl__clip{position:absolute;top:2px;bottom:2px;border-radius:4px;overflow:hidden;border:1px solid #2E3A49;cursor:pointer;transition:.18s}
+.tl__clip img{width:100%;height:100%;object-fit:cover;opacity:.55}
+.tl__clip b{position:absolute;left:6px;top:5px;font-size:11px;font-weight:400;color:#fff;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.85)}
+.tl__clip:hover{border-color:#4A5563}
+.tl__clip.is-on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.tl__clip.is-on img{opacity:.8}
+.tl__trans{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:4px;background:var(--surface-3);border:1px solid var(--accent);color:var(--accent);font-size:9px;display:grid;place-items:center;z-index:3}
+.tl__sub{position:absolute;top:2px;bottom:2px;border-radius:4px;background:rgba(73,148,215,.22);border:1px solid rgba(73,148,215,.5);display:flex;align-items:center;padding:0 6px;font-size:10px;color:#BBD6F2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl__audio{position:absolute;top:2px;bottom:2px;border-radius:4px;background:rgba(232,100,1,.12);border:1px solid rgba(232,100,1,.45);overflow:hidden}
+.tl__audio svg{display:block;width:100%;height:100%}
+.tl__audio path{fill:rgba(232,100,1,.55)}
+.tl__playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);z-index:4;pointer-events:none;transition:left .2s}
+.tl__playhead span{position:absolute;left:50%;top:-2px;transform:translateX(-50%);font-size:10px;color:#fff;background:var(--accent);border-radius:3px;padding:0 5px;line-height:14px;white-space:nowrap}
+
+/* ================= 导出协作 ================= */
+.ex{flex:1;display:grid;grid-template-columns:396px minmax(0,1fr) 340px;gap:18px;min-height:0}
+.expanel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;min-height:0}
+.expanel h3,.exside h3{font-size:22px;font-weight:400}
+.exfield label{display:block;font-size:13px;color:var(--mute);margin-bottom:9px}
+.exfield .chipgroup .chip{height:34px;font-size:13px;padding:0 14px}
+.exswitch{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:14px;color:var(--dim);padding:12px 0;border-top:1px solid rgba(217,217,217,.07)}
+.exswitch small{display:block;font-size:11px;color:var(--mute);margin-top:3px}
+.exsummary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;background:var(--field);border:1px solid var(--line-2);border-radius:8px;padding:14px}
+.exsummary span{display:block;font-size:11px;color:var(--mute);margin-bottom:4px}
+.exsummary b{font-size:14px;font-weight:400;white-space:nowrap}
+.exgo{height:52px;border-radius:10px;background:var(--accent);color:#fff;font-size:18px;flex:none;transition:filter .18s}
+.exgo:hover{filter:brightness(1.08)}
+.exgo.is-done{background:rgba(0,239,92,.14);border:1px solid rgba(0,239,92,.5);color:#00EF5C}
+.exmid{display:flex;flex-direction:column;gap:18px;min-height:0}
+.expreview{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px;flex:1;min-height:0}
+.expreview__pic{position:relative;flex:1;min-height:0;border-radius:8px;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
+.expreview__pic img{width:100%;height:100%;object-fit:cover}
+.expreview__play{position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;background:rgba(232,100,1,.92);color:#fff;display:grid;place-items:center;font-size:20px;cursor:pointer;transition:.18s}
+.expreview__play:hover{transform:scale(1.05)}
+.expreview__meta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none}
+.expreview__meta b{font-size:16px;font-weight:400;display:block;margin-bottom:4px}
+.expreview__meta small{font-size:12px;color:var(--mute)}
+.expreview__tag{display:flex;gap:8px;flex:none}
+.exqueue{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;flex:none;display:flex;flex-direction:column;gap:14px}
+.exqueue__hd{display:flex;align-items:baseline;justify-content:space-between}
+.exqueue__hd h3{font-size:18px;font-weight:400}
+.exqueue__hd span{font-size:12px;color:var(--mute)}
+.exq{display:flex;align-items:center;gap:14px}
+.exq__thumb{width:84px;height:48px;border-radius:6px;overflow:hidden;flex:none;background:var(--field);border:1px solid var(--line-2)}
+.exq__thumb img{width:100%;height:100%;object-fit:cover}
+.exq__body{flex:1;min-width:0}
+.exq__body b{display:block;font-size:13px;font-weight:400;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exq__body small{display:block;font-size:11px;color:var(--mute);margin-bottom:7px}
+.exq__pct{font-size:13px;color:var(--accent);font-variant-numeric:tabular-nums;flex:none}
+.exq.is-done .exq__pct{color:var(--ok)}
+.exside{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 20px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;min-height:0}
+.exshare{display:flex;gap:10px;align-items:center}
+.exshare__link{flex:1;height:38px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);display:flex;align-items:center;padding:0 12px;font-size:12px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exblock h5{font-size:13px;font-weight:400;color:var(--mute);margin-bottom:10px}
+.exstep{display:flex;gap:12px;padding:7px 0}
+.exstep i{width:12px;height:12px;border-radius:50%;border:2px solid #3A4553;flex:none;margin-top:3px}
+.exstep.is-done i{border-color:var(--ok);background:rgba(0,239,92,.25)}
+.exstep.is-doing i{border-color:var(--accent);background:rgba(232,100,1,.3)}
+.exstep b{display:block;font-size:13px;font-weight:400}
+.exstep small{font-size:11px;color:var(--mute);display:block;margin-top:2px;line-height:16px}
+.exchat{display:flex;gap:10px;padding:8px 0}
+.exchat img{width:30px;height:30px;border-radius:50%;object-fit:cover;flex:none;background:var(--field)}
+.exchat b{font-size:12px;font-weight:400;display:flex;gap:8px;align-items:baseline}
+.exchat b small{color:var(--faint);font-size:10px}
+.exchat p{font-size:11px;color:var(--dim);line-height:17px;margin-top:3px}
+.exver{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;font-size:12px;color:var(--dim)}
+.exver b{font-size:11px;padding:1px 6px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);font-weight:400}
+.exver.is-on{background:var(--accent-soft)}
+.exver.is-on b{border-color:var(--accent);color:#fff}
+.exver span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exver time{margin-left:auto;color:var(--mute);font-size:11px;flex:none}
+.exfile{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;background:var(--field);border:1px solid var(--line-2);margin-bottom:8px}
+.exfile__ic{width:34px;height:24px;border-radius:4px;background:rgba(232,100,1,.16);border:1px solid rgba(232,100,1,.45);color:#FFB27A;font-size:9px;display:grid;place-items:center;flex:none;letter-spacing:.04em}
+.exfile b{display:block;font-size:12px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exfile small{font-size:10px;color:var(--mute)}
+.exfile em{margin-left:auto;font-style:normal;font-size:13px;color:var(--mute);cursor:pointer}
+.exfile em:hover{color:var(--accent)}
+.exfile div{min-width:0}
+
 /* 滚动条 */
 .screen ::-webkit-scrollbar{width:6px}
 .screen ::-webkit-scrollbar-thumb{background:#2A3442;border-radius:3px}
@@ -832,8 +979,8 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
         <a class="nav" data-go="script"><i class="icon i-folder"></i>脚本创作</a>
         <a class="nav" data-go="board"><i class="icon i-list"></i>分镜拆解</a>
         <a class="nav" data-go="visual"><i class="icon i-grid"></i>视觉生成</a>
-        <a class="nav" data-soon="视频编辑界面未包含在本 Demo 中"><i class="icon i-anchor"></i>视频编辑</a>
-        <a class="nav" data-soon="导出协作界面未包含在本 Demo 中"><i class="icon i-slack"></i>导出协作</a>
+        <a class="nav" data-go="edit"><i class="icon i-anchor"></i>视频编辑</a>
+        <a class="nav" data-go="export"><i class="icon i-slack"></i>导出协作</a>
       </nav>
     </aside>
 
@@ -1245,6 +1392,255 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
                 <img src="../assets/miaochang-ui/img/hist3.webp" alt="">
                 <img src="../assets/miaochang-ui/img/hist4.webp" alt="">
               </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ================= 视频编辑 ================= -->
+      <section class="screen" data-screen="edit">
+        <div class="edit">
+          <div class="edit__top">
+            <span class="edit__step">05 视频编辑</span>
+            <b class="edit__name">未来城市宣传片</b>
+            <span class="edit__save"><i></i>自动保存 14:30</span>
+            <div class="edit__tools">
+              <button class="etool is-on" title="选择">➤</button>
+              <button class="etool" title="剃刀">✂</button>
+              <button class="etool" title="文字">T</button>
+              <button class="etool" title="转场">◧</button>
+              <button class="etool" title="调色">◐</button>
+              <button class="etool" title="变速">⏱</button>
+            </div>
+            <div class="edit__acts">
+              <button class="abtn">预览成片</button>
+              <button class="abtn abtn--pri" data-go="export">导出成片 →</button>
+            </div>
+          </div>
+
+          <div class="edit__body">
+            <aside class="edit__media">
+              <div class="edit__mtabs">
+                <button class="is-on">素材</button><button>转场</button><button>字幕</button><button>音乐</button>
+              </div>
+              <div class="asearch" style="height:34px;font-size:13px"><i class="icon i-search"></i><span>搜索素材</span></div>
+              <div class="edit__mgrid">
+                <figure><img src="../assets/miaochang-ui/img/result1.webp" alt=""><figcaption>01 · 城市全景</figcaption></figure>
+                <figure><img src="../assets/miaochang-ui/img/result2.webp" alt=""><figcaption>02 · 科技生活</figcaption></figure>
+                <figure><img src="../assets/miaochang-ui/img/result3.webp" alt=""><figcaption>03 · 城市动脉</figcaption></figure>
+                <figure><img src="../assets/miaochang-ui/img/result4.webp" alt=""><figcaption>04 · 绿色共生</figcaption></figure>
+                <figure><img src="../assets/miaochang-ui/shots/home/3.webp" alt=""><figcaption>05 · 航拍补充</figcaption></figure>
+                <figure><img src="../assets/miaochang-ui/shots/home/7.webp" alt=""><figcaption>06 · 国风版</figcaption></figure>
+              </div>
+              <div class="edit__mfoot">来自「视觉生成」· 12 个素材</div>
+            </aside>
+
+            <div class="edit__stage">
+              <div class="edit__player">
+                <img src="../assets/miaochang-ui/img/result1.webp" alt="当前画面">
+                <span class="edit__badge">1080P · 25fps</span>
+                <div class="edit__playerbar">
+                  <button class="edit__play" id="edPlay" title="播放">▶</button>
+                  <span class="edit__time">00:52 / 02:36</span>
+                  <div class="edit__seek"><i style="width:33%"></i></div>
+                  <span class="edit__pcfg">16:9 · 原声 80%</span>
+                </div>
+              </div>
+            </div>
+
+            <aside class="edit__props">
+              <div class="edit__ptabs"><button class="is-on">片段</button><button>转场</button><button>调色</button></div>
+              <div class="edit__pname"><b>片段 03 · 城市动脉</b><small>00:52 - 01:29 · 37s</small></div>
+              <div class="epfield">
+                <label>速度</label>
+                <div class="chipgroup"><button class="chip">0.5x</button><button class="chip is-on">1.0x</button><button class="chip">1.5x</button></div>
+              </div>
+              <div class="epfield">
+                <label>转场</label>
+                <div class="esel"><span>叠化 0.6s</span><i>▾</i></div>
+              </div>
+              <div class="epfield">
+                <label>滤镜</label>
+                <div class="esel"><span>电影感 · 冷调</span><i>▾</i></div>
+              </div>
+              <div class="epfield">
+                <label>不透明度 <span>100%</span></label>
+                <div class="eslider"><i style="width:100%"></i><em style="left:100%"></em></div>
+              </div>
+              <div class="epfield">
+                <label>音量 <span>80%</span></label>
+                <div class="eslider"><i style="width:80%"></i><em style="left:80%"></em></div>
+              </div>
+              <div class="epswitch"><span>自动字幕</span><div class="switch-sm"></div></div>
+              <div class="epswitch"><span>转场音效</span><div class="switch-sm off"></div></div>
+            </aside>
+          </div>
+
+          <div class="edit__timeline">
+            <div class="tl__bar">
+              <span class="tl__title">时间线</span>
+              <span class="tl__hint">12 个片段 · 3 个转场 · 2 条字幕 · 1 条音乐</span>
+              <div class="tl__zoom"><button>−</button><div class="tl__zoomline"><i style="width:55%"></i></div><button>+</button></div>
+              <span class="tl__total">总时长 02:36</span>
+            </div>
+            <div class="tl__ruler">
+              <i>00:00</i><i>00:20</i><i>00:40</i><i>01:00</i><i>01:20</i><i>01:40</i><i>02:00</i><i>02:20</i><i>02:36</i>
+            </div>
+            <div class="tl__tracks" id="tlTracks">
+              <div class="tl__track" style="height:96px">
+                <div class="tl__lane" style="height:96px">
+                  <span class="tl__tag">视频 1</span>
+                  <div class="tl__clip is-on" style="left:0;width:22%" data-clip="01 · 城市全景"><img src="../assets/miaochang-ui/img/result1.webp" alt=""><b>01 · 城市全景</b></div>
+                  <div class="tl__clip" style="left:22%;width:26%" data-clip="02 · 科技生活"><img src="../assets/miaochang-ui/img/result2.webp" alt=""><b>02 · 科技生活</b></div>
+                  <div class="tl__clip" style="left:48%;width:24%" data-clip="03 · 城市动脉"><img src="../assets/miaochang-ui/img/result3.webp" alt=""><b>03 · 城市动脉</b></div>
+                  <div class="tl__clip" style="left:72%;width:28%" data-clip="04 · 绿色共生"><img src="../assets/miaochang-ui/img/result4.webp" alt=""><b>04 · 绿色共生</b></div>
+                  <span class="tl__trans" style="left:21%">◧</span>
+                  <span class="tl__trans" style="left:47%">◧</span>
+                  <span class="tl__trans" style="left:71%">◧</span>
+                </div>
+              </div>
+              <div class="tl__track" style="height:38px">
+                <div class="tl__lane" style="height:38px">
+                  <span class="tl__tag">字幕</span>
+                  <div class="tl__sub" style="left:1%;width:29%">未来已至，一切正以前所未有的速度改变着我们的世界。</div>
+                  <div class="tl__sub" style="left:34%;width:28%">科技让生活更便捷，让想象照进现实。</div>
+                  <div class="tl__sub" style="left:66%;width:30%">我们不仅要创造未来，更要守护未来。</div>
+                </div>
+              </div>
+              <div class="tl__track" style="height:44px">
+                <div class="tl__lane" style="height:44px">
+                  <span class="tl__tag">音乐</span>
+                  <div class="tl__audio" style="left:0;width:100%"><svg viewBox="0 0 1000 100" preserveAspectRatio="none"><path id="tlWave" d=""></path></svg></div>
+                </div>
+              </div>
+              <div class="tl__playhead" style="left:33%"><span>00:52</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 导出协作 ================= -->
+      <section class="screen" data-screen="export">
+        <div class="ex">
+          <div class="panel expanel">
+            <h3>导出设置</h3>
+            <div class="exfield">
+              <label>格式</label>
+              <div class="chipgroup"><button class="chip is-on">MP4</button><button class="chip">MOV</button><button class="chip">GIF</button></div>
+            </div>
+            <div class="exfield">
+              <label>分辨率</label>
+              <div class="chipgroup"><button class="chip is-on">1080P</button><button class="chip">2K</button><button class="chip">4K</button></div>
+            </div>
+            <div class="exfield">
+              <label>帧率</label>
+              <div class="chipgroup"><button class="chip is-on">25fps</button><button class="chip">30fps</button><button class="chip">60fps</button></div>
+            </div>
+            <div class="exfield">
+              <label>码率</label>
+              <div class="chipgroup"><button class="chip">8 Mbps</button><button class="chip is-on">16 Mbps</button><button class="chip">32 Mbps</button></div>
+            </div>
+            <div class="exfield">
+              <label>字幕</label>
+              <div class="chipgroup"><button class="chip is-on">烧入画面</button><button class="chip">外挂 SRT</button><button class="chip">不导出</button></div>
+            </div>
+            <div class="exswitch"><span>添加项目水印<small>右下角妙场 LOGO</small></span><div class="switch-sm off"></div></div>
+            <div class="exfield">
+              <label>导出范围</label>
+              <div class="chipgroup"><button class="chip is-on">全片 02:36</button><button class="chip">选中片段</button></div>
+            </div>
+            <div class="exswitch"><span>导出后自动上传至媒体中心</span><div class="switch-sm"></div></div>
+            <div class="exsummary">
+              <div><span>输出尺寸</span><b>1920×1080</b></div>
+              <div><span>预计大小</span><b>486 MB</b></div>
+              <div><span>预计耗时</span><b>2 分 10 秒</b></div>
+            </div>
+            <button class="exgo" id="exGo">开始导出</button>
+          </div>
+
+          <div class="exmid">
+            <div class="panel expreview">
+              <div class="expreview__pic">
+                <img src="../assets/miaochang-ui/img/result1.webp" alt="成片预览">
+                <span class="edit__badge">成片预览 · 02:36</span>
+                <div class="expreview__play">▶</div>
+              </div>
+              <div class="expreview__meta">
+                <div><b>未来城市宣传片</b><small>04 个分镜 · 3 个转场 · 2 条字幕 · 1 条音乐</small></div>
+                <div class="expreview__tag"><span class="tag">电影感</span><span class="tag">1080P</span><span class="tag">25fps</span></div>
+              </div>
+            </div>
+
+            <div class="panel exqueue">
+              <div class="exqueue__hd"><h3>导出队列</h3><span>共 3 个任务</span></div>
+              <div class="exq" id="exq1">
+                <div class="exq__thumb"><img src="../assets/miaochang-ui/img/result1.webp" alt=""></div>
+                <div class="exq__body">
+                  <b>未来城市宣传片_1080P.mp4</b>
+                  <small class="exq__st">导出中 · 剩余约 50 秒</small>
+                  <div class="mc__bar"><i style="width:62%"></i></div>
+                </div>
+                <em class="exq__pct">62%</em>
+              </div>
+              <div class="exq">
+                <div class="exq__thumb"><img src="../assets/miaochang-ui/img/result2.webp" alt=""></div>
+                <div class="exq__body">
+                  <b>未来城市宣传片_竖屏 9x16.mp4</b>
+                  <small class="exq__st">排队中 · 第 2 位</small>
+                  <div class="mc__bar"><i style="width:0"></i></div>
+                </div>
+                <em class="exq__pct">0%</em>
+              </div>
+              <div class="exq is-done">
+                <div class="exq__thumb"><img src="../assets/miaochang-ui/img/result3.webp" alt=""></div>
+                <div class="exq__body">
+                  <b>未来城市宣传片_审看版.mp4</b>
+                  <small class="exq__st">已完成 · 13:58 · 486 MB</small>
+                  <div class="mc__bar"><i style="width:100%;background:#00EF5C"></i></div>
+                </div>
+                <em class="exq__pct">100%</em>
+              </div>
+            </div>
+          </div>
+
+          <aside class="panel exside">
+            <h3>协作</h3>
+            <div class="exshare">
+              <span class="exshare__link">miaochang.ai/s/FC-2301</span>
+              <button class="abtn" id="exCopy">复制链接</button>
+            </div>
+            <div class="exfield">
+              <label>访问权限</label>
+              <div class="chipgroup"><button class="chip">仅自己</button><button class="chip is-on">团队可评论</button><button class="chip">公开链接</button></div>
+            </div>
+            <div class="exblock">
+              <h5>审批流程</h5>
+              <div class="exstep is-done"><i></i><div><b>内部审核</b><small>星辰大海 · 今天 11:20 通过</small></div></div>
+              <div class="exstep is-doing"><i></i><div><b>客户审核</b><small>已发送，等待回复 · 预计明天</small></div></div>
+              <div class="exstep"><i></i><div><b>定稿入库</b><small>审核通过后自动归档至资产库</small></div></div>
+            </div>
+            <div class="exblock">
+              <h5>评论 2</h5>
+              <div class="exchat">
+                <img src="../assets/miaochang-ui/img/result2.webp" alt="">
+                <div><b>星辰大海 <small>12:04</small></b><p>开场镜头可以再快 0.5s，其他没问题。</p></div>
+              </div>
+              <div class="exchat">
+                <img src="../assets/miaochang-ui/img/result3.webp" alt="">
+                <div><b>AI 创作小助手 <small>12:10</small></b><p>已记录修改建议，下次导出前提醒你。</p></div>
+              </div>
+            </div>
+            <div class="exblock">
+              <h5>交付文件</h5>
+              <div class="exfile"><span class="exfile__ic">MP4</span><div><b>未来城市宣传片_1080P.mp4</b><small>486 MB · 1920×1080</small></div><em>↓</em></div>
+              <div class="exfile"><span class="exfile__ic">SRT</span><div><b>中文字幕_CN.srt</b><small>6 KB · 12 条字幕</small></div><em>↓</em></div>
+              <div class="exfile"><span class="exfile__ic">JPG</span><div><b>封面图_16x9.jpg</b><small>2.4 MB · 1920×1080</small></div><em>↓</em></div>
+            </div>
+            <div class="exblock">
+              <h5>版本</h5>
+              <div class="exver is-on"><b>v3</b><span>当前版本 · 02:36</span><time>14:30</time></div>
+              <div class="exver"><b>v2</b><span>调整转场与字幕</span><time>昨天</time></div>
+              <div class="exver"><b>v1</b><span>初版拼接</span><time>05-06</time></div>
             </div>
           </aside>
         </div>
@@ -2419,6 +2815,134 @@ document.querySelectorAll('#stMain .ststyle').forEach(s => s.addEventListener('c
   document.querySelectorAll('#stMain .ststyle').forEach(x => x.classList.remove('is-on'));
   s.classList.add('is-on');
 }));
+/* ==========================================================================
+   视频编辑 / 导出协作
+   ========================================================================== */
+(function initEditor(){
+  const box = document.querySelector('.screen[data-screen="edit"]');
+  if (!box) return;
+  const TOTAL = 156;   /* 02:36 */
+  const fmt = s => {
+    s = Math.max(0, Math.round(s));
+    return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  };
+
+  box.querySelectorAll('.etool').forEach(t => t.addEventListener('click', () => {
+    box.querySelectorAll('.etool').forEach(x => x.classList.remove('is-on'));
+    t.classList.add('is-on');
+  }));
+  ['.edit__mtabs', '.edit__ptabs'].forEach(sel => {
+    box.querySelectorAll(sel + ' button').forEach(t => t.addEventListener('click', () => {
+      box.querySelectorAll(sel + ' button').forEach(x => x.classList.remove('is-on'));
+      t.classList.add('is-on');
+    }));
+  });
+
+  /* 时间线波形 */
+  const wave = document.getElementById('tlWave');
+  if (wave) {
+    const amp = x => 50 * (0.22 + 0.78 * Math.abs(Math.sin(x / 53) * Math.sin(x / 17) * Math.sin(x / 7.3)));
+    let d = 'M0,50';
+    for (let x = 0; x <= 1000; x += 4) d += ' L' + x + ',' + (50 - amp(x)).toFixed(1);
+    for (let x = 1000; x >= 0; x -= 4) d += ' L' + x + ',' + (50 + amp(x)).toFixed(1);
+    wave.setAttribute('d', d + ' Z');
+  }
+
+  /* 播放头 / 时间码 */
+  const playBtn = box.querySelector('#edPlay');
+  const head = box.querySelector('.tl__playhead');
+  const seek = box.querySelector('.edit__seek i');
+  const timeEl = box.querySelector('.edit__time');
+  let pos = 33, timer = null;
+  const renderHead = () => {
+    head.style.left = pos + '%';
+    seek.style.width = pos + '%';
+    timeEl.textContent = fmt(TOTAL * pos / 100) + ' / 02:36';
+    const badge = head.querySelector('span');
+    if (badge) badge.textContent = fmt(TOTAL * pos / 100);
+  };
+  playBtn?.addEventListener('click', () => {
+    if (timer) {
+      clearInterval(timer); timer = null; playBtn.textContent = '▶'; return;
+    }
+    playBtn.textContent = '❚❚';
+    timer = setInterval(() => {
+      pos += 0.35;
+      if (pos >= 100) {
+        pos = 100;
+        clearInterval(timer); timer = null; playBtn.textContent = '▶';
+      }
+      renderHead();
+    }, 240);
+  });
+  renderHead();
+
+  /* 时间线片段：点击选中，右侧属性同步 */
+  const clips = box.querySelectorAll('.tl__clip');
+  const pName = box.querySelector('.edit__pname b');
+  const pTime = box.querySelector('.edit__pname small');
+  clips.forEach(c => c.addEventListener('click', () => {
+    clips.forEach(x => x.classList.remove('is-on'));
+    c.classList.add('is-on');
+    const start = parseFloat(c.style.left) / 100 * TOTAL;
+    const dur = parseFloat(c.style.width) / 100 * TOTAL;
+    if (pName) pName.textContent = '片段 ' + (c.dataset.clip || '');
+    if (pTime) pTime.textContent = fmt(start) + ' - ' + fmt(start + dur) + ' · ' + Math.round(dur) + 's';
+    /* 把播放头对齐到该片段开头 */
+    pos = parseFloat(c.style.left);
+    renderHead();
+  }));
+
+  /* 素材库：点击加入时间线提示 */
+  const mgrid = box.querySelector('.edit__mgrid');
+  mgrid?.addEventListener('click', e => {
+    const f = e.target.closest('figure');
+    if (!f) return;
+    mgrid.querySelectorAll('figure').forEach(x => x.style.opacity = '');
+    f.style.opacity = '.6';
+    const cap = f.querySelector('figcaption')?.textContent || '素材';
+    const foot = box.querySelector('.edit__mfoot');
+    if (foot) foot.textContent = '已将「' + cap + '」插入到播放头位置 · 来自「视觉生成」';
+  });
+})();
+
+(function initExport(){
+  const btn = document.getElementById('exGo');
+  const first = document.getElementById('exq1');
+  if (!btn || !first) return;
+  let running = false;
+  btn.addEventListener('click', () => {
+    if (running || btn.classList.contains('is-done')) return;
+    running = true;
+    const fill = first.querySelector('.mc__bar i');
+    const pct = first.querySelector('.exq__pct');
+    const st = first.querySelector('.exq__st');
+    let p = 62;
+    const tick = setInterval(() => {
+      p = Math.min(100, p + 4);
+      fill.style.width = p + '%';
+      pct.textContent = p + '%';
+      btn.textContent = '正在导出… ' + p + '%';
+      st.textContent = '导出中 · 剩余约 ' + Math.max(1, Math.round((100 - p) / 8)) + ' 秒';
+      if (p >= 100) {
+        clearInterval(tick);
+        running = false;
+        btn.classList.add('is-done');
+        btn.textContent = '导出完成 · 已上传至媒体中心';
+        first.classList.add('is-done');
+        st.textContent = '已完成 · 14:38 · 486 MB';
+        fill.style.background = '#00EF5C';
+      }
+    }, 200);
+  });
+  const copy = document.getElementById('exCopy');
+  copy?.addEventListener('click', () => {
+    if (copy.dataset.done) return;
+    copy.dataset.done = '1';
+    copy.textContent = '已复制';
+    setTimeout(() => { copy.textContent = '复制链接'; delete copy.dataset.done; }, 1600);
+  });
+})();
 </script>
 </body>
 </html>
