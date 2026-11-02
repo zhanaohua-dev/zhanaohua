@@ -622,6 +622,36 @@ html[data-theme="dark"] .case__shot{
   .lightbox__nav{width:42px; height:42px; font-size:22px}
 }
 
+/* 交互 Demo 全屏查看器 */
+.viewer{
+  position:fixed; inset:0; z-index:300;
+  display:flex; flex-direction:column;
+  background:#050F1A;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s var(--ease);
+}
+.viewer[data-open="true"]{opacity:1; pointer-events:auto}
+.viewer__bar{
+  flex:none; height:48px; display:flex; align-items:center; gap:10px;
+  padding:0 14px; border-bottom:1px solid rgba(255,255,255,.08);
+  background:#0D1622;
+}
+.viewer__dot{width:7px;height:7px;border-radius:50%;background:#00EF5C;flex:none}
+.viewer__title{font-size:13px;color:#D9D9D9;letter-spacing:.02em}
+.viewer__hint{margin-left:auto;font-size:12px;color:#6B7684}
+.viewer__btn{
+  height:30px;padding:0 14px;border-radius:8px;
+  border:1px solid rgba(255,255,255,.16);color:#D9D9D9;font-size:12.5px;
+  transition:border-color .2s,color .2s,background .2s;
+}
+.viewer__btn:hover{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.06)}
+.viewer__btn--close{width:30px;padding:0;display:grid;place-items:center;font-size:13px}
+.viewer__frame{flex:1;width:100%;border:0;background:#050F1A;display:block}
+@media (max-width:760px){
+  .viewer__hint{display:none}
+  .viewer__title{font-size:12px}
+}
+
 /* ============ Sandbox：散落的作品墙 ============ */
 .board{
   --line:rgba(18,60,88,.3);
@@ -1056,6 +1086,17 @@ html[data-theme="dark"] .board__card{
     <p class="giant serif" aria-hidden="true">zhannaohua</p>
   </div>
 </main>
+
+<div class="viewer" id="demoViewer" data-open="false" aria-hidden="true">
+  <div class="viewer__bar">
+    <span class="viewer__dot"></span>
+    <span class="viewer__title">妙场 · 视觉生成 — 可交互 Demo</span>
+    <span class="viewer__hint">滚轮/拖拽可操作，Esc 退出</span>
+    <button class="viewer__btn" id="viewerShots">看设计稿</button>
+    <button class="viewer__btn viewer__btn--close" id="viewerClose" aria-label="关闭">✕</button>
+  </div>
+  <iframe class="viewer__frame" id="demoFrame" title="妙场 视觉生成 交互 Demo" loading="lazy"></iframe>
+</div>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="妙场 界面预览" data-open="false">
   <button class="lightbox__btn lightbox__close" id="lbClose" aria-label="关闭">✕</button>
@@ -1751,7 +1792,7 @@ const GALLERY = [
   document.querySelectorAll('[data-gallery]').forEach(el => {
     el.addEventListener('click', e => {
       e.preventDefault();
-      open(0);
+      openViewer();
     });
   });
 
@@ -1776,6 +1817,54 @@ const GALLERY = [
     if (Math.abs(dx) > 48) show(idx + (dx < 0 ? 1 : -1));
     sx = null;
   }, { passive: true });
+})();
+
+/* ---------- 妙场交互 Demo 全屏查看器 ---------- */
+(function initDemoViewer(){
+  const box = document.getElementById('demoViewer');
+  const frame = document.getElementById('demoFrame');
+  const SRC = 'demo/miaochang-visual.html';
+
+  if (!box || !frame) return;
+
+  window.openViewer = () => {
+    if (!frame.getAttribute('src')) frame.setAttribute('src', SRC);
+    box.dataset.open = 'true';
+    box.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (window.__lenis) window.__lenis.stop();
+  };
+  const close = () => {
+    box.dataset.open = 'false';
+    box.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (window.__lenis) window.__lenis.start();
+  };
+  window.closeViewer = close;
+
+  document.getElementById('viewerClose').addEventListener('click', close);
+
+  /* 看设计稿：切到图片灯箱 */
+  document.getElementById('viewerShots').addEventListener('click', () => {
+    close();
+    const lb = document.getElementById('lightbox');
+    if (!lb) return;
+    document.querySelectorAll('[data-gallery]').forEach(() => {});
+    /* 直接调灯箱：模拟点击第一张 */
+    const lbImg = document.getElementById('lbImg');
+    if (!lbImg) return;
+    lbImg.src = 'assets/miaochang/01-home.webp';
+    lbImg.classList.add('is-ready');
+    document.getElementById('lbCap').textContent = '首页 · 工作台';
+    document.getElementById('lbCount').textContent = '1 / 8';
+    lb.dataset.open = 'true';
+    document.body.style.overflow = 'hidden';
+    if (window.__lenis) window.__lenis.stop();
+  });
+
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape' && box.dataset.open === 'true') close();
+  });
 })();
 
 /* ---------- 案例列表行：封面跟随光标 ---------- */

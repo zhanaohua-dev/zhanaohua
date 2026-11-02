@@ -29,11 +29,20 @@
   --font:"Alibaba PuHuiTi 3.0","Alibaba PuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
 body{
-  background:var(--bg); color:var(--text);
+  color:var(--text);
   font-family:var(--font); font-size:16px; line-height:22px;
   -webkit-font-smoothing:antialiased;
+}
+/* 舞台固定 1920×1140，等比缩放到视口——任何屏幕下比例不变 */
+.frame{
+  position:absolute; top:50%; left:50%;
+  width:1920px; height:1140px;
+  transform:translate(-50%,-50%) scale(var(--scale,1));
+  transform-origin:center center;
+  background:var(--bg);
+  display:flex; flex-direction:column;
   overflow:hidden;
 }
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -100,8 +109,7 @@ img{display:block}
   grid-template-columns:183px minmax(0,1fr) 384px;
   gap:19px;
   padding:28px 16px 20px;
-  height:calc(100vh - 60px);
-  min-height:660px;
+  height:1080px;
 }
 
 /* 侧栏 */
@@ -398,25 +406,10 @@ img{display:block}
 
 .divider{height:1px;background:var(--divider);margin:0 0 24px}
 
-/* 小屏兜底 */
-@media (max-width:1500px){
-  body{overflow:auto}
-  .body{grid-template-columns:183px minmax(0,1fr);height:auto}
-  .params{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:24px;padding:20px}
-  .params__scroll{display:flex;flex-wrap:wrap;gap:24px;overflow:visible}
-  .pfield{margin:0}
-}
-@media (max-width:1100px){
-  .body{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .stage__grid{grid-template-columns:1fr}
-  .topbar__brand{width:auto}
-  .topbar__search{display:none}
-}
 </style>
 </head>
 <body>
-
+<div class="frame" id="frame">
 <header class="topbar">
   <div class="topbar__brand">
     <img src="../assets/miaochang-ui/img/logo.webp" alt="妙场">
@@ -654,8 +647,20 @@ img{display:block}
     </div>
   </aside>
 </div>
+</div><!-- /frame -->
 
 <script>
+/* ── 等比缩放到视口（保持 1920×1140 严格比例） ── */
+(function fitStage(){
+  const root = document.documentElement;
+  const fit = () => {
+    const s = Math.min(innerWidth / 1920, innerHeight / 1140);
+    root.style.setProperty('--scale', s.toFixed(5));
+  };
+  addEventListener('resize', fit, { passive: true });
+  fit();
+})();
+
 /* ==========================================================================
    交互
    ========================================================================== */
