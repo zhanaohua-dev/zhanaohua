@@ -528,6 +528,55 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
 .aitem .gen{margin-left:auto;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);color:#9CABC4;flex:none}
 .libmore{text-align:center;font-size:11px;color:#9CABC4;padding:8px;border-top:1px solid var(--divider);cursor:pointer}
 
+/* ================= 团队协作（精修） ================= */
+.team{flex:1;display:flex;flex-direction:column;gap:19px;min-height:0;overflow-y:auto;padding-right:4px}
+.team__row{display:grid;gap:19px;flex:none}
+.team__row--a{grid-template-columns:minmax(0,1121px) minmax(0,1fr)}
+.tpanel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;min-height:0}
+.tpanel__hd{display:flex;align-items:center;gap:0;margin-bottom:14px}
+.tpanel__hd h3{font-size:20px;font-weight:400}
+.ttabs{display:flex;gap:18px;margin-left:0}
+.ttab{font-size:13px;color:var(--mute);padding-bottom:3px;position:relative}
+.ttab.is-on{color:var(--text)}
+.ttab.is-on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--accent);border-radius:1px}
+.tnew{margin-left:auto;height:28px;padding:0 12px;border-radius:6px;background:var(--accent);color:#fff;font-size:13px}
+.tbl2{width:100%;border-collapse:collapse;font-size:13px}
+.tbl2 th{font-size:12px;color:var(--mute);font-weight:400;text-align:left;padding:8px 0 10px;border-bottom:1px solid var(--divider)}
+.tbl2 td{padding:11px 0;border-bottom:1px solid rgba(217,217,217,.06);color:#9CABC4;vertical-align:middle}
+.tbl2 tr:hover td{background:rgba(255,255,255,.02)}
+.pname{display:flex;align-items:center;gap:10px}
+.pname img{width:52px;height:34px;border-radius:5px;object-fit:cover;flex:none}
+.pname b{display:block;font-size:13px;font-weight:400;color:var(--text);line-height:18px}
+.pname small{font-size:11px;color:var(--mute)}
+.stpill{display:inline-flex;align-items:center;gap:5px;font-size:12px}
+.stack{display:flex;align-items:center}
+.stack img{width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid var(--surface);margin-left:-9px}
+.stack img:first-child{margin-left:0}
+.stack .more{width:26px;height:26px;border-radius:50%;background:var(--field);border:2px solid var(--surface);margin-left:-9px;display:grid;place-items:center;font-size:10px;color:var(--mute)}
+.ops{display:flex;gap:12px;color:var(--mute);font-size:14px}
+.ops span{cursor:pointer}
+.ops span:hover{color:#fff}
+.tfoot{text-align:center;font-size:12px;color:var(--mute);padding:12px 0 2px;margin-top:auto;border-top:1px solid rgba(217,217,217,.06);cursor:pointer}
+.tfoot:hover{color:var(--text)}
+.tmember{display:flex;align-items:center;gap:11px;padding:9px 0}
+.tmember img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.tmember b{font-size:13px;font-weight:400;display:flex;align-items:center;gap:7px}
+.tmember b small{font-size:10px;padding:2px 6px;border-radius:3px;background:var(--field);border:1px solid var(--line-2);color:#9CABC4}
+.tmember .st{margin-left:auto;font-size:11px;display:flex;align-items:center;gap:5px;color:#9CABC4}
+.kcols{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kcol2{background:var(--field);border:1px solid var(--line-2);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:8px}
+.kcol2 h5{font-size:13px;font-weight:400;color:#9CABC4;margin-bottom:2px}
+.kc2{background:var(--surface-3);border:1px solid var(--line-2);border-radius:6px;padding:9px 10px;font-size:12px;line-height:17px;color:var(--text)}
+.kc2 small{display:block;color:var(--mute);font-size:10px;margin-top:6px}
+.kadd{border:1px dashed var(--line);border-radius:6px;padding:7px;text-align:center;font-size:11px;color:var(--mute);cursor:pointer}
+.kadd:hover{border-color:var(--accent);color:var(--accent)}
+.chat{display:flex;gap:10px;padding:9px 0}
+.chat img{width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none}
+.chat b{font-size:12px;font-weight:400;display:flex;gap:6px;align-items:baseline}
+.chat b small{font-size:10px;color:#5B9BE8}
+.chat p{font-size:11px;color:#9CABC4;line-height:16px;margin-top:3px}
+.chat time{margin-left:auto;font-size:10px;color:#5E6A7A;flex:none}
+
 /* 滚动条 */
 .screen ::-webkit-scrollbar{width:6px}
 .screen ::-webkit-scrollbar-thumb{background:#2A3442;border-radius:3px}
@@ -1034,9 +1083,8 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
 
       <!-- ================= 团队协作 ================= -->
       <section class="screen" data-screen="team">
-        <div class="screen__head"><button class="btn" data-go="home" style="margin-right:4px">← 返回工作台</button><h1 class="screen__title">团队协作</h1></div>
-        <div class="wide">
-          <div class="panel panel--s">
+        <div class="team">
+          <div class="panel panel--s" style="flex:none">
             <h3 class="overview__title">团队概况</h3>
             <div class="statcards">
               <div class="statcard"><span>进行中项目</span><b>8</b><em>较昨日 <i>↑ 2</i></em></div>
@@ -1050,27 +1098,39 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
               <div class="statcard"><span>AI生成次数</span><b>1286</b><em>较昨日 <i>↑ 18%</i></em></div>
             </div>
           </div>
-          <div class="cards3" style="grid-template-columns:minmax(0,1121px) minmax(0,1fr)">
-            <div class="panel panel--s">
-              <div class="home__hd"><h3 style="font-size:20px">项目动态</h3></div>
-              <table class="tbl">
-                <thead><tr><th>项目名称</th><th>状态</th><th>更新时间</th><th></th></tr></thead>
+
+          <div class="team__row team__row--a">
+            <div class="tpanel">
+              <div class="tpanel__hd">
+                <h3>项目动态</h3>
+                <div class="ttabs" style="margin-left:22px">
+                  <button class="ttab is-on">全部</button><button class="ttab">我创建的</button>
+                  <button class="ttab">我参与的</button><button class="ttab">收藏</button>
+                </div>
+                <button class="tnew">+ 新建项目</button>
+              </div>
+              <table class="tbl2">
+                <thead><tr><th>项目名称</th><th>项目状态</th><th>成员</th><th>更新时间</th><th>操作</th></tr></thead>
                 <tbody id="teamProjects"></tbody>
               </table>
+              <div class="tfoot">查看全部项目</div>
             </div>
-            <div class="panel panel--s">
-              <div class="home__hd"><h3 style="font-size:20px">团队成员</h3></div>
-              <div class="members" id="teamMembers"></div>
+
+            <div class="tpanel">
+              <div class="tpanel__hd" style="margin-bottom:6px"><h3>团队成员</h3></div>
+              <div id="teamMembers"></div>
+              <div class="tfoot">查看全部成员 →</div>
             </div>
           </div>
-          <div class="cards3" style="grid-template-columns:minmax(0,1121px) minmax(0,1fr)">
-            <div class="panel panel--s">
-              <div class="home__hd"><h3 style="font-size:20px">任务看板</h3></div>
-              <div class="kanban" id="teamKanban"></div>
+
+          <div class="team__row team__row--a">
+            <div class="tpanel">
+              <div class="tpanel__hd"><h3>任务看板</h3></div>
+              <div class="kcols" id="teamKanban"></div>
             </div>
-            <div class="panel panel--s">
-              <div class="home__hd"><h3 style="font-size:20px">团队讨论</h3></div>
-              <div class="members" id="teamChat"></div>
+            <div class="tpanel">
+              <div class="tpanel__hd"><h3>团队讨论</h3></div>
+              <div id="teamChat"></div>
             </div>
           </div>
         </div>
@@ -1370,63 +1430,73 @@ document.querySelectorAll('.switch-sm').forEach(sw => sw.addEventListener('click
 
 
 /* ── 团队协作 ── */
-const TEAM_PROJECTS = [
-  ['智能穿戴产品宣传片','科技·产品·广告','制作中','#4994D7','2026-3-25 14:30','2'],
-  ['智能穿戴产品广告','科技·产品·广告','分镜阶段','#B14BD8','2026-3-28 17:25','3'],
-  ['国风文化推广视频','国风·文化·传承','审核中','#E86401','2026-4-16 18:20','4'],
-  ['夏日冰饮营销短片','夏日·清爽·美食','已完成','#00EF5C','2026-4-29 20:03','5'],
-  ['AI科技未来概念版','AI·科技·未来','制作中','#4994D7','2026-5-25 11:30','6'],
+const TP = [
+  ['未来城市宣传片','科幻·未来·城市','制作中','#4994D7','2026-3-25 14:30','7',true],
+  ['智能穿戴产品广告','科技·产品·广告','分镜阶段','#B14BD8','2026-3-28 17:25','8',false],
+  ['国风文化推广视频','国风·文化·传承','审核中','#E86401','2026-4-16 18:20','9',true],
+  ['夏日冰饮营销短片','夏日·清爽·美食','已完成','#00EF5C','2026-4-29 20:03','10',false],
+  ['AI科技未来概念版','AI·科技·未来','制作中','#4994D7','2026-5-25 11:30','11',false],
 ];
+const MEMBER_IMGS = ['2','3','4','5','6'];
+const avatar = n => `../assets/miaochang-ui/shots/team/${n}.webp`;
 const tp = document.getElementById('teamProjects');
-if (tp) tp.innerHTML = TEAM_PROJECTS.map(([n,tag,st,c,time,img]) => `
-  <tr><td><div style="display:flex;align-items:center;gap:12px">
-    <img class="thumb" src="../assets/miaochang-ui/shots/team/${img}.webp" alt="">
-    <span>${n}<small style="display:block;color:var(--mute);font-size:12px">${tag}</small></span>
-  </div></td>
-  <td><span class="badge" style="border-color:${c};color:${c}">● ${st}</span></td>
-  <td style="font-size:14px">${time}</td>
-  <td style="font-size:14px">★　📁　···</td></tr>`).join('');
+if (tp) tp.innerHTML = TP.map(([n,tag,st,c,time,img,star]) => `
+  <tr>
+    <td><div class="pname"><img src="${avatar(img)}" alt="">
+      <div><b>${n}</b><small>${tag}</small></div></div></td>
+    <td><span class="stpill"><i class="dot" style="background:${c}"></i>${st}</span></td>
+    <td><div class="stack">
+      ${MEMBER_IMGS.slice(0,4).map(m => `<img src="${avatar(m)}" alt="">`).join('')}
+    </div></td>
+    <td style="font-size:12px">${time}</td>
+    <td><div class="ops"><span style="color:${star ? '#FAAB1F' : 'inherit'}">${star ? '★' : '☆'}</span><span>📁</span><span>···</span></div></td>
+  </tr>`).join('');
 
 const MEMBERS = [
-  ['炸脑花的设计','团队管理员','在线','#00EF5C','7'],
-  ['星辰大海','项目负责人','在线','#00EF5C','8'],
-  ['AI创作小助手','设计师','忙碌','#E86401','9'],
-  ['视觉开发','设计师','在线','#00EF5C','10'],
-  ['灵感捕手','编辑','离线','#666','11'],
+  ['炸脑花设计日记','团队管理员','在线','#00EF5C','2'],
+  ['星辰大海','项目负责人','在线','#00EF5C','3'],
+  ['AI创作小助手','设计师','忙碌','#E86401','4'],
+  ['视觉开发','设计师','在线','#00EF5C','5'],
+  ['灵感捕手','编辑','离线','#666','6'],
 ];
 const tm = document.getElementById('teamMembers');
 if (tm) tm.innerHTML = MEMBERS.map(([n,role,st,c,img]) => `
-  <div class="member"><img src="../assets/miaochang-ui/shots/team/${img}.webp" alt="">
-    <div><b>${n}</b><small>${role}</small></div>
+  <div class="tmember"><img src="${avatar(img)}" alt="">
+    <div><b>${n}<small>${role}</small></b></div>
     <span class="st"><i class="dot" style="background:${c}"></i>${st}</span>
   </div>`).join('');
 
 const KANBAN = [
-  ['待办', ['未来城市宣传片·脚本优化','星辰大海','05-20截止'], ['智能穿戴广告·分镜拆解','视觉开发','05-21截止']],
-  ['进行中', ['国风文化推广·图像生成','AI创作小助手','进行中'], ['夏日冰饮·视频剪辑','灵感捕手','进行中']],
-  ['审核中', ['AI科技未来·音效设计','炸脑花的设计','审核中'], ['夏日冰饮·视频剪辑','星辰大海','审核中']],
-  ['已完成', ['产品广告·脚本撰写','灵感捕手','已完成'], ['国风文化·创意策划','炸脑花的设计','已完成']],
+  ['待办', [['未来城市宣传片-脚本优化','星辰大海 · 05-20截止'],['智能穿戴广告-分镜拆解','视觉开发 · 05-21截止']]],
+  ['进行中', [['国风文化推广-图像生成','AI创作小助手 · 进行中'],['夏日冰饮-视频剪辑','灵感捕手 · 进行中']]],
+  ['审核中', [['AI科技未来-音效设计','炸脑花的设计 · 审核中'],['夏日冰饮-视频剪辑','星辰大海 · 审核中']]],
+  ['已完成', [['产品广告-脚本撰写','灵感捕手 · 已完成'],['国风文化-创意策划','炸脑花的设计 · 已完成']]],
 ];
 const kb = document.getElementById('teamKanban');
-if (kb) kb.innerHTML = KANBAN.map(([col, ...items]) => `
-  <div class="kcol"><h5>${col}</h5>
-    ${items.map(([t,who,st]) => `<div class="kcard">${t}<small>👤 ${who} · ${st}</small></div>`).join('')}
+if (kb) kb.innerHTML = KANBAN.map(([col, items]) => `
+  <div class="kcol2"><h5>${col}</h5>
+    ${items.map(([t, meta]) => `<div class="kc2">${t}<small>${meta}</small></div>`).join('')}
+    <div class="kadd">+添加任务</div>
   </div>`).join('');
 
 const CHATS = [
-  ['星辰大海','在 #未来城市宣传片','大家看看这个片段节奏合不合适？','2分钟前','8'],
-  ['视觉开发喵喵','在 #智能穿戴广告','素材我已经上传到项目里了，大家可以看看~','15分钟前','9'],
-  ['灵感捕手','在 #夏日冰饮','这个创意方向很棒！我补充了一些参考案例','36分钟前','11'],
+  ['星辰大海','#未来城市宣传片','大家看看这个片段节奏合不合适？','2分钟前','3'],
+  ['视觉开发喵喵','#智能穿戴广告','素材我已经上传到项目里了，大家可以看看~','15分钟前','5'],
+  ['灵感捕手','#夏日冰饮','这个创意方向很棒！我补充了一些参考案例','36分钟前','6'],
 ];
 const tc = document.getElementById('teamChat');
 if (tc) tc.innerHTML = CHATS.map(([n,where,msg,time,img]) => `
-  <div class="member" style="align-items:flex-start">
-    <img src="../assets/miaochang-ui/shots/team/${img}.webp" alt="">
-    <div style="flex:1"><b>${n} <small style="color:var(--mute)">${where}</small></b>
-      <small style="display:block;line-height:20px;margin-top:4px">${msg}</small>
-    </div>
-    <span class="st" style="margin-left:auto">${time}</span>
+  <div class="chat"><img src="${avatar(img)}" alt="">
+    <div style="flex:1"><b>${n}<small>在 ${where}</small></b><p>${msg}</p></div>
+    <time>${time}</time>
   </div>`).join('');
+
+/* tabs 切换 */
+document.querySelectorAll('.ttabs').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('.ttab'); if (!b) return;
+  g.querySelectorAll('.ttab').forEach(x => x.classList.remove('is-on'));
+  b.classList.add('is-on');
+}));
 
 /* ── 资产库 ── */
 const ASSETS = [
