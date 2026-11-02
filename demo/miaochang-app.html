@@ -76,7 +76,11 @@ a{color:inherit;text-decoration:none}
   padding:21px 0 0;display:flex;flex-direction:column;gap:0}
 .sidebar__back{padding-left:69px;font-size:20px;color:var(--text);margin-bottom:64px}
 .sidebar__back:hover{color:#FFB27A}
-.sidebar__nav{display:flex;flex-direction:column;gap:12px}
+.navset{display:none;flex-direction:column;gap:12px}
+.navset.is-on{display:flex}
+.navset[data-set="flow"]{padding-top:21px}
+.navset[data-set="flow"] .sidebar__back{margin-bottom:64px}
+.navset[data-set="work"]{padding-top:28px}
 .nav{display:flex;align-items:center;gap:10px;height:40px;padding-left:29px;font-size:20px;color:var(--text);
   cursor:pointer;transition:color .18s}
 .nav .icon{width:24px;height:24px}
@@ -416,9 +420,20 @@ a{color:inherit;text-decoration:none}
   </header>
 
   <div class="app">
-    <aside class="sidebar">
-      <a class="sidebar__back" href="#" data-go="home">返回工作台</a>
-      <nav class="sidebar__nav">
+    <aside class="sidebar" id="sidebar">
+      <!-- 工作台导航（首页 / 团队 / 资产 / 灵感库） -->
+      <nav class="navset" data-set="work">
+        <a class="nav" data-go="home"><i class="icon i-home"></i>首页</a>
+        <a class="nav" data-soon="项目列表未包含在本 Demo 中"><i class="icon i-folder"></i>项目</a>
+        <a class="nav" data-go="assets"><i class="icon i-slack"></i>资产库</a>
+        <a class="nav" data-soon="模板中心未包含在本 Demo 中"><i class="icon i-grid"></i>模板中心</a>
+        <a class="nav" data-go="team"><i class="icon i-anchor"></i>团队协作</a>
+        <a class="nav" data-soon="媒体中心未包含在本 Demo 中"><i class="icon i-list"></i>媒体中心</a>
+        <a class="nav" data-soon="设置未包含在本 Demo 中"><i class="icon i-more"></i>设置</a>
+      </nav>
+      <!-- 创作流程导航（灵感 → 视觉） -->
+      <nav class="navset" data-set="flow">
+        <a class="sidebar__back" data-go="home">返回工作台</a>
         <a class="nav" data-go="insp"><i class="icon i-home"></i>灵感输入</a>
         <a class="nav" data-go="script"><i class="icon i-folder"></i>脚本创作</a>
         <a class="nav" data-go="board"><i class="icon i-list"></i>分镜拆解</a>
@@ -426,7 +441,6 @@ a{color:inherit;text-decoration:none}
         <a class="nav" data-soon="视频编辑界面未包含在本 Demo 中"><i class="icon i-anchor"></i>视频编辑</a>
         <a class="nav" data-soon="导出协作界面未包含在本 Demo 中"><i class="icon i-slack"></i>导出协作</a>
       </nav>
-      <a class="nav" data-go="team" style="margin-top:auto;margin-bottom:22px"><i class="icon i-anchor"></i>团队协作</a>
     </aside>
 
     <div class="viewport">
@@ -943,6 +957,10 @@ function go(name){
   const target = document.querySelector(`.screen[data-screen="${name}"]`);
   if (!target) return;
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('is-on', s === target));
+  /* 首页/团队/资产/灵感库 用工作台导航，其余用创作流程导航 */
+  const WORK = ['home', 'team', 'assets', 'lib'];
+  const set = WORK.includes(name) ? 'work' : 'flow';
+  document.querySelectorAll('.navset').forEach(ns => ns.classList.toggle('is-on', ns.dataset.set === set));
   document.querySelectorAll('.nav').forEach(n => n.classList.toggle('is-active', n.dataset.go === name));
   document.querySelectorAll('.topbar__tab').forEach(t => t.classList.toggle('is-active', t.dataset.go === name));
   history.replaceState(null, '', '#' + name);
@@ -963,7 +981,7 @@ document.addEventListener('click', e => {
 });
 
 /* 首屏 / 前进后退按 hash */
-const applyHash = () => { const n = location.hash.slice(1); if (n) go(n); };
+const applyHash = () => { const n = location.hash.slice(1); go(n || 'home'); };
 applyHash();
 addEventListener('hashchange', applyHash);
 

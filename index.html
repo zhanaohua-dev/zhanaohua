@@ -1092,7 +1092,6 @@ html[data-theme="dark"] .board__card{
     <span class="viewer__dot"></span>
     <span class="viewer__title">妙场 · 工作台 — 8 屏可交互 Demo</span>
     <span class="viewer__hint">左侧导航可切换 8 个界面，Esc 退出</span>
-    <button class="viewer__btn" id="viewerShots">看设计稿</button>
     <button class="viewer__btn viewer__btn--close" id="viewerClose" aria-label="关闭">✕</button>
   </div>
   <iframe class="viewer__frame" id="demoFrame" title="妙场 视觉生成 交互 Demo" loading="lazy"></iframe>
@@ -1843,24 +1842,6 @@ const GALLERY = [
   window.closeViewer = close;
 
   document.getElementById('viewerClose').addEventListener('click', close);
-
-  /* 看设计稿：切到图片灯箱 */
-  document.getElementById('viewerShots').addEventListener('click', () => {
-    close();
-    const lb = document.getElementById('lightbox');
-    if (!lb) return;
-    document.querySelectorAll('[data-gallery]').forEach(() => {});
-    /* 直接调灯箱：模拟点击第一张 */
-    const lbImg = document.getElementById('lbImg');
-    if (!lbImg) return;
-    lbImg.src = 'assets/miaochang/01-home.webp';
-    lbImg.classList.add('is-ready');
-    document.getElementById('lbCap').textContent = '首页 · 工作台';
-    document.getElementById('lbCount').textContent = '1 / 8';
-    lb.dataset.open = 'true';
-    document.body.style.overflow = 'hidden';
-    if (window.__lenis) window.__lenis.stop();
-  });
 
   addEventListener('keydown', e => {
     if (e.key === 'Escape' && box.dataset.open === 'true') close();
