@@ -540,7 +540,13 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
 .ttab.is-on{color:var(--text)}
 .ttab.is-on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--accent);border-radius:1px}
 .tnew{margin-left:auto;height:28px;padding:0 12px;border-radius:6px;background:var(--accent);color:#fff;font-size:13px}
-.tbl2{width:100%;border-collapse:collapse;font-size:13px}
+.tbl2{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.tbl2 col.c-name{width:31%}
+.tbl2 col.c-st{width:13%}
+.tbl2 col.c-mem{width:21%}
+.tbl2 col.c-time{width:20%}
+.tbl2 col.c-ops{width:15%}
+.tbl2 td,.tbl2 th{text-align:left}
 .tbl2 th{font-size:12px;color:var(--mute);font-weight:400;text-align:left;padding:8px 0 10px;border-bottom:1px solid var(--divider)}
 .tbl2 td{padding:11px 0;border-bottom:1px solid rgba(217,217,217,.06);color:#9CABC4;vertical-align:middle}
 .tbl2 tr:hover td{background:rgba(255,255,255,.02)}
@@ -556,7 +562,7 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
 .ops{display:flex;gap:12px;color:var(--mute);font-size:14px}
 .ops span{cursor:pointer}
 .ops span:hover{color:#fff}
-.tfoot{text-align:center;font-size:12px;color:var(--mute);padding:12px 0 2px;margin-top:auto;border-top:1px solid rgba(217,217,217,.06);cursor:pointer}
+.tfoot{text-align:center;font-size:12px;color:var(--mute);padding:12px 0 2px;margin-top:auto;border-top:1px solid rgba(217,217,217,.06);cursor:pointer;width:100%}
 .tfoot:hover{color:var(--text)}
 .tmember{display:flex;align-items:center;gap:11px;padding:9px 0}
 .tmember img{width:38px;height:38px;border-radius:50%;object-fit:cover}
@@ -567,12 +573,14 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
 .kcol2{background:var(--field);border:1px solid var(--line-2);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:8px}
 .kcol2 h5{font-size:13px;font-weight:400;color:#9CABC4;margin-bottom:2px}
 .kc2{background:var(--surface-3);border:1px solid var(--line-2);border-radius:6px;padding:9px 10px;font-size:12px;line-height:17px;color:var(--text)}
-.kc2 small{display:block;color:var(--mute);font-size:10px;margin-top:6px}
+.kc2 .who{display:flex;align-items:center;gap:5px;margin-top:7px;font-size:10px;color:#9CABC4}
+.kc2 .who img{width:14px;height:14px;border-radius:50%;object-fit:cover;flex:none}
+.kc2 .who em{font-style:normal;margin-left:auto}
 .kadd{border:1px dashed var(--line);border-radius:6px;padding:7px;text-align:center;font-size:11px;color:var(--mute);cursor:pointer}
 .kadd:hover{border-color:var(--accent);color:var(--accent)}
 .chat{display:flex;gap:10px;padding:9px 0}
 .chat img{width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none}
-.chat b{font-size:12px;font-weight:400;display:flex;gap:6px;align-items:baseline}
+.chat b{font-size:12px;font-weight:400;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
 .chat b small{font-size:10px;color:#5B9BE8}
 .chat p{font-size:11px;color:#9CABC4;line-height:16px;margin-top:3px}
 .chat time{margin-left:auto;font-size:10px;color:#5E6A7A;flex:none}
@@ -1110,6 +1118,7 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
                 <button class="tnew">+ 新建项目</button>
               </div>
               <table class="tbl2">
+                <colgroup><col class="c-name"><col class="c-st"><col class="c-mem"><col class="c-time"><col class="c-ops"></colgroup>
                 <thead><tr><th>项目名称</th><th>项目状态</th><th>成员</th><th>更新时间</th><th>操作</th></tr></thead>
                 <tbody id="teamProjects"></tbody>
               </table>
@@ -1446,7 +1455,7 @@ if (tp) tp.innerHTML = TP.map(([n,tag,st,c,time,img,star]) => `
       <div><b>${n}</b><small>${tag}</small></div></div></td>
     <td><span class="stpill"><i class="dot" style="background:${c}"></i>${st}</span></td>
     <td><div class="stack">
-      ${MEMBER_IMGS.slice(0,4).map(m => `<img src="${avatar(m)}" alt="">`).join('')}
+      ${MEMBER_IMGS.map(m => `<img src="${avatar(m)}" alt="">`).join('')}
     </div></td>
     <td style="font-size:12px">${time}</td>
     <td><div class="ops"><span style="color:${star ? '#FAAB1F' : 'inherit'}">${star ? '★' : '☆'}</span><span>📁</span><span>···</span></div></td>
@@ -1467,15 +1476,17 @@ if (tm) tm.innerHTML = MEMBERS.map(([n,role,st,c,img]) => `
   </div>`).join('');
 
 const KANBAN = [
-  ['待办', [['未来城市宣传片-脚本优化','星辰大海 · 05-20截止'],['智能穿戴广告-分镜拆解','视觉开发 · 05-21截止']]],
-  ['进行中', [['国风文化推广-图像生成','AI创作小助手 · 进行中'],['夏日冰饮-视频剪辑','灵感捕手 · 进行中']]],
-  ['审核中', [['AI科技未来-音效设计','炸脑花的设计 · 审核中'],['夏日冰饮-视频剪辑','星辰大海 · 审核中']]],
-  ['已完成', [['产品广告-脚本撰写','灵感捕手 · 已完成'],['国风文化-创意策划','炸脑花的设计 · 已完成']]],
+  ['待办', [['未来城市宣传片-脚本优化','星辰大海','05-20截止','3'],['智能穿戴广告-分镜拆解','视觉开发','05-21截止','5']]],
+  ['进行中', [['国风文化推广-图像生成','AI创作小助手','进行中','4'],['夏日冰饮-视频剪辑','灵感捕手','进行中','6']]],
+  ['审核中', [['AI科技未来-音效设计','炸脑花的设计','审核中','2'],['夏日冰饮-视频剪辑','星辰大海','审核中','3']]],
+  ['已完成', [['产品广告-脚本撰写','灵感捕手','已完成','6'],['国风文化-创意策划','炸脑花的设计','已完成','2']]],
 ];
 const kb = document.getElementById('teamKanban');
 if (kb) kb.innerHTML = KANBAN.map(([col, items]) => `
   <div class="kcol2"><h5>${col}</h5>
-    ${items.map(([t, meta]) => `<div class="kc2">${t}<small>${meta}</small></div>`).join('')}
+    ${items.map(([t, who, when, avatarNo]) => `<div class="kc2">${t}
+      <div class="who"><img src="${avatar(avatarNo)}" alt=""><span>${who}</span><em>${when}</em></div>
+    </div>`).join('')}
     <div class="kadd">+添加任务</div>
   </div>`).join('');
 
