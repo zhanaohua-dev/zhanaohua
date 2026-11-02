@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>妙场 · 工作台（可交互 Demo）</title>
+<style>
+/* ==========================================================================
+   妙场 工作台 · 8 屏交互 Demo
+   画布锁定 1920×1140，色值/字号/间距取自 Figma 文件 QkOKldxyAq8VWDPS5q23X4
+   ========================================================================== */
+:root{
+  --bg:#050F1A; --surface:#111821; --surface-2:#0D1622; --surface-3:#161D28;
+  --field:#19202A; --line:#262F3C; --line-2:#242D38;
+  --text:#FFFFFF; --dim:#D9D9D9; --mute:#808080; --faint:#6B7684;
+  --accent:#E86401; --accent-soft:rgba(232,100,1,.25);
+  --ok:#00EF5C; --info:#4994D7; --track:#FFE5D1; --divider:rgba(217,217,217,.2);
+  --font:"Alibaba PuHuiTi 3.0","Alibaba PuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
+body{color:var(--text);font-family:var(--font);font-size:16px;line-height:22px;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea{font:inherit;color:inherit;background:none;border:0;outline:none}
+img{display:block}
+a{color:inherit;text-decoration:none}
+
+/* ── 画布：1920×1140 等比缩放 ── */
+.frame{
+  position:absolute;top:50%;left:50%;
+  width:1920px;height:1140px;
+  transform:translate(-50%,-50%) scale(var(--scale,1));
+  transform-origin:center center;
+  background:var(--bg);display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* ── 图标 ── */
+.icon{display:inline-block;width:24px;height:24px;flex:none;background-color:currentColor;
+  -webkit-mask-position:center;-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;
+  mask-position:center;mask-size:contain;mask-repeat:no-repeat}
+.i-home{-webkit-mask-image:url(../assets/miaochang-ui/icons/home.svg);mask-image:url(../assets/miaochang-ui/icons/home.svg)}
+.i-list{-webkit-mask-image:url(../assets/miaochang-ui/icons/list.svg);mask-image:url(../assets/miaochang-ui/icons/list.svg)}
+.i-grid{-webkit-mask-image:url(../assets/miaochang-ui/icons/grid.svg);mask-image:url(../assets/miaochang-ui/icons/grid.svg)}
+.i-anchor{-webkit-mask-image:url(../assets/miaochang-ui/icons/anchor.svg);mask-image:url(../assets/miaochang-ui/icons/anchor.svg)}
+.i-slack{-webkit-mask-image:url(../assets/miaochang-ui/icons/slack.svg);mask-image:url(../assets/miaochang-ui/icons/slack.svg)}
+.i-folder{-webkit-mask-image:url(../assets/miaochang-ui/icons/folder.svg);mask-image:url(../assets/miaochang-ui/icons/folder.svg)}
+.i-download{-webkit-mask-image:url(../assets/miaochang-ui/icons/download.svg);mask-image:url(../assets/miaochang-ui/icons/download.svg)}
+.i-more{-webkit-mask-image:url(../assets/miaochang-ui/icons/more-horizontal.svg);mask-image:url(../assets/miaochang-ui/icons/more-horizontal.svg)}
+.i-heart{-webkit-mask-image:url(../assets/miaochang-ui/icons/heart.svg);mask-image:url(../assets/miaochang-ui/icons/heart.svg)}
+.i-bell{-webkit-mask-image:url(../assets/miaochang-ui/icons/信息.svg);mask-image:url(../assets/miaochang-ui/icons/信息.svg)}
+.i-help{-webkit-mask-image:url(../assets/miaochang-ui/icons/问号.svg);mask-image:url(../assets/miaochang-ui/icons/问号.svg)}
+.i-search{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E")}
+.i-image{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Ccircle cx='8.5' cy='9.5' r='1.5'/%3E%3Cpath d='m21 15-5-5L5 20'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Ccircle cx='8.5' cy='9.5' r='1.5'/%3E%3Cpath d='m21 15-5-5L5 20'/%3E%3C/svg%3E")}
+
+/* ── 顶栏 ── */
+.topbar{height:60px;flex:none;display:flex;align-items:center;background:var(--surface-2);padding-left:16px;position:relative;z-index:5}
+.topbar__brand img{width:124px;height:60px;object-fit:contain;object-position:left center}
+.topbar__tabs{display:flex;margin-left:132px}
+.topbar__tab{height:60px;padding:0 20px;display:flex;align-items:center;font-size:20px;position:relative;color:var(--dim)}
+.topbar__tab.is-active{color:var(--text)}
+.topbar__tab.is-active::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:80px;height:3px;background:var(--accent);border-radius:2px}
+.topbar__search{margin-left:auto;width:250px;height:40px;display:flex;align-items:center;gap:12px;padding:0 13px;
+  border:1px solid rgba(255,255,255,.35);border-radius:12px;color:var(--mute);font-size:16px}
+.topbar__search .icon{width:16px;height:16px;color:var(--text)}
+.topbar__right{display:flex;align-items:center;gap:16px;margin-left:24px;margin-right:20px}
+.topbar__ico{width:36px;height:36px;display:grid;place-items:center;color:var(--text);opacity:.9}
+.topbar__ico:hover{opacity:1}
+.topbar__ico .icon{width:22px;height:22px}
+.topbar__user{display:flex;align-items:center;gap:15px}
+.topbar__user img{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--field)}
+.topbar__user span{font-size:16px}
+
+/* ── 主体 ── */
+.app{flex:1;display:flex;gap:17px;padding:28px 17px 20px 16px;min-height:0}
+.sidebar{width:183px;flex:none;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;
+  padding:21px 0 0;display:flex;flex-direction:column;gap:0}
+.sidebar__back{padding-left:69px;font-size:20px;color:var(--text);margin-bottom:64px}
+.sidebar__back:hover{color:#FFB27A}
+.sidebar__nav{display:flex;flex-direction:column;gap:12px}
+.nav{display:flex;align-items:center;gap:10px;height:40px;padding-left:29px;font-size:20px;color:var(--text);
+  cursor:pointer;transition:color .18s}
+.nav .icon{width:24px;height:24px}
+.nav:hover{color:#FFB27A}
+.nav.is-active{color:var(--accent)}
+
+/* 屏幕容器 */
+.viewport{flex:1;min-width:0;position:relative}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;min-height:0}
+.screen.is-on{display:flex}
+.screen__head{display:flex;align-items:center;gap:16px;padding:0 0 0 0;height:52px;flex:none}
+.screen__title{font-size:28px;line-height:38px;font-weight:400}
+.screen__save{display:flex;align-items:center;gap:6px;color:var(--dim);font-size:16px}
+.screen__save i{width:16px;height:16px;border-radius:50%;border:2px solid var(--ok);display:grid;place-items:center}
+.screen__save i::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--ok)}
+
+/* 通用面板 */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;min-height:0}
+.panel--pad{padding:24px 26px}
+.panel__title{font-size:24px;line-height:32px;margin-bottom:18px}
+.muted{color:var(--mute)}
+.dim{color:var(--dim)}
+
+/* 按钮 */
+.btn{height:32px;padding:0 20px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);
+  color:var(--dim);font-size:16px;transition:.18s}
+.btn:hover{border-color:#3A4553;color:#fff}
+.btn.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.btn--primary{height:60px;border-radius:12px;background:var(--accent);color:#fff;font-size:24px;border:0}
+.btn--primary:hover{filter:brightness(1.08)}
+
+/* 输入 */
+.ta{width:100%;resize:none;background:var(--field);border:1px solid var(--line-2);border-radius:8px;
+  padding:14px 16px;color:var(--dim);font-size:18px;line-height:30px}
+.ta:focus{border-color:#3E4A5A}
+.time{font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+
+/* ================= 首页 ================= */
+.home{flex:1;display:grid;grid-template-columns:1135px minmax(0,1fr);grid-template-rows:400px 400px 197px;
+  gap:30px 20px;min-height:0}
+.home__hero{grid-column:1;grid-row:1;border-radius:12px;overflow:hidden;border:1px solid var(--line);position:relative}
+.home__hero img{width:100%;height:100%;object-fit:cover}
+.home__recent{grid-column:1;grid-row:2}
+.home__stats{grid-column:1;grid-row:3}
+.home__rec{grid-column:2;grid-row:1}
+.home__mid{grid-column:2;grid-row:2;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.home__mid img{width:100%;height:100%;object-fit:cover}
+.home__mid{position:relative}
+.hot{position:absolute;background:transparent;border-radius:8px;cursor:pointer;transition:.18s}
+.hot:hover{background:rgba(232,100,1,.12);box-shadow:inset 0 0 0 1px rgba(232,100,1,.5)}
+.home__mid--banner{grid-row:3}
+
+.home__panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 26px;position:relative;overflow:hidden}
+.home__hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px}
+.home__hd h3{font-size:22px;font-weight:400;white-space:nowrap}
+.home__hd button{font-size:16px;color:var(--mute)}
+.home__hd button:hover{color:var(--dim)}
+
+.recent{display:grid;grid-template-columns:repeat(5,200px);gap:19px}
+.recent figure{margin:0;cursor:pointer}
+.recent img{width:200px;height:200px;border-radius:8px;object-fit:cover;transition:transform .22s}
+.recent figure:hover img{transform:translateY(-3px)}
+.recent figcaption{font-size:19px;margin-top:12px;line-height:26px}
+.recent figcaption span{display:block}
+.recent time{display:block;font-size:15px;color:var(--mute);margin-top:2px}
+
+.recs{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px 20px;align-content:start}
+.recs img{width:130px;height:72px;border-radius:6px;object-fit:cover}
+.recs div h4{font-size:18px;font-weight:400;margin-bottom:6px}
+.recs div p{font-size:16px;color:var(--mute);line-height:22px}
+.recs__item{display:contents;cursor:pointer}
+
+.stats{display:flex;gap:0;align-items:stretch}
+.stats__main{display:flex;gap:26px;flex:1;min-width:0}
+.stats__cell{min-width:0}
+.stats__cell span{display:block;font-size:15px;color:var(--dim);margin-bottom:8px;white-space:nowrap}
+.stats__cell strong{display:block;font-size:30px;line-height:38px;font-weight:400;white-space:nowrap}
+.stats__cell em{font-style:normal;font-size:13px;color:var(--ok);margin-left:4px}
+.stats__chart{width:250px;flex:none;display:flex;gap:12px;align-items:center}
+.stats__chart svg{width:84px;height:84px;flex:none}
+.stats__legend{font-size:13px;line-height:21px;color:var(--dim)}
+.stats__legend b{color:var(--text);font-weight:400;margin-left:8px}
+
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.quick button{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;
+  background:var(--field);border:1px solid var(--line-2);border-radius:8px;text-align:left;transition:.18s}
+.quick button:hover{border-color:var(--accent);background:var(--accent-soft)}
+.quick b{display:block;font-size:18px;font-weight:400;margin-bottom:2px}
+.quick small{font-size:13px;color:var(--mute)}
+.quick .icon{width:22px;height:22px;color:var(--dim)}
+
+/* ================= 灵感输入 ================= */
+.insp{flex:1;display:grid;grid-template-columns:minmax(0,1303px) minmax(0,1fr);gap:20px;min-height:0}
+.insp__left{display:flex;flex-direction:column;min-height:0}
+.insp__panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px 26px;margin-top:20px;flex:1;display:flex;flex-direction:column;min-height:0}
+.insp__h2{font-size:28px;line-height:38px;margin-bottom:8px}
+.insp__sub{font-size:18px;color:var(--mute);margin-bottom:22px}
+.modes{display:flex;gap:16px;margin-bottom:22px}
+.mode{height:44px;padding:0 22px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);
+  color:var(--dim);font-size:20px;display:flex;align-items:center;gap:10px;transition:.18s}
+.mode .icon{width:20px;height:20px}
+.mode.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.mode:hover{border-color:#3A4553}
+.insp__count{font-size:20px;color:#CDCDCD;text-align:right;margin-top:8px}
+.insp__hint{font-size:18px;color:var(--text);margin-top:10px}
+.insp__hint b{color:var(--accent);font-weight:400}
+.insp__upload{margin-top:22px;border:1px dashed var(--line-2);border-radius:8px;height:180px;
+  display:grid;place-items:center;align-content:center;gap:10px;color:var(--dim);cursor:pointer;transition:.18s}
+.insp__upload:hover{border-color:var(--accent);background:rgba(232,100,1,.05)}
+.insp__upload .icon{width:34px;height:34px;color:var(--dim)}
+.insp__upload small{font-size:18px;color:var(--mute)}
+.insp__label{font-size:18px;color:#CDCDCD;margin:24px 0 12px}
+.styles{display:flex;gap:18px}
+.style{display:flex;flex-direction:column;gap:6px;cursor:pointer;width:120px}
+.style img{width:58px;height:58px;border-radius:6px;object-fit:cover;border:1px solid var(--line-2);transition:.18s}
+.style span{font-size:16px}
+.style small{font-size:12px;color:var(--mute)}
+.style.is-on img{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.style:hover img{transform:translateY(-2px)}
+.durations{display:flex;gap:16px;flex-wrap:wrap}
+.duration{height:44px;padding:0 24px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);color:#fff;font-size:20px;transition:.18s}
+.duration.is-on{background:var(--accent-soft);border-color:var(--accent)}
+.insp__foot{margin-top:auto;display:flex;align-items:center;gap:20px;padding-top:24px}
+.insp__status{flex:1;height:60px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);
+  display:flex;align-items:center;padding:0 22px;font-size:24px;color:var(--info)}
+.insp__go{width:322px;height:60px;border-radius:8px;background:var(--accent);color:#fff;font-size:24px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex:none;transition:filter .18s}
+.insp__go:hover{filter:brightness(1.08)}
+.insp__side{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px 22px;display:flex;flex-direction:column;min-height:0}
+.insp__side .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px}
+.insp__side h3{font-size:24px;font-weight:400}
+.insp__side .hd button{font-size:16px;color:var(--mute)}
+.insp__list{display:flex;flex-direction:column;gap:20px;overflow-y:auto;flex:1;padding-right:4px}
+.insp__list::-webkit-scrollbar{width:5px}
+.insp__list::-webkit-scrollbar-thumb{background:#2A3442;border-radius:3px}
+.insp__card{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;cursor:pointer}
+.insp__card img{width:120px;height:160px;border-radius:8px;object-fit:cover}
+.insp__card h4{font-size:20px;font-weight:400;margin-bottom:8px;line-height:27px}
+.insp__card p{font-size:14px;color:var(--dim);line-height:20px;margin-bottom:10px}
+.insp__card .heat{font-size:16px;color:var(--dim)}
+.insp__more{margin-top:18px;text-align:center;padding:16px;border:1px solid var(--line-2);border-radius:8px;cursor:pointer}
+.insp__more b{display:block;font-size:20px;font-weight:400;margin-bottom:4px}
+.insp__more span{font-size:16px;color:var(--dim)}
+
+/* ================= 脚本创作 ================= */
+.script{flex:1;display:grid;grid-template-columns:minmax(0,1210px) minmax(0,1fr);gap:20px;min-height:0}
+.script__main{display:flex;flex-direction:column;min-height:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 26px 22px}
+.script__proj{display:flex;align-items:center;gap:10px;font-size:18px;margin-bottom:18px}
+.script__proj b{font-size:20px;font-weight:400;background:var(--surface-3);border:1px solid var(--line);border-radius:8px;padding:3px 14px}
+.script__tabs{display:flex;gap:12px;margin-bottom:18px}
+.script__tab{height:38px;padding:0 22px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);color:var(--dim);font-size:20px;transition:.18s}
+.script__tab.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.script__tools{display:flex;align-items:center;gap:16px;padding:10px 0 14px;border-bottom:1px solid var(--divider);font-size:16px;color:var(--dim)}
+.script__tools span{cursor:pointer}
+.script__tools span:hover{color:#fff}
+.script__scenes{flex:1;overflow-y:auto;padding-top:6px}
+.scene{padding:16px 0;border-bottom:1px solid rgba(217,217,217,.08)}
+.scene__hd{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+.scene__hd b{font-size:24px;font-weight:400;color:var(--accent)}
+.scene__hd time{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.scene__hd .more{color:var(--dim);font-size:14px;cursor:pointer}
+.scene p{font-size:16px;line-height:26px;color:var(--dim)}
+.scene p em{font-style:normal;color:var(--text)}
+.script__add{text-align:center;padding:14px;font-size:16px;color:var(--dim);cursor:pointer}
+.script__add:hover{color:var(--accent)}
+.script__foot{display:flex;gap:16px;align-items:center;margin-top:14px}
+.script__foot .ta{height:64px;padding:18px 20px;font-size:18px}
+.script__go{width:262px;height:64px;border-radius:8px;background:var(--accent);color:#fff;font-size:24px;flex:none;display:flex;align-items:center;justify-content:center;gap:10px}
+.script__go:hover{filter:brightness(1.08)}
+.script__side{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:22px;overflow-y:auto}
+.script__side h3{font-size:24px;font-weight:400;display:flex;justify-content:space-between;align-items:baseline}
+.script__side h3 button{font-size:16px;color:var(--mute)}
+.pfield__label{font-size:20px;color:var(--text);margin-bottom:12px}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{height:36px;padding:0 18px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);color:var(--mute);font-size:16px;transition:.18s}
+.chip:hover{border-color:#3A4553;color:var(--dim)}
+.chip.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.sel{height:44px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:16px;color:var(--mute);cursor:pointer}
+.sel:hover{border-color:#3A4553}
+
+/* ================= 分镜拆解 ================= */
+.board{flex:1;display:grid;grid-template-columns:minmax(0,1435px) minmax(0,1fr);gap:20px;min-height:0}
+.board__main{display:flex;flex-direction:column;min-height:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 26px}
+.board__proj{display:flex;align-items:center;gap:10px;font-size:18px;margin-bottom:20px}
+.board__proj b{font-size:20px;font-weight:400;background:var(--surface-3);border:1px solid var(--line);border-radius:8px;padding:3px 14px}
+.board__proj .swap{font-size:20px;color:var(--dim);margin-left:20px;display:flex;align-items:center;gap:6px;cursor:pointer}
+.board__bar{display:flex;align-items:center;gap:18px;margin-bottom:18px;color:var(--dim);font-size:16px}
+.board__grid{flex:1;display:grid;grid-template-columns:repeat(4,230px);gap:62px;align-content:start;overflow-y:auto}
+.shotcard{border:1px solid var(--line-2);border-radius:10px;background:var(--surface-3);padding:12px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:.2s}
+.shotcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.shotcard__hd{display:flex;align-items:center;justify-content:space-between}
+.shotcard__hd b{font-size:24px;font-weight:400}
+.shotcard__hd time{font-size:12px;color:var(--dim)}
+.shotcard img{width:100%;height:130px;object-fit:cover;border-radius:6px}
+.shotcard p{font-size:12px;line-height:19px;color:var(--dim)}
+.shotcard__tags{display:flex;gap:6px;flex-wrap:wrap}
+.shotcard__tags span{font-size:11px;padding:3px 8px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);color:var(--dim)}
+.shotcard__st{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim)}
+.dot{width:7px;height:7px;border-radius:50%}
+.board__foot{display:flex;justify-content:center;gap:12px;margin-top:18px}
+.board__foot button{width:48px;height:44px;border-radius:8px;border:1px solid var(--line-2);background:var(--field);color:var(--dim);display:grid;place-items:center}
+.board__foot button:hover{border-color:var(--accent);color:#fff}
+.board__side{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 20px;display:flex;flex-direction:column;gap:20px;overflow-y:auto}
+.board__side h3{font-size:24px;font-weight:400}
+.legend{display:flex;flex-direction:column;gap:12px;font-size:16px;color:var(--dim)}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:10px}
+.switch-sm{width:40px;height:20px;border-radius:30px;background:var(--accent);position:relative;flex:none;cursor:pointer}
+.switch-sm::after{content:"";position:absolute;top:1.5px;left:21px;width:17px;height:17px;border-radius:50%;background:#fff;transition:left .2s}
+.switch-sm.off{background:#39424F}
+.switch-sm.off::after{left:2px}
+
+/* ================= 视觉生成 ================= */
+.visual{flex:1;display:grid;grid-template-columns:454px minmax(0,1fr) 384px;gap:20px;min-height:0}
+.vpanel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 20px;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+.vtabs{display:flex;gap:12px;margin-bottom:18px}
+.vtab{height:38px;padding:0 20px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);color:var(--dim);font-size:19px;transition:.18s}
+.vtab.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.vfield{margin-bottom:18px}
+.vfield__label{font-size:16px;color:var(--dim);margin-bottom:8px;display:flex;justify-content:space-between}
+.vta{width:100%;height:115px;resize:none;background:var(--field);border:1px solid var(--line-2);border-radius:8px;padding:12px;color:var(--dim);font-size:15px;line-height:24px}
+.vrow{display:flex;gap:12px;align-items:center}
+.vbox{width:50px;height:50px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);display:grid;place-items:center;color:var(--divider)}
+.vbox--add{width:34px;cursor:pointer;color:var(--dim);font-size:18px}
+.vbox--add:hover{border-color:#3A455A}
+.vupload{height:50px;padding:0 20px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);color:var(--dim);font-size:16px}
+.vstyles{display:flex;gap:12px}
+.vstyle{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;width:50px}
+.vstyle img,.vstyle i{width:50px;height:50px;border-radius:4px;object-fit:cover;border:1px solid var(--line-2);transition:.18s}
+.vstyle i{display:grid;place-items:center;background:var(--field);border-style:dashed}
+.vstyle span{font-size:11px;color:var(--dim);white-space:nowrap}
+.vstyle.is-on img,.vstyle.is-on i{border-color:var(--accent)}
+.vstyle:hover img{transform:translateY(-2px)}
+.vopts{display:flex;gap:12px;flex-wrap:wrap}
+.vopt{min-width:72px;height:30px;padding:0 12px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);color:var(--mute);font-size:16px;transition:.18s}
+.vopt.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.vopt:hover{border-color:#3A4553}
+.vgen{width:100%;height:60px;border-radius:12px;background:var(--accent);color:#fff;font-size:28px;margin-top:6px}
+.vgen:hover{filter:brightness(1.08)}
+.vgen:disabled{filter:grayscale(.4) brightness(.7);cursor:not-allowed}
+.vquota{display:flex;justify-content:space-between;margin-top:14px;font-size:12px;color:var(--dim)}
+.vresults{background:var(--surface-3);border:1px solid var(--line);border-radius:12px;padding:24px 26px;display:flex;flex-direction:column;min-height:0}
+.vresults__hd{display:flex;gap:26px;margin-bottom:18px}
+.vresults__tab{font-size:19px;color:var(--dim)}
+.vresults__tab.is-on{color:var(--accent)}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.vshot{position:relative;border-radius:4px;overflow:hidden;border:1px solid var(--line);background:var(--field);aspect-ratio:340/336}
+.vshot img{width:100%;height:100%;object-fit:cover}
+.vshot__bar{position:absolute;right:10px;bottom:10px;display:flex;gap:8px;opacity:0;transition:.2s}
+.vshot:hover .vshot__bar{opacity:1}
+.vshot__fav{position:absolute;right:10px;top:10px;opacity:0;transition:.2s;color:var(--dim)}
+.vshot:hover .vshot__fav{opacity:1}
+.vshot__btn{width:23px;height:23px;border-radius:4px;background:rgba(14,21,32,.6);border:1px solid var(--line);display:grid;place-items:center;color:var(--dim)}
+.vshot__btn:hover{color:#fff}
+.vshot__btn .icon{width:13px;height:13px}
+.vshot.is-loading::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,#1A2230 30%,#232D3D 50%,#1A2230 70%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-100% 0}}
+.vprog{display:flex;align-items:center;gap:14px;margin-top:22px;font-size:12px;color:var(--info)}
+.vprog__track{flex:1;height:3px;border-radius:2px;background:#282F3B;overflow:hidden}
+.vprog__fill{height:100%;width:0;background:var(--accent);transition:width .3s}
+.vprog__stop{height:25px;padding:0 14px;border-radius:8px;background:var(--surface-3);border:1px solid var(--line);color:var(--dim);font-size:12px}
+.vparams{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px 18px;display:flex;flex-direction:column;gap:22px;overflow-y:auto}
+.vparams h3{font-size:16px;color:var(--dim);font-weight:400}
+.vslider{position:relative;flex:1;height:20px;display:flex;align-items:center;cursor:pointer}
+.vslider__track{position:absolute;left:0;right:0;height:5px;border-radius:10px;background:var(--track)}
+.vslider__fill{position:absolute;left:0;height:5px;border-radius:10px;background:var(--accent)}
+.vslider__thumb{position:absolute;width:20px;height:19px;border-radius:50%;background:#fff;border:3px solid var(--accent);transform:translateX(-50%);pointer-events:none}
+.vval{width:46px;height:30px;border-radius:8px;flex:none;background:var(--field);border:1px solid var(--line-2);display:grid;place-items:center;font-size:16px;color:var(--mute)}
+.vhistory{background:var(--field);border:1px solid var(--line-2);border-radius:4px;padding:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.vhistory img{width:100%;aspect-ratio:1;border-radius:4px;object-fit:cover;cursor:pointer;transition:.18s}
+.vhistory img:hover{transform:translateY(-2px)}
+
+/* ================= 团队协作 / 资产库 / 灵感库 ================= */
+.wide{flex:1;display:flex;flex-direction:column;gap:20px;min-height:0;overflow-y:auto}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.panel--s{padding:20px 22px}
+.kv{display:flex;gap:31px;flex-wrap:wrap}
+.kv div b{display:block;font-size:34px;font-weight:400;line-height:42px}
+.kv div span{font-size:15px;color:var(--dim)}
+.kv div em{font-style:normal;font-size:13px;color:var(--ok);margin-left:6px}
+.tbl{width:100%;border-collapse:collapse;font-size:16px}
+.tbl th{font-size:15px;color:var(--dim);font-weight:400;text-align:left;padding:10px 0;border-bottom:1px solid var(--divider)}
+.tbl td{padding:14px 0;border-bottom:1px solid rgba(217,217,217,.07);color:var(--dim)}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl img.thumb{width:56px;height:36px;border-radius:4px;object-fit:cover}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;border:1px solid var(--line-2);color:var(--dim)}
+.members{display:flex;flex-direction:column;gap:14px}
+.member{display:flex;align-items:center;gap:12px}
+.member img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.member b{font-size:16px;font-weight:400;display:block}
+.member small{font-size:12px;color:var(--mute)}
+.member .st{margin-left:auto;font-size:12px;display:flex;align-items:center;gap:6px}
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kcol{background:var(--field);border:1px solid var(--line-2);border-radius:8px;padding:12px}
+.kcol h5{font-size:15px;font-weight:400;color:var(--dim);margin-bottom:10px}
+.kcard{background:var(--surface-3);border:1px solid var(--line-2);border-radius:6px;padding:10px;font-size:13px;line-height:19px;margin-bottom:8px}
+.kcard small{display:block;color:var(--mute);font-size:11px;margin-top:6px}
+.assetsgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.asset{background:var(--field);border:1px solid var(--line-2);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s}
+.asset:hover{border-color:var(--accent);transform:translateY(-2px)}
+.asset img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.asset div{padding:10px 12px;font-size:14px}
+.asset small{display:block;color:var(--mute);font-size:11px;margin-top:4px}
+.libgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.libcard{background:var(--field);border:1px solid var(--line-2);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s}
+.libcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.libcard img{width:100%;aspect-ratio:240/207;object-fit:cover}
+.libcard div{padding:10px 12px}
+.libcard b{font-size:15px;font-weight:400;display:block}
+.libcard small{font-size:11px;color:var(--mute)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.filter{height:32px;padding:0 16px;border-radius:999px;background:var(--field);border:1px solid var(--line-2);color:var(--dim);font-size:14px}
+.filter.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+
+/* 滚动条 */
+.screen ::-webkit-scrollbar{width:6px}
+.screen ::-webkit-scrollbar-thumb{background:#2A3442;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="frame" id="frame">
+
+  <header class="topbar">
+    <div class="topbar__brand"><img src="../assets/miaochang-ui/img/logo.webp" alt="妙场"></div>
+    <div class="topbar__tabs">
+      <button class="topbar__tab is-active" data-go="home">工作台</button>
+      <button class="topbar__tab" data-go="lib">灵感库</button>
+    </div>
+    <div class="topbar__search"><i class="icon i-search"></i><span>搜索项目/模板/资产</span></div>
+    <div class="topbar__right">
+      <button class="topbar__ico"><i class="icon i-bell"></i></button>
+      <button class="topbar__ico"><i class="icon i-help"></i></button>
+      <div class="topbar__user">
+        <img src="../assets/miaochang-ui/img/avatar.webp" alt="">
+        <span>炸脑花的设计</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="sidebar">
+      <a class="sidebar__back" href="#" data-go="home">返回工作台</a>
+      <nav class="sidebar__nav">
+        <a class="nav" data-go="insp"><i class="icon i-home"></i>灵感输入</a>
+        <a class="nav" data-go="script"><i class="icon i-folder"></i>脚本创作</a>
+        <a class="nav" data-go="board"><i class="icon i-list"></i>分镜拆解</a>
+        <a class="nav" data-go="visual"><i class="icon i-grid"></i>视觉生成</a>
+        <a class="nav" data-soon="视频编辑界面未包含在本 Demo 中"><i class="icon i-anchor"></i>视频编辑</a>
+        <a class="nav" data-soon="导出协作界面未包含在本 Demo 中"><i class="icon i-slack"></i>导出协作</a>
+      </nav>
+      <a class="nav" data-go="team" style="margin-top:auto;margin-bottom:22px"><i class="icon i-anchor"></i>团队协作</a>
+    </aside>
+
+    <div class="viewport">
+
+      <!-- ================= 首页 ================= -->
+      <section class="screen is-on" data-screen="home">
+        <div class="home">
+          <div class="home__hero"><img src="../assets/miaochang-ui/shots/home/2.webp" alt=""></div>
+
+          <div class="home__panel home__recent">
+            <div class="home__hd"><h3>最近项目</h3></div>
+            <div class="recent">
+              <figure data-go="visual"><img src="../assets/miaochang-ui/shots/home/3.webp" alt=""><figcaption><span>智能穿戴产品宣传片</span><time>2026-05-18 14:30</time></figcaption></figure>
+              <figure data-go="visual"><img src="../assets/miaochang-ui/shots/home/4.webp" alt=""><figcaption><span>品牌故事短片</span><time>2026-05-08 21:26</time></figcaption></figure>
+              <figure data-go="visual"><img src="../assets/miaochang-ui/shots/home/5.webp" alt=""><figcaption><span>运动品牌广告</span><time>2026-04-26 16:03</time></figcaption></figure>
+              <figure data-go="visual"><img src="../assets/miaochang-ui/shots/home/6.webp" alt=""><figcaption><span>AI科技未来概念</span><time>2026-04-20 20:36</time></figcaption></figure>
+              <figure data-go="visual"><img src="../assets/miaochang-ui/shots/home/7.webp" alt=""><figcaption><span>国风文化推广视频</span><time>2026-04-12 19:20</time></figcaption></figure>
+            </div>
+          </div>
+
+          <div class="home__panel home__stats">
+            <div class="stats">
+              <div class="stats__main">
+                <div style="flex:none"><div class="home__hd" style="margin-bottom:14px"><h3>今日创作数据</h3></div></div>
+                <div class="stats__cell"><span>创建总项目</span><strong>12<em>↑20%</em></strong></div>
+                <div class="stats__cell"><span>生成视频</span><strong>28<em>↑35%</em></strong></div>
+                <div class="stats__cell"><span>渲染时长</span><strong>2.8<em>↑15%</em></strong></div>
+                <div class="stats__cell"><span>节省时间</span><strong>8.2<em>↑16%</em></strong></div>
+                <div class="stats__cell"><span>算力消耗</span><strong>1200<em>↑18%</em></strong></div>
+              </div>
+              <div class="stats__chart">
+                <svg viewBox="0 0 42 42">
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#2A3442" stroke-width="6"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E86401" stroke-width="6"
+                          stroke-dasharray="20 80" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#B14BD8" stroke-width="6"
+                          stroke-dasharray="30 70" stroke-dashoffset="5" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#3B82F6" stroke-width="6"
+                          stroke-dasharray="40 60" stroke-dashoffset="-25" transform="rotate(-90 21 21)"/>
+                </svg>
+                <div class="stats__legend">
+                  文本生成<b>20%</b><br>
+                  图像生成<b>30%</b><br>
+                  视频生成<b>40%</b><br>
+                  其他<b>10%</b>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="home__panel home__rec">
+            <div class="home__hd"><h3>灵感推荐</h3><button>换一批</button></div>
+            <div class="recs">
+              <div class="recs__item"><img src="../assets/miaochang-ui/shots/home/8.webp" alt=""><div><h4>夏日冰饮</h4><p>清爽一夏，冰饮带来好心情</p></div></div>
+              <div class="recs__item"><img src="../assets/miaochang-ui/shots/home/9.webp" alt=""><div><h4>未来科技</h4><p>探索未来，科技改变生活</p></div></div>
+              <div class="recs__item"><img src="../assets/miaochang-ui/shots/home/10.webp" alt=""><div><h4>国风美学</h4><p>东方美学，古韵新生</p></div></div>
+              <div class="recs__item"><img src="../assets/miaochang-ui/shots/home/11.webp" alt=""><div><h4>运动活力</h4><p>挑战自我，突破极限</p></div></div>
+            </div>
+          </div>
+
+          <div class="home__mid home__mid--quick">
+            <img src="../assets/miaochang-ui/shots/home/12.webp" alt="快速入口">
+            <button class="hot" style="left:3%;top:15%;width:46%;height:25%" data-go="insp" title="新建项目"></button>
+            <button class="hot" style="left:51%;top:15%;width:46%;height:25%" data-go="script" title="导入脚本"></button>
+            <button class="hot" style="left:3%;top:44%;width:46%;height:25%" data-go="script" title="AI脚本生成"></button>
+            <button class="hot" style="left:51%;top:44%;width:46%;height:25%" data-go="visual" title="视频剪辑"></button>
+            <button class="hot" style="left:3%;top:73%;width:46%;height:25%" data-go="visual" title="批量生成"></button>
+            <button class="hot" style="left:51%;top:73%;width:46%;height:25%" data-go="assets" title="我的资产"></button>
+          </div>
+
+          <div class="home__mid home__mid--banner"><img src="../assets/miaochang-ui/shots/home/14.webp" alt=""></div>
+        </div>
+      </section>
+
+      <!-- ================= 灵感输入 ================= -->
+      <section class="screen" data-screen="insp">
+        <div class="insp">
+          <div class="insp__left">
+            <div class="screen__head">
+              <h1 class="screen__title">01 灵感输入（Inspiration Input）</h1>
+            </div>
+            <div class="insp__panel">
+              <h2 class="insp__h2">你想创作什么样的视频？</h2>
+              <p class="insp__sub">输入你的想法，或上传参考资料，让AI帮你生成精彩的脚本</p>
+
+              <div class="modes">
+                <button class="mode is-on"><i class="icon i-list"></i>文本输入</button>
+                <button class="mode"><i class="icon i-anchor"></i>语音输入</button>
+                <button class="mode"><i class="icon i-image"></i>参考图上传</button>
+              </div>
+
+              <textarea class="ta" id="inspPrompt" style="height:230px" maxlength="2000"
+                placeholder="请描述你的创意、故事梗概、核心想法或想要传达的主题...... 
+示例：一个关于未来城市的环保主题短片，讲述人类与AI共同守护地球的故事，画面要有科技感和未来感。"></textarea>
+              <div class="insp__count"><span id="inspCount">0</span>/2000</div>
+              <p class="insp__hint">不知道怎么写？试试 <b>输入示例</b> 或 使用 <b>推荐灵感</b></p>
+
+              <div class="insp__label">参考资料（可选）</div>
+              <div class="insp__upload">
+                <i class="icon i-image"></i>
+                <div style="font-size:20px">拖拽图片到此处，或点击上传</div>
+                <small>支持JPG、PNG格式，大小不超过10MB</small>
+              </div>
+
+              <div class="insp__label">风格预设（可选）</div>
+              <div class="styles" id="inspStyles">
+                <div class="style"><img src="../assets/miaochang-ui/shots/insp/2.webp" alt=""><span>赛博朋克</span><small>未来·科技·霓虹</small></div>
+                <div class="style"><img src="../assets/miaochang-ui/shots/insp/3.webp" alt=""><span>国风古韵</span><small>东方·传统·诗意</small></div>
+                <div class="style"><img src="../assets/miaochang-ui/shots/insp/4.webp" alt=""><span>电影写实</span><small>真实·质感·叙事</small></div>
+                <div class="style"><img src="../assets/miaochang-ui/shots/insp/5.webp" alt=""><span>动漫二次元</span><small>青春·活力·幻想</small></div>
+                <div class="style"><img src="../assets/miaochang-ui/shots/insp/6.webp" alt=""><span>极简风格</span><small>简洁·高级·留白</small></div>
+                <div class="style"><img alt="" style="background:var(--field)"><span>更多风格</span><small>&nbsp;</small></div>
+              </div>
+
+              <div class="insp__label">视频时长（可选）</div>
+              <div class="durations" id="inspDurations">
+                <button class="duration">15秒以内</button>
+                <button class="duration is-on">15-30秒</button>
+                <button class="duration">30-60秒</button>
+                <button class="duration">1-2分钟</button>
+                <button class="duration">2分钟以上</button>
+              </div>
+
+              <div class="insp__foot">
+                <div class="insp__status" id="inspStatus">千问正在理解你的意图......</div>
+                <button class="insp__go" id="inspGo">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M3 12h18M12 3l4 4M12 3 8 7"/></svg>
+                  开始生成灵感
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="insp__side">
+            <div class="hd"><h3>灵感推荐</h3><button>换一批</button></div>
+            <div class="insp__list">
+              <div class="insp__card"><img src="../assets/miaochang-ui/shots/insp/7.webp" alt=""><div><h4>漂浮的未来之城</h4><p>在云层之上的未来城市，科技与自然和谐共生</p><span class="heat">🔥 热度9.2K</span></div></div>
+              <div class="insp__card"><img src="../assets/miaochang-ui/shots/insp/8.webp" alt=""><div><h4>星际探索日记</h4><p>一名宇航员的太空探索之旅，记录未知的奇遇</p><span class="heat">🔥 热度8.7K</span></div></div>
+              <div class="insp__card"><img src="../assets/miaochang-ui/shots/insp/9.webp" alt=""><div><h4>青春的毕业季</h4><p>关于成长、梦想与告别的校园故事</p><span class="heat">🔥 热度7.1K</span></div></div>
+              <div class="insp__card"><img src="../assets/miaochang-ui/shots/insp/10.webp" alt=""><div><h4>茶香里的中国</h4><p>中国传统茶文化的魅力与传承</p><span class="heat">🔥 热度5.8K</span></div></div>
+            </div>
+            <div class="insp__more" data-go="lib"><b>没有找到合适的灵感？</b><span>更多灵感库</span></div>
+          </aside>
+        </div>
+      </section>
+
+
+      <!-- ================= 脚本创作 ================= -->
+      <section class="screen" data-screen="script">
+        <div class="screen__head">
+          <h1 class="screen__title">02 脚本创作（Script Creation）</h1>
+          <span class="screen__save"><i></i>自动保存 14：30：25</span>
+        </div>
+        <div class="script" style="margin-top:8px">
+          <div class="script__main">
+            <div class="script__proj">项目名称：<b>未来城市宣传片</b>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--dim)"><path d="M15.5 4.5 19.5 8.5 8 20H4v-4L15.5 4.5Z"/></svg>
+            </div>
+            <div class="script__tabs">
+              <button class="script__tab is-on">脚本编辑</button>
+              <button class="script__tab">AI灵感</button>
+              <button class="script__tab">参考案例</button>
+            </div>
+            <div class="script__tools">
+              <span>↶</span><span>↷</span>
+              <span style="margin-left:10px">正文 ▾</span>
+              <span>16px</span>
+              <span style="margin-left:10px"><b>B</b></span><span><i>I</i></span><span><u>U</u></span>
+              <span>≡</span><span>⋮≡</span>
+            </div>
+            <div class="script__scenes" id="scriptScenes"></div>
+            <div class="script__add">+ 添加场景</div>
+            <div class="script__foot">
+              <input class="ta" placeholder="请输入你的创作需求，例如：帮我润色这段文案，要求气势更加磅礴" style="height:64px;border-radius:8px">
+              <button class="script__go" data-go="board">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z" opacity=".4"/><path d="m6 18 5-5 4 4 3-3"/></svg>
+                开始生成脚本
+              </button>
+            </div>
+          </div>
+
+          <aside class="script__side">
+            <h3>创作参数 <button>重置</button></h3>
+            <div>
+              <div class="pfield__label">视频时长</div>
+              <div class="chips" data-group>
+                <button class="chip">15秒</button><button class="chip is-on">30秒</button>
+                <button class="chip">60秒</button><button class="chip">自定义</button>
+              </div>
+            </div>
+            <div>
+              <div class="pfield__label">视频比例</div>
+              <div class="chips" data-group>
+                <button class="chip is-on">16:9</button><button class="chip">9:16</button>
+                <button class="chip">4:3</button><button class="chip">3:4</button><button class="chip">2:1</button>
+              </div>
+            </div>
+            <div>
+              <div class="pfield__label">视频风格</div>
+              <div class="chips" data-group>
+                <button class="chip">未来科技</button><button class="chip">国风古韵</button>
+                <button class="chip is-on">电影质感</button><button class="chip">赛博朋克</button>
+                <button class="chip">简约现代</button><button class="chip">奇幻史诗</button>
+              </div>
+            </div>
+            <div>
+              <div class="pfield__label">叙事角度</div>
+              <div class="sel"><span>第三人称视角</span><svg width="12" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></div>
+            </div>
+            <div>
+              <div class="pfield__label">语言风格</div>
+              <div class="sel"><span>磅礴、大气、充满希望</span></div>
+            </div>
+            <div>
+              <div class="pfield__label">目标受众</div>
+              <div class="sel"><span>大众人群</span><svg width="12" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></div>
+            </div>
+            <div>
+              <div class="pfield__label">参考资料</div>
+              <div class="insp__upload" style="height:120px;margin-top:0">
+                <i class="icon i-image"></i>
+                <div style="font-size:16px">点击或拖拽文件到此上传</div>
+                <small style="font-size:13px">支持JPG、PNG、PDF、TXT，不超过50MB</small>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ================= 分镜拆解 ================= -->
+      <section class="screen" data-screen="board">
+        <div class="screen__head">
+          <h1 class="screen__title">03 分镜拆解（Storyboard）</h1>
+          <span class="screen__save"><i></i>自动保存 14：30：25</span>
+        </div>
+        <div class="board" style="margin-top:8px">
+          <div class="board__main">
+            <div class="board__proj">当前脚本：<b>未来城市宣传片</b>
+              <span class="swap">更换脚本
+                <svg width="12" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg>
+              </span>
+            </div>
+            <div class="board__bar">
+              <span style="font-size:18px">🔍</span>
+              <span>100% ▾</span>
+              <span style="margin-left:auto">🔍</span>
+            </div>
+            <div class="board__grid" id="boardGrid"></div>
+            <div class="board__foot">
+              <button title="手型">✋</button>
+              <button title="选择">🖱</button>
+              <button title="缩放">⊕</button>
+            </div>
+          </div>
+          <aside class="board__side">
+            <h3>创作参数</h3>
+            <div>
+              <div class="pfield__label" style="font-size:16px;color:var(--dim)">画布尺寸</div>
+              <div class="sel"><span>16:9 (1920*1080)</span><svg width="12" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:16px;color:var(--dim)">背景网格</span><div class="switch-sm"></div>
+            </div>
+            <div>
+              <div class="pfield__label" style="font-size:16px;color:var(--dim)">网格大小</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="flex:1;height:4px;border-radius:2px;background:var(--accent);position:relative">
+                  <span style="position:absolute;right:-2px;top:-6px;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--accent)"></span>
+                </div>
+                <span style="font-size:12px;color:var(--mute)">24px</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:16px;color:var(--dim)">吸附对齐</span><div class="switch-sm"></div>
+            </div>
+            <div class="pfield__label" style="font-size:16px;color:var(--dim);margin:6px 0 0">图例说明</div>
+            <div class="legend">
+              <div><i style="background:#00EF5C"></i>已生成</div>
+              <div><i style="background:#E86401"></i>生成中</div>
+              <div><i style="background:#666"></i>未生成</div>
+              <div><i style="background:#4994D7"></i>待调整</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ================= 视觉生成 ================= -->
+      <section class="screen" data-screen="visual">
+        <div class="screen__head">
+          <h1 class="screen__title">04 视觉生成（Visual Generation）</h1>
+          <span class="screen__save"><i></i>自动保存 14：30：25</span>
+        </div>
+        <div class="visual" style="margin-top:8px">
+          <div class="vpanel">
+            <div class="vtabs" id="vTabs">
+              <button class="vtab is-on">文生图</button>
+              <button class="vtab">图生图</button>
+              <button class="vtab">局部重绘</button>
+            </div>
+            <div class="vfield">
+              <div class="vfield__label">描述词 <span class="muted" id="vCount">48/100</span></div>
+              <textarea class="vta" id="vPrompt" maxlength="100">未来科技城市，夜晚，赛博朋克风格，霓虹灯光，超高建筑，飞行器穿梭，雨后超市地面反射灯光，电影级光影，超高清细节</textarea>
+            </div>
+            <div class="vfield">
+              <div class="vfield__label">参考图</div>
+              <div class="vrow">
+                <div class="vbox"><i class="icon i-image" style="width:20px;height:20px"></i></div>
+                <div class="vbox vbox--add">+</div>
+                <button class="vupload">+上传参考图</button>
+              </div>
+            </div>
+            <div class="vfield">
+              <div class="vfield__label">风格模型</div>
+              <div class="vstyles" id="vStyles">
+                <div class="vstyle"><img src="../assets/miaochang-ui/img/style1.webp" alt=""><span>通用写实</span></div>
+                <div class="vstyle"><img src="../assets/miaochang-ui/img/style2.webp" alt=""><span>电影质感</span></div>
+                <div class="vstyle is-on"><img src="../assets/miaochang-ui/img/style3.webp" alt=""><span>赛博朋克</span></div>
+                <div class="vstyle"><img src="../assets/miaochang-ui/img/style4.webp" alt=""><span>二次元</span></div>
+                <div class="vstyle"><img src="../assets/miaochang-ui/img/style5.webp" alt=""><span>国风水墨</span></div>
+                <div class="vstyle"><i>+</i><span>更多</span></div>
+              </div>
+            </div>
+            <div class="vfield">
+              <div class="vfield__label">画面比例</div>
+              <div class="vopts" data-group>
+                <button class="vopt">16:9</button><button class="vopt is-on">9:16</button>
+                <button class="vopt">4:3</button><button class="vopt">3:4</button><button class="vopt">2:1</button>
+              </div>
+            </div>
+            <div class="vfield">
+              <div class="vfield__label">生成数量</div>
+              <div class="vopts" data-group>
+                <button class="vopt">1</button><button class="vopt">2</button>
+                <button class="vopt">4</button><button class="vopt">6</button><button class="vopt is-on">8</button>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:12px;color:var(--dim);margin-bottom:8px">消耗 8 点算力</div>
+            <button class="vgen" id="vGen">立即生成</button>
+            <div class="vquota"><span>今日剩余额度：320 点</span><button style="font-size:12px;color:var(--dim);text-decoration:underline">购买算力包</button></div>
+          </div>
+
+          <div class="vresults">
+            <div class="vresults__hd">
+              <button class="vresults__tab is-on">全部结果</button>
+              <button class="vresults__tab">收藏夹</button>
+            </div>
+            <div class="vgrid" id="vGrid"></div>
+            <div class="vprog">
+              <span id="vLabel">妙场万相正在为你生成图像...</span>
+              <div class="vprog__track"><div class="vprog__fill" id="vFill"></div></div>
+              <span id="vCount2" style="font-size:16px">2/4</span>
+              <button class="vprog__stop" id="vStop">停止生成</button>
+            </div>
+          </div>
+
+          <aside class="vparams">
+            <h3>模型选择</h3>
+            <div>
+              <div class="vfield__label">画质选择</div>
+              <div class="vopts" data-group>
+                <button class="vopt">标准</button><button class="vopt">高清HD</button><button class="vopt is-on">超清UHD</button>
+              </div>
+            </div>
+            <div>
+              <div class="vfield__label">风格强度</div>
+              <div class="vrow">
+                <div class="vslider" data-slider="strength" data-min="0" data-max="10" data-step="0.5" data-value="7.5">
+                  <div class="vslider__track"></div><div class="vslider__fill"></div><div class="vslider__thumb"></div>
+                </div>
+                <div class="vval" data-output="strength">7.5</div>
+              </div>
+            </div>
+            <div>
+              <div class="vfield__label">光影效果</div>
+              <div class="sel"><span>电影级光影</span><svg width="12" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></div>
+            </div>
+            <div>
+              <div class="vfield__label">色彩倾向</div>
+              <div class="vopts" data-group>
+                <button class="vopt is-on">自动</button><button class="vopt">冷色调</button>
+                <button class="vopt">暖色调</button><button class="vopt">自定义</button>
+              </div>
+            </div>
+            <div>
+              <div class="vfield__label">细节增强</div>
+              <div class="vrow">
+                <div class="vslider" data-slider="detail" data-min="0" data-max="100" data-step="1" data-value="60">
+                  <div class="vslider__track"></div><div class="vslider__fill"></div><div class="vslider__thumb"></div>
+                </div>
+                <div class="vval" data-output="detail">60%</div>
+              </div>
+            </div>
+            <div>
+              <div class="vfield__label">种子（Seed）：</div>
+              <input class="vval" style="width:147px;height:35px;text-align:left;padding:0 12px;border-radius:4px" value="1024">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:16px;color:var(--dim)">生成后自动放大<small style="display:block;font-size:12px;color:var(--mute)">消耗额外算力</small></span>
+              <div class="switch-sm"></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:16px;color:var(--dim);margin-bottom:10px">
+                <span>历史记录</span><button style="font-size:12px;color:var(--mute)">清空记录</button>
+              </div>
+              <div class="vhistory" id="vHistory">
+                <img src="../assets/miaochang-ui/img/hist1.webp" alt="">
+                <img src="../assets/miaochang-ui/img/hist2.webp" alt="">
+                <img src="../assets/miaochang-ui/img/hist3.webp" alt="">
+                <img src="../assets/miaochang-ui/img/hist4.webp" alt="">
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ================= 团队协作 ================= -->
+      <section class="screen" data-screen="team">
+        <div class="screen__head"><button class="btn" data-go="home" style="margin-right:4px">← 返回工作台</button><h1 class="screen__title">团队协作</h1></div>
+        <div class="wide">
+          <div class="panel panel--s">
+            <div class="kv">
+              <div><span>进行中项目</span><b>8</b><em>较昨日 ↑2</em></div>
+              <div><span>本周完成任务</span><b>24</b><em>较上周 ↑35%</em></div>
+              <div><span>团队成员</span><b>12</b><em>较昨日 -</em></div>
+              <div><span>储存空间</span><b>512<small style="font-size:16px;color:var(--dim)">GB/2TB</small></b><em>25%</em></div>
+              <div><span>AI生成次数</span><b>1286</b><em>较昨日 ↑18%</em></div>
+            </div>
+          </div>
+          <div class="cards3" style="grid-template-columns:minmax(0,1121px) minmax(0,1fr)">
+            <div class="panel panel--s">
+              <div class="home__hd"><h3 style="font-size:20px">项目动态</h3></div>
+              <table class="tbl">
+                <thead><tr><th>项目名称</th><th>状态</th><th>更新时间</th><th></th></tr></thead>
+                <tbody id="teamProjects"></tbody>
+              </table>
+            </div>
+            <div class="panel panel--s">
+              <div class="home__hd"><h3 style="font-size:20px">团队成员</h3></div>
+              <div class="members" id="teamMembers"></div>
+            </div>
+          </div>
+          <div class="cards3" style="grid-template-columns:minmax(0,1121px) minmax(0,1fr)">
+            <div class="panel panel--s">
+              <div class="home__hd"><h3 style="font-size:20px">任务看板</h3></div>
+              <div class="kanban" id="teamKanban"></div>
+            </div>
+            <div class="panel panel--s">
+              <div class="home__hd"><h3 style="font-size:20px">团队讨论</h3></div>
+              <div class="members" id="teamChat"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 资产库 ================= -->
+      <section class="screen" data-screen="assets">
+        <div class="screen__head">
+          <h1 class="screen__title">资产库</h1>
+          <span class="screen__save" style="color:var(--dim)">512GB/2TB</span>
+          <button class="btn" style="margin-left:auto;background:var(--accent);border-color:var(--accent);color:#fff">上传资产</button>
+          <button class="btn">新建文件夹</button>
+          <button class="btn">批量操作 ▾</button>
+        </div>
+        <div class="wide">
+          <div class="filters">
+            <button class="filter is-on">全部</button><button class="filter">品牌主视觉</button>
+            <button class="filter">LOGO&标识</button><button class="filter">字体规范</button>
+            <button class="filter">色彩规范</button><button class="filter">IP形象</button>
+            <button class="filter">产品图片</button>
+          </div>
+          <div class="assetsgrid" id="assetsGrid"></div>
+        </div>
+      </section>
+
+      <!-- ================= 灵感库 ================= -->
+      <section class="screen" data-screen="lib">
+        <div class="screen__head"><button class="btn" data-go="home" style="margin-right:4px">← 返回工作台</button><h1 class="screen__title">灵感库</h1>
+          <span class="screen__save" style="color:var(--dim)">海量灵感资源，每日更新，激发你的无限创意</span>
+        </div>
+        <div class="wide">
+          <div class="filters" id="libFilters">
+            <button class="filter is-on">全部</button><button class="filter">视觉风格</button>
+            <button class="filter">场景氛围</button><button class="filter">角色形象</button>
+            <button class="filter">镜头运用</button><button class="filter">色彩搭配</button>
+            <button class="filter">品牌设计</button><button class="filter">节日热点</button>
+            <button class="filter">科技未来</button><button class="filter">自然生态</button>
+          </div>
+          <div class="libgrid" id="libGrid"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   等比缩放（锁定 1920×1140）
+   ========================================================================== */
+(function fit(){
+  const root = document.documentElement;
+  const run = () => root.style.setProperty('--scale',
+    Math.min(innerWidth / 1920, innerHeight / 1140).toFixed(5));
+  addEventListener('resize', run, { passive: true });
+  run();
+})();
+
+/* ==========================================================================
+   路由：data-go="screenName"
+   ========================================================================== */
+const SCREEN_NAV = { home:null, insp:'insp', script:'script', board:'board', visual:'visual',
+                     team:'team', assets:'assets', lib:null };
+
+function go(name){
+  const target = document.querySelector(`.screen[data-screen="${name}"]`);
+  if (!target) return;
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('is-on', s === target));
+  document.querySelectorAll('.nav').forEach(n => n.classList.toggle('is-active', n.dataset.go === name));
+  document.querySelectorAll('.topbar__tab').forEach(t => t.classList.toggle('is-active', t.dataset.go === name));
+  history.replaceState(null, '', '#' + name);
+}
+
+document.addEventListener('click', e => {
+  const soon = e.target.closest('[data-soon]');
+  if (soon) {
+    e.preventDefault();
+    const st = document.getElementById('inspStatus');
+    if (st) { st.textContent = soon.dataset.soon; st.style.color = '#E86401'; }
+    return;
+  }
+  const el = e.target.closest('[data-go]');
+  if (!el) return;
+  e.preventDefault();
+  go(el.dataset.go);
+});
+
+/* 首屏 / 前进后退按 hash */
+const applyHash = () => { const n = location.hash.slice(1); if (n) go(n); };
+applyHash();
+addEventListener('hashchange', applyHash);
+
+
+/* ── 脚本创作：场景列表 ── */
+const SCENES = [
+  ['场景1 | 开篇·未来已至', '00:00-00:06', '夜幕下的未来城市，全景展示高楼林立，空中飞行器穿梭，霓虹灯光闪烁。', '未来已至，一切正以前所未有的速度改变着我们的世界。'],
+  ['场景2 | 科技改变生活', '00:06-00:15', '切换到城市内部，智能家居、无人配送、AI助手等画面快速切换。', '科技让生活更便捷，让想象照进现实。'],
+  ['场景3 | 城市的动脉', '00:15-00:22', '镜头穿梭于地铁、街道、商业中心，人类忙碌而有序。', '每一个人都是城市的动脉，连接现在通向未来。'],
+  ['场景4 | 绿色与共生', '00:22-00:32', '绿色建筑、风力发电，人与自然和谐共处。', '我们不仅要创造未来，更要守护未来。'],
+  ['场景5 | 共创未来', '00:32-00:40', '城市全景再次升起，Logo与Slogan出现。', '一起创造更美好的未来。'],
+];
+const scenesEl = document.getElementById('scriptScenes');
+if (scenesEl) {
+  scenesEl.innerHTML = SCENES.map(([t, time, desc, vo]) => `
+    <div class="scene">
+      <div class="scene__hd"><b>${t}</b><time>${time}</time><span class="more">···</span></div>
+      <p>${desc} <em>旁白：${vo}</em></p>
+    </div>`).join('');
+}
+
+/* ── 分镜拆解：四张卡 ── */
+const SHOTS = [
+  ['01','6s','夜幕下的未来城市，全景展示高楼林立，空中飞行器穿梭，霓虹灯光闪烁','全景镜头','推镜头','#00EF5C','已生成','2'],
+  ['02','11s','切换到城市内部，智能家居、无人配送、AI助手等画面快速切换','全景镜头','推镜头','#4994D7','待调整','3'],
+  ['03','7s','镜头穿梭于地铁、街道、商业中心，人类忙碌而有序','中景镜头','推镜头','#E86401','待生成','4'],
+  ['04','10s','绿色建筑、风力发电，人与自然和谐共处','中景镜头','固定镜头','#666','未生成','5'],
+];
+const boardEl = document.getElementById('boardGrid');
+if (boardEl) {
+  boardEl.innerHTML = SHOTS.map(([no, dur, desc, l1, l2, color, st, img]) => `
+    <article class="shotcard" data-go="visual">
+      <div class="shotcard__hd"><b>${no}</b><time>${dur}</time></div>
+      <img src="../assets/miaochang-ui/shots/board/${img}.webp" alt="">
+      <p>${desc}</p>
+      <div class="shotcard__tags"><span>${l1}</span><span>${l2}</span></div>
+      <div class="shotcard__st"><i class="dot" style="background:${color}"></i>${st}</div>
+    </article>`).join('');
+}
+
+/* ── 单选组（.chips） ── */
+document.querySelectorAll('.chips[data-group]').forEach(g => {
+  g.addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    g.querySelectorAll('.chip').forEach(x => x.classList.remove('is-on'));
+    b.classList.add('is-on');
+  });
+});
+/* 开关 */
+document.querySelectorAll('.switch-sm').forEach(sw => sw.addEventListener('click', () => sw.classList.toggle('off')));
+
+
+/* ── 团队协作 ── */
+const TEAM_PROJECTS = [
+  ['智能穿戴产品宣传片','科技·产品·广告','制作中','#4994D7','2026-3-25 14:30','2'],
+  ['智能穿戴产品广告','科技·产品·广告','分镜阶段','#B14BD8','2026-3-28 17:25','3'],
+  ['国风文化推广视频','国风·文化·传承','审核中','#E86401','2026-4-16 18:20','4'],
+  ['夏日冰饮营销短片','夏日·清爽·美食','已完成','#00EF5C','2026-4-29 20:03','5'],
+  ['AI科技未来概念版','AI·科技·未来','制作中','#4994D7','2026-5-25 11:30','6'],
+];
+const tp = document.getElementById('teamProjects');
+if (tp) tp.innerHTML = TEAM_PROJECTS.map(([n,tag,st,c,time,img]) => `
+  <tr><td><div style="display:flex;align-items:center;gap:12px">
+    <img class="thumb" src="../assets/miaochang-ui/shots/team/${img}.webp" alt="">
+    <span>${n}<small style="display:block;color:var(--mute);font-size:12px">${tag}</small></span>
+  </div></td>
+  <td><span class="badge" style="border-color:${c};color:${c}">● ${st}</span></td>
+  <td style="font-size:14px">${time}</td>
+  <td style="font-size:14px">★　📁　···</td></tr>`).join('');
+
+const MEMBERS = [
+  ['炸脑花的设计','团队管理员','在线','#00EF5C','7'],
+  ['星辰大海','项目负责人','在线','#00EF5C','8'],
+  ['AI创作小助手','设计师','忙碌','#E86401','9'],
+  ['视觉开发','设计师','在线','#00EF5C','10'],
+  ['灵感捕手','编辑','离线','#666','11'],
+];
+const tm = document.getElementById('teamMembers');
+if (tm) tm.innerHTML = MEMBERS.map(([n,role,st,c,img]) => `
+  <div class="member"><img src="../assets/miaochang-ui/shots/team/${img}.webp" alt="">
+    <div><b>${n}</b><small>${role}</small></div>
+    <span class="st"><i class="dot" style="background:${c}"></i>${st}</span>
+  </div>`).join('');
+
+const KANBAN = [
+  ['待办', ['未来城市宣传片·脚本优化','星辰大海','05-20截止'], ['智能穿戴广告·分镜拆解','视觉开发','05-21截止']],
+  ['进行中', ['国风文化推广·图像生成','AI创作小助手','进行中'], ['夏日冰饮·视频剪辑','灵感捕手','进行中']],
+  ['审核中', ['AI科技未来·音效设计','炸脑花的设计','审核中'], ['夏日冰饮·视频剪辑','星辰大海','审核中']],
+  ['已完成', ['产品广告·脚本撰写','灵感捕手','已完成'], ['国风文化·创意策划','炸脑花的设计','已完成']],
+];
+const kb = document.getElementById('teamKanban');
+if (kb) kb.innerHTML = KANBAN.map(([col, ...items]) => `
+  <div class="kcol"><h5>${col}</h5>
+    ${items.map(([t,who,st]) => `<div class="kcard">${t}<small>👤 ${who} · ${st}</small></div>`).join('')}
+  </div>`).join('');
+
+const CHATS = [
+  ['星辰大海','在 #未来城市宣传片','大家看看这个片段节奏合不合适？','2分钟前','8'],
+  ['视觉开发喵喵','在 #智能穿戴广告','素材我已经上传到项目里了，大家可以看看~','15分钟前','9'],
+  ['灵感捕手','在 #夏日冰饮','这个创意方向很棒！我补充了一些参考案例','36分钟前','11'],
+];
+const tc = document.getElementById('teamChat');
+if (tc) tc.innerHTML = CHATS.map(([n,where,msg,time,img]) => `
+  <div class="member" style="align-items:flex-start">
+    <img src="../assets/miaochang-ui/shots/team/${img}.webp" alt="">
+    <div style="flex:1"><b>${n} <small style="color:var(--mute)">${where}</small></b>
+      <small style="display:block;line-height:20px;margin-top:4px">${msg}</small>
+    </div>
+    <span class="st" style="margin-left:auto">${time}</span>
+  </div>`).join('');
+
+/* ── 资产库 ── */
+const ASSETS = [
+  ['品牌升级 2025','28项','2'],['春季营销活动','28项','3'],['主视觉海报','28项','4'],
+  ['品牌LOGO标准版.svg','28项','5'],['品牌色板2.0','28项','6'],['IP-灵灵-3D.png','28项','7'],
+  ['宣传片片头.pdf','28项','8'],['产品界面设计稿.fig','28项','9'],['启动页背景.psd','28项','10'],
+  ['产品展示图-1.png','28项','11'],['鲜乳口味','28项','12'],['品牌微电影','28项','13'],
+  ['城市之光','28项','14'],['人物肖像','28项','15'],['品牌手册','28项','16'],
+];
+const ag = document.getElementById('assetsGrid');
+if (ag) ag.innerHTML = ASSETS.map(([n,cnt,img]) => `
+  <div class="asset"><img src="../assets/miaochang-ui/shots/assets/${img}.webp" alt="">
+    <div>${n}<small>${cnt} · 2025-05-20 18:50</small></div></div>`).join('');
+
+/* ── 灵感库 ── */
+const LIB = [
+  ['赛博朋克·未来都市','赛博朋克 未来科技','2'],['国风山水·意境水墨','国风 山水','3'],
+  ['太空探索·宇宙幻想','太空 科幻','4'],['极简主义·光彩空间','极简 光影','5'],
+  ['少女肖像·温柔光影','人像 少女','6'],['产品广告·科技质感','产品 广告','7'],
+  ['奇幻世界·魔幻场景','奇幻 场景','8'],['霓虹人像·潮流街拍','人像 霓虹','9'],
+  ['卡通3D·可爱治愈','治愈 可爱','10'],['建筑设计·现代美学','建筑 现代','11'],
+  ['茶叶静物·东方禅意','国风 静物','12'],['人物肖像·真实质感','人像 写实','13'],
+  ['夏日饮品·清爽氛围','美食 清爽','14'],['日落剪影·叙事感','风景 叙事','15'],
+  ['木偶角色·童话感','角色 童话','16'],
+];
+const lg = document.getElementById('libGrid');
+if (lg) lg.innerHTML = LIB.map(([n,tag,img]) => `
+  <div class="libcard"><img src="../assets/miaochang-ui/shots/lib/${img}.webp" alt="">
+    <div><b>${n}</b><small>${tag} · 2025-05-20</small></div></div>`).join('');
+
+/* ── 视觉生成：结果 + 生成流程 ── */
+const VRESULTS = [1,2,3,4].map(i => `../assets/miaochang-ui/img/result${i}.webp`);
+const vGrid = document.getElementById('vGrid');
+function vShot(src, loading) {
+  const f = document.createElement('figure');
+  f.className = 'vshot' + (loading ? ' is-loading' : '');
+  f.style.margin = '0';
+  f.innerHTML = `<img src="${src}" alt="">
+    <button class="vshot__fav"><i class="icon i-heart"></i></button>
+    <div class="vshot__bar">
+      <button class="vshot__btn"><i class="icon i-download"></i></button>
+      <button class="vshot__btn"><i class="icon i-more"></i></button>
+    </div>`;
+  return f;
+}
+function vRender() {
+  if (!vGrid) return;
+  vGrid.innerHTML = '';
+  VRESULTS.forEach(src => vGrid.appendChild(vShot(src, false)));
+}
+vRender();
+
+let vRunning = false, vTimer = null;
+const vGen = document.getElementById('vGen'), vFill = document.getElementById('vFill');
+const vCount2 = document.getElementById('vCount2'), vLabel = document.getElementById('vLabel');
+vGen?.addEventListener('click', () => {
+  if (vRunning) return;
+  vRunning = true; vGen.disabled = true; vGen.textContent = '生成中…';
+  vGrid.innerHTML = ''; VRESULTS.forEach(s => vGrid.appendChild(vShot(s, true)));
+  vLabel.textContent = '妙场万相正在为你生成图像...';
+  vCount2.textContent = '0/4'; vFill.style.width = '0%';
+  let done = 0;
+  vTimer = setInterval(() => {
+    done = Math.min(4, done + 1);
+    vFill.style.width = (done / 4 * 100) + '%';
+    vCount2.textContent = done + '/4';
+    const el = vGrid.children[done - 1];
+    if (el) el.classList.remove('is-loading');
+    if (done >= 4) {
+      clearInterval(vTimer); vRunning = false;
+      vGen.disabled = false; vGen.textContent = '立即生成';
+      vLabel.textContent = '生成完成 · 共 4 张';
+    }
+  }, 900);
+});
+document.getElementById('vStop')?.addEventListener('click', () => {
+  if (!vRunning) return;
+  clearInterval(vTimer); vRunning = false;
+  vGen.disabled = false; vGen.textContent = '立即生成';
+  vLabel.textContent = '已停止生成';
+  vGrid.querySelectorAll('.is-loading').forEach(s => s.classList.remove('is-loading'));
+});
+/* 提示词字数 */
+const vp = document.getElementById('vPrompt'), vc = document.getElementById('vCount');
+if (vp) vp.addEventListener('input', () => { vc.textContent = vp.value.length + '/100'; });
+/* 视觉生成区的单选组 */
+document.querySelectorAll('.vopts[data-group]').forEach(g => {
+  g.addEventListener('click', e => {
+    const b = e.target.closest('.vopt'); if (!b) return;
+    g.querySelectorAll('.vopt').forEach(x => x.classList.remove('is-on'));
+    b.classList.add('is-on');
+  });
+});
+document.querySelectorAll('#vStyles .vstyle').forEach(st => st.addEventListener('click', () => {
+  document.querySelectorAll('#vStyles .vstyle').forEach(x => x.classList.remove('is-on'));
+  st.classList.add('is-on');
+}));
+document.querySelectorAll('#vTabs .vtab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('#vTabs .vtab').forEach(x => x.classList.remove('is-on'));
+  t.classList.add('is-on');
+}));
+document.querySelectorAll('.vresults__tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.vresults__tab').forEach(x => x.classList.remove('is-on'));
+  t.classList.add('is-on');
+}));
+/* 滑块 */
+document.querySelectorAll('.vslider').forEach(sl => {
+  const min = +sl.dataset.min, max = +sl.dataset.max, step = +sl.dataset.step;
+  const out = document.querySelector(`[data-output="${sl.dataset.slider}"]`);
+  const fill = sl.querySelector('.vslider__fill'), thumb = sl.querySelector('.vslider__thumb');
+  let val = +sl.dataset.value;
+  const render = () => {
+    const p = (val - min) / (max - min);
+    fill.style.width = (p * 100) + '%'; thumb.style.left = (p * 100) + '%';
+    out.textContent = sl.dataset.slider === 'detail' ? Math.round(val) + '%' : val;
+  };
+  const set = e => {
+    const r = sl.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    val = Math.round((min + p * (max - min)) / step) * step;
+    render();
+  };
+  sl.addEventListener('pointerdown', e => {
+    sl.setPointerCapture(e.pointerId); set(e);
+    const mv = ev => set(ev);
+    const up = () => { sl.removeEventListener('pointermove', mv); sl.removeEventListener('pointerup', up); };
+    sl.addEventListener('pointermove', mv); sl.addEventListener('pointerup', up);
+  });
+  render();
+});
+/* 历史记录回填 */
+document.querySelectorAll('#vHistory img').forEach(img => img.addEventListener('click', () => {
+  vGrid.innerHTML = ''; vGrid.appendChild(vShot(img.src, false));
+  vLabel.textContent = '已载入历史记录'; vCount2.textContent = '1/1'; vFill.style.width = '100%';
+}));
+/* 筛选器 */
+document.querySelectorAll('.filters').forEach(f => f.addEventListener('click', e => {
+  const b = e.target.closest('.filter'); if (!b) return;
+  f.querySelectorAll('.filter').forEach(x => x.classList.remove('is-on'));
+  b.classList.add('is-on');
+}));
+
+/* ── 灵感输入：字数 + 单选 ── */
+const promptEl = document.getElementById('inspPrompt');
+const countEl = document.getElementById('inspCount');
+if (promptEl) {
+  promptEl.addEventListener('input', () => { countEl.textContent = promptEl.value.length; });
+}
+document.querySelectorAll('.modes .mode').forEach(m => m.addEventListener('click', () => {
+  document.querySelectorAll('.modes .mode').forEach(x => x.classList.remove('is-on'));
+  m.classList.add('is-on');
+}));
+document.querySelectorAll('#inspStyles .style').forEach(s => s.addEventListener('click', () => {
+  document.querySelectorAll('#inspStyles .style').forEach(x => x.classList.remove('is-on'));
+  s.classList.add('is-on');
+}));
+document.querySelectorAll('#inspDurations .duration').forEach(d => d.addEventListener('click', () => {
+  document.querySelectorAll('#inspDurations .duration').forEach(x => x.classList.remove('is-on'));
+  d.classList.add('is-on');
+}));
+document.getElementById('inspGo')?.addEventListener('click', () => {
+  const st = document.getElementById('inspStatus');
+  st.textContent = '千问已理解你的意图，正在生成脚本…';
+  st.style.color = 'var(--ok)';
+  setTimeout(() => go('script'), 900);
+});
+</script>
+</body>
+</html>

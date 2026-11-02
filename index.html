@@ -1090,8 +1090,8 @@ html[data-theme="dark"] .board__card{
 <div class="viewer" id="demoViewer" data-open="false" aria-hidden="true">
   <div class="viewer__bar">
     <span class="viewer__dot"></span>
-    <span class="viewer__title">妙场 · 视觉生成 — 可交互 Demo</span>
-    <span class="viewer__hint">滚轮/拖拽可操作，Esc 退出</span>
+    <span class="viewer__title">妙场 · 工作台 — 8 屏可交互 Demo</span>
+    <span class="viewer__hint">左侧导航可切换 8 个界面，Esc 退出</span>
     <button class="viewer__btn" id="viewerShots">看设计稿</button>
     <button class="viewer__btn viewer__btn--close" id="viewerClose" aria-label="关闭">✕</button>
   </div>
@@ -1823,7 +1823,7 @@ const GALLERY = [
 (function initDemoViewer(){
   const box = document.getElementById('demoViewer');
   const frame = document.getElementById('demoFrame');
-  const SRC = 'demo/miaochang-visual.html';
+  const SRC = 'demo/miaochang-app.html';
 
   if (!box || !frame) return;
 
