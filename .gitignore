@@ -2,7 +2,8 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-Icon?
+/Icon
+/Icon\r
 ._*
 
 # 编辑器 / IDE
