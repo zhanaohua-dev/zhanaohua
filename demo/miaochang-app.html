@@ -460,6 +460,74 @@ a{color:inherit;text-decoration:none}
 .ver img{width:26px;height:26px;border-radius:50%;object-fit:cover}
 .ver small{margin-left:auto;color:var(--mute);font-size:12px}
 
+/* ================= 灵感库 ================= */
+.lib-nav{display:none}
+.screen[data-screen="lib"] ~ * .sidebar,
+body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
+.library{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 328px;gap:20px;min-height:0}
+.library__main{display:flex;flex-direction:column;gap:16px;min-height:0;overflow-y:auto;padding-right:6px}
+.lib-head{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px;flex:none}
+.lib-head h2{font-size:24px;font-weight:400;margin-bottom:6px}
+.lib-head p{font-size:13px;color:var(--mute)}
+.lib-head__r{display:flex;gap:12px;align-items:center}
+.lib-tools{display:flex;align-items:center;gap:12px;flex:none}
+.libsearch{flex:1;height:36px;display:flex;align-items:center;gap:10px;padding:0 12px;background:var(--field);border:1px solid var(--line-2);border-radius:8px;color:var(--mute);font-size:13px}
+.libsearch .icon{width:14px;height:14px;color:#707D94}
+.libtool{height:36px;padding:0 14px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);color:#9CABC4;font-size:13px;display:flex;align-items:center;gap:8px}
+.libtool:hover{border-color:#3A4553}
+.libchips{display:flex;gap:8px;flex-wrap:wrap;flex:none}
+.libchip{height:28px;padding:0 14px;border-radius:6px;background:var(--field);border:1px solid var(--line-2);color:#9CABC4;font-size:12px;transition:.18s}
+.libchip.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
+.libchip:hover{border-color:#3A4553}
+.libgrid2{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;flex:none}
+.lcard{background:var(--surface-3);border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s}
+.lcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.lcard__img{aspect-ratio:240/207;overflow:hidden;background:var(--field)}
+.lcard__img img{width:100%;height:100%;object-fit:cover}
+.lcard__meta{padding:10px 12px 12px}
+.lcard__meta b{display:block;font-size:14px;font-weight:400;margin-bottom:6px}
+.lcard__tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.lcard__tags span{font-size:11px;color:#9CABC4}
+.lcard__meta small{font-size:11px;color:var(--mute)}
+/* 侧栏（灵感库专属） */
+.sidebar--lib .libnav{display:flex;flex-direction:column;gap:0;padding:0 12px}
+.sidebar--lib{width:183px;padding:21px 0 16px;overflow-y:auto}
+.sidebar--lib .sidebar__back{padding-left:14px;margin-bottom:16px;font-size:18px}
+.libbadge{background:linear-gradient(135deg,rgba(120,90,255,.28),rgba(60,120,255,.14));border:1px solid rgba(140,120,255,.4);border-radius:10px;padding:12px;margin-bottom:20px}
+.libbadge h4{font-size:16px;font-weight:400;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.libbadge small{font-size:10px;color:#9CABC4;display:block;line-height:15px;margin-bottom:10px}
+.libbadge button{width:100%;height:28px;border-radius:6px;background:rgba(140,120,255,.28);border:1px solid rgba(160,140,255,.45);color:#FAF5FF;font-size:12px}
+.libgroup{margin-bottom:18px}
+.libgroup h5{font-size:12px;font-weight:400;color:#F7FAFF;margin-bottom:10px}
+.libitem{font-size:12px;color:#9CABC4;padding:5px 0;cursor:pointer;display:flex;justify-content:space-between}
+.libitem:hover{color:#F7FAFF}
+.libitem.is-on{color:#F7FAFF;font-weight:500}
+.libitem em{font-style:normal;color:#707D94;font-size:11px}
+.libtags{display:flex;flex-wrap:wrap;gap:6px}
+.libtags span{font-size:10px;padding:3px 7px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);color:#9CABC4}
+.libradar{background:var(--field);border:1px solid var(--line-2);border-radius:8px;padding:10px;font-size:11px;color:#707D94;line-height:16px}
+/* 右栏分析 */
+.libside{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:flex;flex-direction:column;gap:18px;overflow-y:auto}
+.libpanel{display:flex;flex-direction:column;gap:10px}
+.libpanel h4{font-size:14px;font-weight:400;display:flex;justify-content:space-between;align-items:baseline}
+.libpanel h4 small{font-size:10px;color:#9CABC4}
+.trend{display:flex;align-items:center;gap:8px;font-size:12px}
+.trend b{color:#FAAB1F;font-weight:400;width:12px}
+.trend span{color:#F7FAFF;flex:1}
+.trend em{font-style:normal;color:#BAD1FC}
+.trend.off span,.trend.off em{color:#9CABC4}
+.libbars{display:flex;gap:12px;align-items:center}
+.libbars svg{width:74px;height:74px;flex:none}
+.libbars ul{list-style:none;font-size:11px;color:#9CABC4;display:flex;flex-direction:column;gap:4px}
+.libbars li{display:flex;align-items:center;gap:6px}
+.libbars li i{width:7px;height:7px;border-radius:2px}
+.libbars li em{margin-left:auto;font-style:normal;color:#F7FAFF}
+.aitem{display:flex;align-items:center;gap:10px;font-size:11px;color:#9CABC4}
+.aitem img{width:34px;height:42px;border-radius:5px;object-fit:cover}
+.aitem b{display:block;color:#F7FAFF;font-size:12px;font-weight:400;margin-bottom:2px}
+.aitem .gen{margin-left:auto;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--field);border:1px solid var(--line-2);color:#9CABC4;flex:none}
+.libmore{text-align:center;font-size:11px;color:#9CABC4;padding:8px;border-top:1px solid var(--divider);cursor:pointer}
+
 /* 滚动条 */
 .screen ::-webkit-scrollbar{width:6px}
 .screen ::-webkit-scrollbar-thumb{background:#2A3442;border-radius:3px}
@@ -497,6 +565,48 @@ a{color:inherit;text-decoration:none}
         <a class="nav" data-soon="媒体中心未包含在本 Demo 中"><i class="icon i-list"></i>媒体中心</a>
         <a class="nav" data-soon="设置未包含在本 Demo 中"><i class="icon i-more"></i>设置</a>
       </nav>
+      <!-- 灵感库专属侧栏 -->
+      <nav class="navset" data-set="lib">
+        <a class="sidebar__back" data-go="home">返回工作台</a>
+        <div class="libnav">
+          <div class="libbadge">
+            <h4><span style="width:20px;height:20px;flex:none;border-radius:6px;background:linear-gradient(135deg,#8B5CF6,#4A7BF7);display:grid;place-items:center;font-size:11px">◈</span>灵感库</h4>
+            <small>发现灵感，激发无限创意</small>
+            <button>+ 收集灵感 ⌘K</button>
+          </div>
+          <div class="libgroup">
+            <h5>推荐灵感</h5>
+            <div class="libitem is-on">全部灵感</div>
+            <div class="libitem">我的收藏</div>
+            <div class="libitem">最近浏览</div>
+            <div class="libitem">灵感分享</div>
+          </div>
+          <div class="libgroup">
+            <h5>灵感分类</h5>
+            <div class="libitem">视觉风格 <em>256</em></div>
+            <div class="libitem">场景氛围 <em>189</em></div>
+            <div class="libitem">角色形象 <em>128</em></div>
+            <div class="libitem">镜头运用 <em>76</em></div>
+            <div class="libitem">色彩搭配 <em>64</em></div>
+            <div class="libitem">品牌设计 <em>54</em></div>
+            <div class="libitem">创意概念 <em>52</em></div>
+            <div class="libitem">节日热点 <em>38</em></div>
+            <div class="libitem">科技未来 <em>112</em></div>
+            <div class="libitem">自然生态 <em>61</em></div>
+            <div class="libitem">建筑空间 <em>37</em></div>
+            <div class="libitem">其他 <em>42</em></div>
+          </div>
+          <div class="libgroup">
+            <h5>热门标签</h5>
+            <div class="libtags"><span>赛博朋克</span><span>国风</span><span>电影感</span><span>未来科技</span><span>治愈</span><span>极简</span><span>梦幻</span><span>卡通3D</span><span>蓝紫光</span></div>
+          </div>
+          <div class="libgroup">
+            <h5>灵感雷达</h5>
+            <div class="libradar">为你发现更多相关灵感</div>
+          </div>
+        </div>
+      </nav>
+
       <!-- 创作流程导航（灵感 → 视觉） -->
       <nav class="navset" data-set="flow">
         <a class="sidebar__back" data-go="home">返回工作台</a>
@@ -1058,18 +1168,101 @@ a{color:inherit;text-decoration:none}
 
       <!-- ================= 灵感库 ================= -->
       <section class="screen" data-screen="lib">
-        <div class="screen__head"><button class="btn" data-go="home" style="margin-right:4px">← 返回工作台</button><h1 class="screen__title">灵感库</h1>
-          <span class="screen__save" style="color:var(--dim)">海量灵感资源，每日更新，激发你的无限创意</span>
-        </div>
-        <div class="wide">
-          <div class="filters" id="libFilters">
-            <button class="filter is-on">全部</button><button class="filter">视觉风格</button>
-            <button class="filter">场景氛围</button><button class="filter">角色形象</button>
-            <button class="filter">镜头运用</button><button class="filter">色彩搭配</button>
-            <button class="filter">品牌设计</button><button class="filter">节日热点</button>
-            <button class="filter">科技未来</button><button class="filter">自然生态</button>
+        <div class="library">
+          <div class="library__main">
+            <div class="panel lib-head">
+              <div>
+                <h2>灵感库</h2>
+                <p>海量灵感资源，每日更新，激发你的无限创意</p>
+              </div>
+              <div class="lib-head__r">
+                <button class="abtn">↑ 灵感推荐</button>
+                <button class="abtn">新建文件夹</button>
+                <button class="abtn">批量操作 ▾</button>
+              </div>
+            </div>
+
+            <div class="lib-tools">
+              <div class="libsearch"><i class="icon i-search"></i><span>搜索灵感关键词，例如：赛博朋克、未来城市、极简…</span></div>
+              <button class="libtool">综合排序 <svg width="10" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></button>
+              <button class="libtool">时间筛选 <svg width="10" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></button>
+              <button class="libtool">筛选</button>
+              <button class="libtool" style="width:36px;justify-content:center;color:var(--accent)">▦</button>
+              <button class="libtool" style="width:36px;justify-content:center">≣</button>
+            </div>
+
+            <div class="libchips" id="libChips">
+              <button class="libchip is-on">全部</button>
+              <button class="libchip">视觉风格</button><button class="libchip">场景氛围</button>
+              <button class="libchip">角色形象</button><button class="libchip">镜头运用</button>
+              <button class="libchip">色彩搭配</button><button class="libchip">品牌设计</button>
+              <button class="libchip">节日热点</button><button class="libchip">科技未来</button>
+              <button class="libchip">自然生态</button><button class="libchip">建筑空间</button>
+              <button class="libchip">其他</button>
+            </div>
+
+            <div class="libgrid2" id="libGrid"></div>
           </div>
-          <div class="libgrid" id="libGrid"></div>
+
+          <aside class="libside">
+            <div class="libpanel">
+              <h4>灵感洞察 <small>近7天</small></h4>
+              <div style="font-size:12px;color:#9CABC4;margin-top:-4px">热门趋势</div>
+              <div class="trend"><b>1</b><span>赛博朋克</span><em>↑ 128%</em></div>
+              <div class="trend"><b>2</b><span>未来城市</span><em>↑ 96%</em></div>
+              <div class="trend"><b>3</b><span>国风水墨</span><em>↑ 78%</em></div>
+              <div class="trend off"><b>4</b><span>太空探索</span><em>↑ 65%</em></div>
+              <div class="trend off"><b>5</b><span>极简主义</span><em>↑ 54%</em></div>
+            </div>
+
+            <div class="libpanel">
+              <h4>色彩趋势</h4>
+              <div class="libbars">
+                <svg viewBox="0 0 42 42">
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#3B82F6" stroke-width="7" stroke-dasharray="28 72" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#B14BD8" stroke-width="7" stroke-dasharray="22 78" stroke-dashoffset="-3" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#00D8C0" stroke-width="7" stroke-dasharray="18 82" stroke-dashoffset="-25" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#00EF5C" stroke-width="7" stroke-dasharray="15 85" stroke-dashoffset="-43" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#666" stroke-width="7" stroke-dasharray="17 83" stroke-dashoffset="-58" transform="rotate(-90 21 21)"/>
+                </svg>
+                <ul>
+                  <li><i style="background:#3B82F6"></i>赛博蓝<em>28%</em></li>
+                  <li><i style="background:#B14BD8"></i>未来紫<em>22%</em></li>
+                  <li><i style="background:#00D8C0"></i>科技青<em>18%</em></li>
+                  <li><i style="background:#00EF5C"></i>极光绿<em>15%</em></li>
+                  <li><i style="background:#666"></i>其他<em>17%</em></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="libpanel">
+              <h4>灵感来源分布</h4>
+              <div class="libbars">
+                <svg viewBox="0 0 42 42">
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E86401" stroke-width="7" stroke-dasharray="32 68" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#3B82F6" stroke-width="7" stroke-dasharray="28 72" stroke-dashoffset="-7" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#B14BD8" stroke-width="7" stroke-dasharray="20 80" stroke-dashoffset="-35" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#00EF5C" stroke-width="7" stroke-dasharray="12 88" stroke-dashoffset="-55" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#666" stroke-width="7" stroke-dasharray="8 92" stroke-dashoffset="-67" transform="rotate(-90 21 21)"/>
+                </svg>
+                <ul>
+                  <li><i style="background:#E86401"></i>电影<em>32%</em></li>
+                  <li><i style="background:#3B82F6"></i>游戏<em>28%</em></li>
+                  <li><i style="background:#B14BD8"></i>摄影<em>20%</em></li>
+                  <li><i style="background:#00EF5C"></i>设计<em>12%</em></li>
+                  <li><i style="background:#666"></i>其他<em>8%</em></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="libpanel">
+              <h4>AI 灵感推荐 <small>↻ 换一换</small></h4>
+              <div class="aitem"><img src="../assets/miaochang-ui/shots/lib/17.webp" alt=""><div><b>未来城市夜景</b>未来科技 · 城市</div><span class="gen">生成</span></div>
+              <div class="aitem"><img src="../assets/miaochang-ui/shots/lib/18.webp" alt=""><div><b>水墨意境山水</b>国风 · 山水</div><span class="gen">生成</span></div>
+              <div class="aitem"><img src="../assets/miaochang-ui/shots/lib/19.webp" alt=""><div><b>太空宇航员</b>太空 · 科幻</div><span class="gen">生成</span></div>
+              <div class="libmore">更多 AI 灵感生成 →</div>
+            </div>
+          </aside>
         </div>
       </section>
     </div>
@@ -1099,8 +1292,9 @@ function go(name){
   if (!target) return;
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('is-on', s === target));
   /* 首页/团队/资产/灵感库 用工作台导航，其余用创作流程导航 */
-  const WORK = ['home', 'team', 'assets', 'lib'];
-  const set = WORK.includes(name) ? 'work' : 'flow';
+  const WORK = ['home', 'team', 'assets'];
+  const LIB_SET = ['lib'];
+  const set = LIB_SET.includes(name) ? 'lib' : (WORK.includes(name) ? 'work' : 'flow');
   document.querySelectorAll('.navset').forEach(ns => ns.classList.toggle('is-on', ns.dataset.set === set));
   document.querySelectorAll('.nav').forEach(n => n.classList.toggle('is-active', n.dataset.go === name));
   document.querySelectorAll('.topbar__tab').forEach(t => t.classList.toggle('is-active', t.dataset.go === name));
@@ -1260,19 +1454,31 @@ if (ag) ag.innerHTML = ASSETS.map(([n, meta, img, full]) => `
 
 /* ── 灵感库 ── */
 const LIB = [
-  ['赛博朋克·未来都市','赛博朋克 未来科技','2'],['国风山水·意境水墨','国风 山水','3'],
-  ['太空探索·宇宙幻想','太空 科幻','4'],['极简主义·光彩空间','极简 光影','5'],
-  ['少女肖像·温柔光影','人像 少女','6'],['产品广告·科技质感','产品 广告','7'],
-  ['奇幻世界·魔幻场景','奇幻 场景','8'],['霓虹人像·潮流街拍','人像 霓虹','9'],
-  ['卡通3D·可爱治愈','治愈 可爱','10'],['建筑设计·现代美学','建筑 现代','11'],
-  ['茶叶静物·东方禅意','国风 静物','12'],['人物肖像·真实质感','人像 写实','13'],
-  ['夏日饮品·清爽氛围','美食 清爽','14'],['日落剪影·叙事感','风景 叙事','15'],
-  ['木偶角色·童话感','角色 童话','16'],
+  ['赛博朋克·未来都市','赛博朋克','未来科技','2'],
+  ['国风山水·意境水墨','国风','山水','3'],
+  ['太空探索·宇宙幻想','太空','科幻','4'],
+  ['极简主义·光彩空间','极简','光影','5'],
+  ['少女肖像·温柔光影','人像','少女','6'],
+  ['产品广告·科技质感','产品','广告','7'],
+  ['奇幻世界·魔幻场景','奇幻','场景','8'],
+  ['霓虹人像·潮流街拍','人像','霓虹','9'],
+  ['卡通3D·可爱治愈','治愈','可爱','10'],
+  ['建筑设计·现代美学','建筑','现代','11'],
+  ['茶叶静物·东方禅意','国风','静物','12'],
+  ['人物肖像·真实质感','人像','写实','13'],
+  ['夏日饮品·清爽氛围','美食','清爽','14'],
+  ['日落剪影·叙事感','风景','叙事','15'],
+  ['木偶角色·童话感','角色','童话','16'],
 ];
 const lg = document.getElementById('libGrid');
-if (lg) lg.innerHTML = LIB.map(([n,tag,img]) => `
-  <div class="libcard"><img src="../assets/miaochang-ui/shots/lib/${img}.webp" alt="">
-    <div><b>${n}</b><small>${tag} · 2025-05-20</small></div></div>`).join('');
+if (lg) lg.innerHTML = LIB.map(([n, t1, t2, img]) => `
+  <div class="lcard"><div class="lcard__img">
+    <img src="../assets/miaochang-ui/shots/lib/${img}.webp" alt="">
+  </div><div class="lcard__meta">
+    <b>${n}</b>
+    <div class="lcard__tags"><span>${t1}</span><span>${t2}</span></div>
+    <small>2025-05-20 18:50</small>
+  </div></div>`).join('');
 
 /* ── 视觉生成：结果 + 生成流程 ── */
 const VRESULTS = [1,2,3,4].map(i => `../assets/miaochang-ui/img/result${i}.webp`);
@@ -1378,6 +1584,18 @@ document.querySelectorAll('.vslider').forEach(sl => {
 document.querySelectorAll('#vHistory img').forEach(img => img.addEventListener('click', () => {
   vGrid.innerHTML = ''; vGrid.appendChild(vShot(img.src, false));
   vLabel.textContent = '已载入历史记录'; vCount2.textContent = '1/1'; vFill.style.width = '100%';
+}));
+/* 灵感库分类 chips */
+const libChips = document.getElementById('libChips');
+if (libChips) libChips.addEventListener('click', e => {
+  const b = e.target.closest('.libchip'); if (!b) return;
+  libChips.querySelectorAll('.libchip').forEach(x => x.classList.remove('is-on'));
+  b.classList.add('is-on');
+});
+/* 灵感库侧栏选中 */
+document.querySelectorAll('.sidebar--lib .libitem, .libnav .libitem').forEach(it => it.addEventListener('click', () => {
+  it.parentElement.querySelectorAll('.libitem').forEach(x => x.classList.remove('is-on'));
+  it.classList.add('is-on');
 }));
 /* 筛选器 */
 document.querySelectorAll('.filters').forEach(f => f.addEventListener('click', e => {
