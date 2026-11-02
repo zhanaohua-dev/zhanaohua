@@ -566,29 +566,27 @@ html[data-theme="dark"] .case__shot{
   box-shadow:0 44px 76px -38px rgba(0,0,0,.8);
 }
 
-/* 云梦设计稿：点开后整页上下滚动浏览 */
+/* 云梦设计稿：点开后是一张连续的超长页面，上下滚动浏览 */
 .viewer__scroll{
-  flex:1 1 auto; overflow-y:auto; overscroll-behavior:contain;
+  flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
-  padding:clamp(16px,2.6vw,40px) clamp(12px,3vw,44px) clamp(36px,6vw,72px);
-  display:flex; flex-direction:column; align-items:center;
-  gap:clamp(14px,2.2vw,30px);
+  padding:clamp(14px,2.4vw,36px) clamp(12px,3vw,44px) clamp(36px,6vw,72px);
+  display:flex; flex-direction:column; align-items:center; gap:0;
   scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.22) transparent;
 }
 .viewer__scroll::-webkit-scrollbar{width:10px}
 .viewer__scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2); border-radius:999px}
-.viewer__item{margin:0; width:min(1240px,100%)}
-.viewer__item img{
-  display:block; width:100%; height:auto;
-  border-radius:12px; background:#0D1622;
+/* 17 张首尾相接：无间隙、无分割 */
+.viewer__stack{
+  flex:0 0 auto;         /* 不能被 flex 压缩，否则内容会被裁掉、也无法滚动 */
+  width:min(1240px,100%); line-height:0;
+  border-radius:12px; overflow:hidden;
+  background:#0D1622;
   box-shadow:0 30px 60px -34px rgba(0,0,0,.9);
 }
-.viewer__item figcaption{
-  margin-top:10px; font-size:12px; letter-spacing:.08em;
-  color:#6B7684; font-variant-numeric:tabular-nums;
-}
+.viewer__stack img{display:block; width:100%; height:auto; border:0}
 @media (max-width:640px){
-  .viewer__item img{border-radius:10px}
+  .viewer__stack{border-radius:10px}
 }
 
 /* 交互 Demo 全屏查看器 */
@@ -1079,7 +1077,7 @@ html[data-theme="dark"] .board__card{
     <span class="viewer__hint">上下滚动查看，Esc 退出</span>
     <button class="viewer__btn viewer__btn--close" id="ymClose" aria-label="关闭">✕</button>
   </div>
-  <div class="viewer__scroll" id="ymScroll"></div>
+  <div class="viewer__scroll" id="ymScroll" data-lenis-prevent></div>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
@@ -1741,20 +1739,19 @@ const GALLERY = [
   if (!box || !scroller) return;
   let built = false;
 
-  /* 第一次打开时才注入 17 张，避免首页一开始就加载全部大图 */
+  /* 第一次打开时才注入 17 张，避免首页一开始就加载全部大图；
+     17 张首尾相接拼成一整张超长页面 */
   const build = () => {
     if (built) return;
     built = true;
-    scroller.innerHTML = GALLERY.map(item =>
-      '<figure class="viewer__item">' +
-        '<img src="' + item.src + '" alt="云梦 · ' + item.cap + '" width="1920" height="1080" loading="lazy" decoding="async">' +
-        '<figcaption>' + item.cap + '</figcaption>' +
-      '</figure>'
-    ).join('');
+    scroller.innerHTML = '<div class="viewer__stack">' + GALLERY.map(item =>
+      '<img src="' + item.src + '" alt="云梦 · ' + item.cap + '" width="1920" height="1080" loading="lazy" decoding="async">'
+    ).join('') + '</div>';
   };
 
   const open = () => {
     build();
+    scroller.scrollTop = 0;      /* 每次打开都从封面开始 */
     box.dataset.open = 'true';
     box.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -1772,6 +1769,11 @@ const GALLERY = [
 
   document.getElementById('ymClose').addEventListener('click', close);
   addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+  /* Lenis 会接管 wheel 并 preventDefault，这里让滚轮只滚这个容器 */
+  ['wheel', 'touchmove'].forEach(type => {
+    scroller.addEventListener(type, e => e.stopPropagation(), { passive: true });
+  });
 })();
 
 (function bindGalleryLinks(){
