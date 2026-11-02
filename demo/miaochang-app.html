@@ -355,11 +355,19 @@ a{color:inherit;text-decoration:none}
 /* ================= 团队协作 / 资产库 / 灵感库 ================= */
 .wide{flex:1;display:flex;flex-direction:column;gap:20px;min-height:0;overflow-y:auto}
 .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.panel--s{padding:20px 22px}
-.kv{display:flex;gap:31px;flex-wrap:wrap}
-.kv div b{display:block;font-size:34px;font-weight:400;line-height:42px}
-.kv div span{font-size:15px;color:var(--dim)}
-.kv div em{font-style:normal;font-size:13px;color:var(--ok);margin-left:6px}
+.panel--s{padding:20px 22px;flex:none}
+.overview__title{font-size:20px;font-weight:400;margin-bottom:20px}
+.statcards{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.statcard{background:var(--surface-3);border:1px solid var(--line);border-radius:8px;padding:16px 18px 14px}
+.statcard span{display:block;font-size:16px;color:var(--text)}
+.statcard b{display:block;font-size:36px;line-height:44px;font-weight:400;margin:6px 0 10px}
+.statcard b small{font-size:16px;color:var(--dim);margin-left:2px}
+.statcard em{font-style:normal;font-size:16px;color:var(--text)}
+.statcard em i{font-style:normal;color:var(--ok)}
+.statcard em i.flat{color:var(--dim)}
+.statbar{position:relative;height:4px;border-radius:2px;background:#2A3442;margin:14px 0 6px;display:flex;align-items:center}
+.statbar i{display:block;height:4px;border-radius:2px;background:var(--accent)}
+.statbar em{position:absolute;right:0;top:-2px;transform:translateY(-100%);font-size:16px;color:var(--dim);font-style:normal}
 .tbl{width:100%;border-collapse:collapse;font-size:16px}
 .tbl th{font-size:15px;color:var(--dim);font-weight:400;text-align:left;padding:10px 0;border-bottom:1px solid var(--divider)}
 .tbl td{padding:14px 0;border-bottom:1px solid rgba(217,217,217,.07);color:var(--dim)}
@@ -861,12 +869,17 @@ a{color:inherit;text-decoration:none}
         <div class="screen__head"><button class="btn" data-go="home" style="margin-right:4px">← 返回工作台</button><h1 class="screen__title">团队协作</h1></div>
         <div class="wide">
           <div class="panel panel--s">
-            <div class="kv">
-              <div><span>进行中项目</span><b>8</b><em>较昨日 ↑2</em></div>
-              <div><span>本周完成任务</span><b>24</b><em>较上周 ↑35%</em></div>
-              <div><span>团队成员</span><b>12</b><em>较昨日 -</em></div>
-              <div><span>储存空间</span><b>512<small style="font-size:16px;color:var(--dim)">GB/2TB</small></b><em>25%</em></div>
-              <div><span>AI生成次数</span><b>1286</b><em>较昨日 ↑18%</em></div>
+            <h3 class="overview__title">团队概况</h3>
+            <div class="statcards">
+              <div class="statcard"><span>进行中项目</span><b>8</b><em>较昨日 <i>↑ 2</i></em></div>
+              <div class="statcard"><span>本周完成任务</span><b>24</b><em>较上周 <i>↑ 35%</i></em></div>
+              <div class="statcard"><span>团队成员</span><b>12</b><em>较昨日 <i class="flat">-</i></em></div>
+              <div class="statcard">
+                <span>储存空间</span>
+                <b>512<small>GB/2TB</small></b>
+                <div class="statbar"><i style="width:25%"></i><em>25%</em></div>
+              </div>
+              <div class="statcard"><span>AI生成次数</span><b>1286</b><em>较昨日 <i>↑ 18%</i></em></div>
             </div>
           </div>
           <div class="cards3" style="grid-template-columns:minmax(0,1121px) minmax(0,1fr)">
