@@ -345,6 +345,7 @@ html[data-theme="dark"] .i-moon{display:none}
   font-family:var(--serif); font-weight:400;
   font-size:clamp(34px,5.6vw,90px); line-height:1.02; letter-spacing:-.02em;
 }
+.case__title-en{font-size:.36em; letter-spacing:.06em; color:var(--muted); white-space:nowrap}
 .case__link{display:block}
 .case__link{transition:transform .5s var(--ease-out)}
 .case__link:hover{transform:translateY(-4px)}
@@ -799,6 +800,9 @@ html[data-theme="dark"] .board__card{
   .board__card{width:100%; transform:none !important; rotate:none; animation:none; aspect-ratio:4/3}
   .board__card span{font-size:9px; padding:1px 5px; left:5px; bottom:5px}
   .case__media{aspect-ratio:4/3}
+  /* 真实截图不撑 4:3 空框，直接铺满宽度 */
+  .case__media--photo{aspect-ratio:auto}
+  .case__shot{width:100%; border-radius:12px}
   .fui{width:88%; height:74%; aspect-ratio:auto}
   .fui__main{padding:10px 12px; gap:7px}
   .fui__kpis i{height:26px}
@@ -927,17 +931,20 @@ html[data-theme="dark"] .board__card{
     </article>
 
     <article class="case reveal">
-      <a class="case__link" href="#" data-soon="案例详情页待补充">
+      <a class="case__link" href="#" data-gallery="yunmeng">
         <div class="case__meta">
           <div class="case__tags">
             <span class="case__num">02</span>
-            <span>UX · UI · Data-heavy</span>
+            <span>App · UX · UI · Branding</span>
           </div>
-          <p class="case__desc">高密度数据表格与状态体系：让每天处理上千行数据的人少犯错，也少骂人。</p>
+          <p class="case__desc">云梦 YUN MENG——以「粉丝权益优先」和「极致公平体验」为核心的官方综合票务与粉丝社区 App。品牌、IP 形象、组件规范到购票全流程，一套做完：直面黄牛肆虐与粉丝真实需求被忽视这两个最大的痛点。</p>
         </div>
-        <h3 class="case__title">预付金管理系统</h3>
-        <div class="case__media"></div>
-        <span class="case__cta">查看案例 →</span>
+        <h3 class="case__title">云梦 <span class="case__title-en">YUN MENG</span></h3>
+        <div class="case__media case__media--photo">
+          <img class="case__shot" src="assets/yunmeng/10-home.webp"
+               alt="云梦 · 首页" width="1920" height="1080" loading="lazy" decoding="async">
+        </div>
+        <span class="case__cta">查看全部界面 →</span>
       </a>
     </article>
 
@@ -1097,7 +1104,7 @@ html[data-theme="dark"] .board__card{
   <iframe class="viewer__frame" id="demoFrame" title="妙场 视觉生成 交互 Demo" loading="lazy"></iframe>
 </div>
 
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="妙场 界面预览" data-open="false">
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="界面预览" data-open="false">
   <button class="lightbox__btn lightbox__close" id="lbClose" aria-label="关闭">✕</button>
   <button class="lightbox__btn lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="上一张">‹</button>
   <button class="lightbox__btn lightbox__nav lightbox__nav--next" id="lbNext" aria-label="下一张">›</button>
@@ -1742,16 +1749,25 @@ document.getElementById('year').textContent = new Date().getFullYear();
   });
 })();
 
-/* ---------- 妙场界面灯箱 ---------- */
+/* ---------- 云梦界面灯箱：按设计稿 01 → 17 的顺序排列 ---------- */
 const GALLERY = [
-  { src: 'assets/miaochang/01-home.webp',        cap: '首页 · 工作台' },
-  { src: 'assets/miaochang/02-inspiration.webp', cap: '灵感输入' },
-  { src: 'assets/miaochang/03-script.webp',      cap: '脚本创作' },
-  { src: 'assets/miaochang/04-storyboard.webp',  cap: '分镜拆解' },
-  { src: 'assets/miaochang/05-visual.webp',      cap: '视觉生成' },
-  { src: 'assets/miaochang/06-library.webp',     cap: '灵感库' },
-  { src: 'assets/miaochang/07-team.webp',        cap: '团队协作' },
-  { src: 'assets/miaochang/08-assets.webp',      cap: '资产库' },
+  { src: 'assets/yunmeng/01-cover.webp',       cap: '01 · 封面' },
+  { src: 'assets/yunmeng/02-background.webp',  cap: '02 · 设计背景' },
+  { src: 'assets/yunmeng/03-persona.webp',     cap: '03 · 用户画像' },
+  { src: 'assets/yunmeng/04-competitors.webp', cap: '04 · 竞品调研' },
+  { src: 'assets/yunmeng/05-style.webp',       cap: '05 · 设计风格' },
+  { src: 'assets/yunmeng/06-spec.webp',        cap: '06 · 设计规范' },
+  { src: 'assets/yunmeng/07-icons.webp',       cap: '07 · 图标设计' },
+  { src: 'assets/yunmeng/08-ip.webp',          cap: '08 · IP 形象' },
+  { src: 'assets/yunmeng/09-flow.webp',        cap: '09 · 购票流程' },
+  { src: 'assets/yunmeng/10-home.webp',        cap: '10 · 首页' },
+  { src: 'assets/yunmeng/11-booking.webp',     cap: '11 · 预约界面' },
+  { src: 'assets/yunmeng/12-ranking.webp',     cap: '12 · 榜单' },
+  { src: 'assets/yunmeng/13-profile.webp',     cap: '13 · 个人界面' },
+  { src: 'assets/yunmeng/14-overview-1.webp',  cap: '14 · 页面总览 01' },
+  { src: 'assets/yunmeng/15-overview-2.webp',  cap: '15 · 页面总览 02' },
+  { src: 'assets/yunmeng/16-overview-3.webp',  cap: '16 · 页面总览 03' },
+  { src: 'assets/yunmeng/17-overview-4.webp',  cap: '17 · 页面总览 04' },
 ];
 
 (function initGallery(){
@@ -1770,7 +1786,7 @@ const GALLERY = [
     img.classList.remove('is-ready');
     img.onload = () => img.classList.add('is-ready');
     img.src = item.src;
-    img.alt = '妙场 · ' + item.cap;
+    img.alt = '云梦 · ' + item.cap;
     cap.textContent = item.cap;
     count.textContent = (idx + 1) + ' / ' + GALLERY.length;
     preload(idx + 1); preload(idx - 1);
@@ -1791,7 +1807,9 @@ const GALLERY = [
   document.querySelectorAll('[data-gallery]').forEach(el => {
     el.addEventListener('click', e => {
       e.preventDefault();
-      openViewer();
+      /* 妙场：进全屏可交互 demo；云梦：进灯箱按顺序看 17 张设计稿 */
+      if (el.dataset.gallery === 'yunmeng') open(0);
+      else openViewer();
     });
   });
 
