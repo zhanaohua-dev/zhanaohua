@@ -566,61 +566,29 @@ html[data-theme="dark"] .case__shot{
   box-shadow:0 44px 76px -38px rgba(0,0,0,.8);
 }
 
-/* 灯箱：点开看全部界面 */
-.lightbox{
-  position:fixed; inset:0; z-index:200;
-  display:grid; place-items:center;
-  padding:clamp(14px,3.4vw,52px) clamp(14px,3.4vw,72px) clamp(52px,7vw,84px);
-  background:rgba(6,10,18,.94);
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-  opacity:0; pointer-events:none;
-  transition:opacity .3s var(--ease);
+/* 云梦设计稿：点开后整页上下滚动浏览 */
+.viewer__scroll{
+  flex:1 1 auto; overflow-y:auto; overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding:clamp(16px,2.6vw,40px) clamp(12px,3vw,44px) clamp(36px,6vw,72px);
+  display:flex; flex-direction:column; align-items:center;
+  gap:clamp(14px,2.2vw,30px);
+  scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.22) transparent;
 }
-.lightbox[data-open="true"]{opacity:1; pointer-events:auto}
-.lightbox__stage{
-  margin:0; display:grid; place-items:center;
-  width:100%; height:100%;
+.viewer__scroll::-webkit-scrollbar{width:10px}
+.viewer__scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2); border-radius:999px}
+.viewer__item{margin:0; width:min(1240px,100%)}
+.viewer__item img{
+  display:block; width:100%; height:auto;
+  border-radius:12px; background:#0D1622;
+  box-shadow:0 30px 60px -34px rgba(0,0,0,.9);
 }
-.lightbox__img{
-  max-width:100%; max-height:100%;
-  width:auto; height:auto;
-  border-radius:10px;
-  box-shadow:0 50px 90px -34px rgba(0,0,0,.85);
-  transform:scale(.965);
-  transition:transform .38s var(--ease-out), opacity .25s ease;
-  opacity:0;
+.viewer__item figcaption{
+  margin-top:10px; font-size:12px; letter-spacing:.08em;
+  color:#6B7684; font-variant-numeric:tabular-nums;
 }
-.lightbox__img.is-ready{opacity:1}
-.lightbox[data-open="true"] .lightbox__img{transform:scale(1)}
-
-.lightbox__btn{
-  position:absolute; z-index:2;
-  display:grid; place-items:center;
-  color:#fff; background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:999px; cursor:pointer;
-  transition:background-color .25s, border-color .25s, transform .25s var(--ease-out);
-}
-.lightbox__btn:hover{background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.4)}
-.lightbox__btn:active{transform:scale(.94)}
-.lightbox__close{top:clamp(12px,2.4vw,26px); right:clamp(12px,2.4vw,26px); width:42px; height:42px; font-size:15px}
-.lightbox__nav{
-  top:50%; transform:translateY(-50%);
-  width:52px; height:52px; font-size:26px; line-height:1;
-  padding-bottom:6px;
-}
-.lightbox__nav:hover{transform:translateY(-50%) scale(1.05)}
-.lightbox__nav--prev{left:clamp(10px,2.2vw,34px)}
-.lightbox__nav--next{right:clamp(10px,2.2vw,34px)}
-.lightbox__bar{
-  position:absolute; left:0; right:0; bottom:clamp(14px,2.4vw,26px);
-  display:flex; justify-content:center; align-items:center; gap:14px;
-  font-size:12.5px; letter-spacing:.06em; color:rgba(255,255,255,.72);
-}
-.lightbox__cap{color:#fff}
-.lightbox__count{opacity:.6; font-variant-numeric:tabular-nums}
 @media (max-width:640px){
-  .lightbox__nav{width:42px; height:42px; font-size:22px}
+  .viewer__item img{border-radius:10px}
 }
 
 /* 交互 Demo 全屏查看器 */
@@ -941,8 +909,8 @@ html[data-theme="dark"] .board__card{
         </div>
         <h3 class="case__title">云梦 <span class="case__title-en">YUN MENG</span></h3>
         <div class="case__media case__media--photo">
-          <img class="case__shot" src="assets/yunmeng/10-home.webp"
-               alt="云梦 · 首页" width="1920" height="1080" loading="lazy" decoding="async">
+          <img class="case__shot" src="assets/yunmeng/01-cover.webp"
+               alt="云梦 · 封面" width="1920" height="1080" loading="lazy" decoding="async">
         </div>
         <span class="case__cta">查看全部界面 →</span>
       </a>
@@ -1104,17 +1072,14 @@ html[data-theme="dark"] .board__card{
   <iframe class="viewer__frame" id="demoFrame" title="妙场 视觉生成 交互 Demo" loading="lazy"></iframe>
 </div>
 
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="界面预览" data-open="false">
-  <button class="lightbox__btn lightbox__close" id="lbClose" aria-label="关闭">✕</button>
-  <button class="lightbox__btn lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="上一张">‹</button>
-  <button class="lightbox__btn lightbox__nav lightbox__nav--next" id="lbNext" aria-label="下一张">›</button>
-  <figure class="lightbox__stage">
-    <img class="lightbox__img" id="lbImg" alt="" width="1800" height="1068" decoding="async">
-  </figure>
-  <div class="lightbox__bar">
-    <span class="lightbox__cap" id="lbCap"></span>
-    <span class="lightbox__count" id="lbCount"></span>
+<div class="viewer viewer--scroll" id="yunmengViewer" data-open="false" aria-hidden="true" role="dialog" aria-modal="true" aria-label="云梦 · 设计稿">
+  <div class="viewer__bar">
+    <span class="viewer__dot"></span>
+    <span class="viewer__title">云梦 YUN MENG · 设计稿 (17)</span>
+    <span class="viewer__hint">上下滚动查看，Esc 退出</span>
+    <button class="viewer__btn viewer__btn--close" id="ymClose" aria-label="关闭">✕</button>
   </div>
+  <div class="viewer__scroll" id="ymScroll"></div>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
@@ -1749,7 +1714,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
   });
 })();
 
-/* ---------- 云梦界面灯箱：按设计稿 01 → 17 的顺序排列 ---------- */
+/* ---------- 云梦设计稿数据：按 01 → 17 的顺序 ---------- */
 const GALLERY = [
   { src: 'assets/yunmeng/01-cover.webp',       cap: '01 · 封面' },
   { src: 'assets/yunmeng/02-background.webp',  cap: '02 · 设计背景' },
@@ -1770,70 +1735,54 @@ const GALLERY = [
   { src: 'assets/yunmeng/17-overview-4.webp',  cap: '17 · 页面总览 04' },
 ];
 
-(function initGallery(){
-  const box = document.getElementById('lightbox');
-  const img = document.getElementById('lbImg');
-  const cap = document.getElementById('lbCap');
-  const count = document.getElementById('lbCount');
-  if (!box || !img) return;
-  let idx = 0;
+(function initYunmengViewer(){
+  const box = document.getElementById('yunmengViewer');
+  const scroller = document.getElementById('ymScroll');
+  if (!box || !scroller) return;
+  let built = false;
 
-  const preload = i => { const p = new Image(); p.src = GALLERY[(i + GALLERY.length) % GALLERY.length].src; };
-
-  const show = i => {
-    idx = (i + GALLERY.length) % GALLERY.length;
-    const item = GALLERY[idx];
-    img.classList.remove('is-ready');
-    img.onload = () => img.classList.add('is-ready');
-    img.src = item.src;
-    img.alt = '云梦 · ' + item.cap;
-    cap.textContent = item.cap;
-    count.textContent = (idx + 1) + ' / ' + GALLERY.length;
-    preload(idx + 1); preload(idx - 1);
+  /* 第一次打开时才注入 17 张，避免首页一开始就加载全部大图 */
+  const build = () => {
+    if (built) return;
+    built = true;
+    scroller.innerHTML = GALLERY.map(item =>
+      '<figure class="viewer__item">' +
+        '<img src="' + item.src + '" alt="云梦 · ' + item.cap + '" width="1920" height="1080" loading="lazy" decoding="async">' +
+        '<figcaption>' + item.cap + '</figcaption>' +
+      '</figure>'
+    ).join('');
   };
 
-  const open = i => {
-    show(i);
+  const open = () => {
+    build();
     box.dataset.open = 'true';
+    box.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
     if (window.__lenis) window.__lenis.stop();
   };
   const close = () => {
+    if (box.dataset.open !== 'true') return;
     box.dataset.open = 'false';
+    box.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     if (window.__lenis) window.__lenis.start();
   };
+  window.openYunmengViewer = open;
+  window.closeYunmengViewer = close;
 
+  document.getElementById('ymClose').addEventListener('click', close);
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+})();
+
+(function bindGalleryLinks(){
   document.querySelectorAll('[data-gallery]').forEach(el => {
     el.addEventListener('click', e => {
       e.preventDefault();
-      /* 妙场：进全屏可交互 demo；云梦：进灯箱按顺序看 17 张设计稿 */
-      if (el.dataset.gallery === 'yunmeng') open(0);
+      /* 妙场：进全屏可交互 demo；云梦：进全屏长页，上下滚动看 17 张设计稿 */
+      if (el.dataset.gallery === 'yunmeng') openYunmengViewer();
       else openViewer();
     });
   });
-
-  document.getElementById('lbClose').addEventListener('click', close);
-  document.getElementById('lbPrev').addEventListener('click', () => show(idx - 1));
-  document.getElementById('lbNext').addEventListener('click', () => show(idx + 1));
-  box.addEventListener('click', e => { if (e.target === box || e.target.classList.contains('lightbox__stage')) close(); });
-
-  addEventListener('keydown', e => {
-    if (box.dataset.open !== 'true') return;
-    if (e.key === 'Escape') close();
-    else if (e.key === 'ArrowLeft') show(idx - 1);
-    else if (e.key === 'ArrowRight') show(idx + 1);
-  });
-
-  /* 触屏左右滑动 */
-  let sx = null;
-  box.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
-  box.addEventListener('touchend', e => {
-    if (sx === null) return;
-    const dx = e.changedTouches[0].clientX - sx;
-    if (Math.abs(dx) > 48) show(idx + (dx < 0 ? 1 : -1));
-    sx = null;
-  }, { passive: true });
 })();
 
 /* ---------- 妙场交互 Demo 全屏查看器 ---------- */
