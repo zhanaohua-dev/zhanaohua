@@ -1073,7 +1073,7 @@ html[data-theme="dark"] .board__card{
 <div class="viewer viewer--scroll" id="yunmengViewer" data-open="false" aria-hidden="true" role="dialog" aria-modal="true" aria-label="云梦 · 设计稿">
   <div class="viewer__bar">
     <span class="viewer__dot"></span>
-    <span class="viewer__title">云梦 YUN MENG · 设计稿 (17)</span>
+    <span class="viewer__title">云梦 YUN MENG · 设计稿 (10)</span>
     <span class="viewer__hint">上下滚动查看，Esc 退出</span>
     <button class="viewer__btn viewer__btn--close" id="ymClose" aria-label="关闭">✕</button>
   </div>
@@ -1712,7 +1712,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
   });
 })();
 
-/* ---------- 云梦设计稿数据：按 01 → 17 的顺序 ---------- */
+/* ---------- 云梦设计稿数据：前 9 张分页 + 尾部一张界面长图 ---------- */
 const GALLERY = [
   { src: 'assets/yunmeng/01-cover.webp',       cap: '01 · 封面' },
   { src: 'assets/yunmeng/02-background.webp',  cap: '02 · 设计背景' },
@@ -1723,14 +1723,7 @@ const GALLERY = [
   { src: 'assets/yunmeng/07-icons.webp',       cap: '07 · 图标设计' },
   { src: 'assets/yunmeng/08-ip.webp',          cap: '08 · IP 形象' },
   { src: 'assets/yunmeng/09-flow.webp',        cap: '09 · 购票流程' },
-  { src: 'assets/yunmeng/10-home.webp',        cap: '10 · 首页' },
-  { src: 'assets/yunmeng/11-booking.webp',     cap: '11 · 预约界面' },
-  { src: 'assets/yunmeng/12-ranking.webp',     cap: '12 · 榜单' },
-  { src: 'assets/yunmeng/13-profile.webp',     cap: '13 · 个人界面' },
-  { src: 'assets/yunmeng/14-overview-1.webp',  cap: '14 · 页面总览 01' },
-  { src: 'assets/yunmeng/15-overview-2.webp',  cap: '15 · 页面总览 02' },
-  { src: 'assets/yunmeng/16-overview-3.webp',  cap: '16 · 页面总览 03' },
-  { src: 'assets/yunmeng/17-overview-4.webp',  cap: '17 · 页面总览 04' },
+  { src: 'assets/yunmeng/10-screens.webp',     cap: '10 · 界面展示', h: 8640 },
 ];
 
 (function initYunmengViewer(){
@@ -1739,13 +1732,14 @@ const GALLERY = [
   if (!box || !scroller) return;
   let built = false;
 
-  /* 第一次打开时才注入 17 张，避免首页一开始就加载全部大图；
-     17 张首尾相接拼成一整张超长页面 */
+  /* 第一次打开时才注入图片，避免首页一开始就加载全部大图；
+     所有图首尾相接拼成一整张超长页面 */
   const build = () => {
     if (built) return;
     built = true;
     scroller.innerHTML = '<div class="viewer__stack">' + GALLERY.map(item =>
-      '<img src="' + item.src + '" alt="云梦 · ' + item.cap + '" width="1920" height="1080" loading="lazy" decoding="async">'
+      '<img src="' + item.src + '" alt="云梦 · ' + item.cap + '" width="1920" height="' + (item.h || 1080) + '"'
+        + ' style="aspect-ratio:1920/' + (item.h || 1080) + '" loading="lazy" decoding="async">'
     ).join('') + '</div>';
   };
 
