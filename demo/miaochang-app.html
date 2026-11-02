@@ -464,9 +464,10 @@ a{color:inherit;text-decoration:none}
 .lib-nav{display:none}
 .screen[data-screen="lib"] ~ * .sidebar,
 body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
-.library{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 328px;gap:20px;min-height:0}
+.library{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0}
+.library__body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 328px;gap:20px;min-height:0}
 .library__main{display:flex;flex-direction:column;gap:16px;min-height:0;overflow-y:auto;padding-right:6px}
-.lib-head{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px;flex:none}
+.lib-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;flex:none}
 .lib-head h2{font-size:24px;font-weight:400;margin-bottom:6px}
 .lib-head p{font-size:13px;color:var(--mute)}
 .lib-head__r{display:flex;gap:12px;align-items:center}
@@ -1238,19 +1239,20 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
       <!-- ================= 灵感库 ================= -->
       <section class="screen" data-screen="lib">
         <div class="library">
-          <div class="library__main">
-            <div class="panel lib-head">
+          <div class="panel lib-head">
               <div>
                 <h2>灵感库</h2>
                 <p>海量灵感资源，每日更新，激发你的无限创意</p>
               </div>
-              <div class="lib-head__r">
-                <button class="abtn">↑ 灵感推荐</button>
-                <button class="abtn">新建文件夹</button>
-                <button class="abtn">批量操作 ▾</button>
-              </div>
+            <div class="lib-head__r">
+              <button class="abtn">↑ 灵感推荐</button>
+              <button class="abtn">新建文件夹</button>
+              <button class="abtn">批量操作 ▾</button>
             </div>
+          </div>
 
+          <div class="library__body">
+          <div class="library__main">
             <div class="lib-tools">
               <div class="libsearch"><i class="icon i-search"></i><span>搜索灵感关键词，例如：赛博朋克、未来城市、极简…</span></div>
               <button class="libtool">综合排序 <svg width="10" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></button>
@@ -1332,6 +1334,7 @@ body:has(.screen[data-screen="lib"].is-on) .sidebar{width:183px}
               <div class="libmore">更多 AI 灵感生成 →</div>
             </div>
           </aside>
+          </div>
         </div>
       </section>
     </div>
