@@ -1822,12 +1822,16 @@ const GALLERY = [
 (function initDemoViewer(){
   const box = document.getElementById('demoViewer');
   const frame = document.getElementById('demoFrame');
-  const SRC = 'demo/miaochang-app.html';
+  const SRC = 'demo/miaochang-app.html?v=20251102a';
 
   if (!box || !frame) return;
 
   window.openViewer = () => {
-    if (!frame.getAttribute('src')) frame.setAttribute('src', SRC);
+    if (!frame.getAttribute('src')) {
+      frame.setAttribute('src', SRC);
+    } else {
+      try { frame.contentWindow.location.reload(); } catch (_) {}
+    }
     box.dataset.open = 'true';
     box.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
