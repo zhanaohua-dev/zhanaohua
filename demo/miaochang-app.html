@@ -402,6 +402,64 @@ a{color:inherit;text-decoration:none}
 .filter{height:32px;padding:0 16px;border-radius:999px;background:var(--field);border:1px solid var(--line-2);color:var(--dim);font-size:14px}
 .filter.is-on{background:var(--accent-soft);border-color:var(--accent);color:#fff}
 
+/* ================= 资产库（按设计稿） ================= */
+.assets-page{flex:1;display:grid;grid-template-columns:minmax(0,1278px) minmax(0,1fr);gap:20px;min-height:0}
+.assets-left{display:flex;flex-direction:column;gap:18px;min-height:0;overflow-y:auto;padding-right:6px}
+.assets-head{display:flex;align-items:flex-start;justify-content:space-between;padding:22px 26px;flex:none}
+.assets-head h2{font-size:24px;font-weight:400;margin-bottom:6px}
+.assets-head p{font-size:15px;color:var(--mute)}
+.assets-head__right{display:flex;align-items:center;gap:12px}
+.assets-head__right .cap{font-size:16px;color:var(--dim);margin-right:8px}
+.abtn{height:40px;padding:0 20px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface-3);color:var(--dim);font-size:15px;transition:.18s}
+.abtn:hover{border-color:#3A4553;color:#fff}
+.abtn--pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.abtn--pri:hover{filter:brightness(1.08)}
+.assets-tools{display:flex;align-items:center;gap:12px;flex:none}
+.asearch{flex:1;height:40px;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--field);border:1px solid var(--line-2);border-radius:8px;color:var(--mute);font-size:15px}
+.asearch .icon{width:15px;height:15px;color:var(--dim)}
+.asel{height:40px;min-width:118px;padding:0 14px;border-radius:8px;background:var(--field);border:1px solid var(--line-2);color:var(--mute);font-size:15px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
+.asel:hover{border-color:#3A4553}
+.viewtoggle{display:flex;gap:0;margin-left:auto}
+.viewtoggle button{width:38px;height:38px;display:grid;place-items:center;color:var(--mute);border-radius:6px}
+.viewtoggle button.is-on{color:var(--accent)}
+.catgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;flex:none}
+.catcard{background:var(--surface-3);border:1px solid var(--line);border-radius:10px;padding:18px 16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:.2s;min-height:132px}
+.catcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.catcard .ic{height:58px;display:flex;align-items:center}
+.catcard .ic img{height:58px;width:auto;max-width:100%;object-fit:contain}
+.catcard b{font-size:16px;font-weight:400}
+.catcard small{font-size:13px;color:var(--mute)}
+.catword{font-size:38px;line-height:1;font-weight:600;letter-spacing:-.02em;background:linear-gradient(180deg,#4A7BF7,#2B4FCC);-webkit-background-clip:text;background-clip:text;color:transparent}
+.datelabel{font-size:20px;font-weight:400;margin:4px 0 -2px;flex:none}
+.assets-grid2{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.acard{background:var(--surface-3);border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;transition:.2s}
+.acard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.acard__img{aspect-ratio:212/150;display:grid;place-items:center;background:var(--field);overflow:hidden}
+.acard__img img{max-width:86%;max-height:86%;object-fit:contain}
+.acard__img--full img{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover}
+.acard__meta{padding:10px 12px}
+.acard__meta b{display:block;font-size:15px;font-weight:400;margin-bottom:4px}
+.acard__meta small{font-size:12px;color:var(--mute)}
+/* 右侧详情 */
+.assets-detail{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
+.assets-detail__hd{display:flex;align-items:center;justify-content:space-between}
+.assets-detail__hd b{font-size:18px;font-weight:400}
+.assets-detail__hd span{color:var(--dim);cursor:pointer}
+.assets-detail__pic{border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.assets-detail__pic img{width:100%;aspect-ratio:342/208;object-fit:cover}
+.dl{display:grid;grid-template-columns:82px minmax(0,1fr);gap:10px 12px;font-size:14px}
+.dl dt{color:var(--mute)}
+.dl dd{color:var(--dim)}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.tag{padding:3px 10px;border-radius:6px;border:1px solid var(--line-2);background:var(--field);font-size:13px;color:var(--dim)}
+.actbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actbtns button{height:36px;border-radius:8px;border:1px solid var(--line-2);background:var(--field);color:var(--dim);font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+.actbtns button:hover{border-color:var(--accent);color:#fff}
+.versions{display:flex;flex-direction:column;gap:12px}
+.ver{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim)}
+.ver img{width:26px;height:26px;border-radius:50%;object-fit:cover}
+.ver small{margin-left:auto;color:var(--mute);font-size:12px}
+
 /* 滚动条 */
 .screen ::-webkit-scrollbar{width:6px}
 .screen ::-webkit-scrollbar-thumb{background:#2A3442;border-radius:3px}
@@ -910,21 +968,91 @@ a{color:inherit;text-decoration:none}
 
       <!-- ================= 资产库 ================= -->
       <section class="screen" data-screen="assets">
-        <div class="screen__head">
-          <h1 class="screen__title">资产库</h1>
-          <span class="screen__save" style="color:var(--dim)">512GB/2TB</span>
-          <button class="btn" style="margin-left:auto;background:var(--accent);border-color:var(--accent);color:#fff">上传资产</button>
-          <button class="btn">新建文件夹</button>
-          <button class="btn">批量操作 ▾</button>
-        </div>
-        <div class="wide">
-          <div class="filters">
-            <button class="filter is-on">全部</button><button class="filter">品牌主视觉</button>
-            <button class="filter">LOGO&标识</button><button class="filter">字体规范</button>
-            <button class="filter">色彩规范</button><button class="filter">IP形象</button>
-            <button class="filter">产品图片</button>
+        <div class="assets-page">
+          <div class="assets-left">
+            <div class="panel assets-head">
+              <div>
+                <h2>资产库</h2>
+                <p>所有品牌相关的视觉、音频、文档等资产的统一管理与使用</p>
+              </div>
+              <div class="assets-head__right">
+                <span class="cap">512GB/2TB</span>
+                <button class="abtn abtn--pri">↑ 上传资产</button>
+                <button class="abtn">新建文件夹</button>
+                <button class="abtn">批量操作 ▾</button>
+              </div>
+            </div>
+
+            <div class="assets-tools">
+              <div class="asearch"><i class="icon i-search"></i><span>搜索资产名称、标签、类型</span></div>
+              <button class="asel"><span>资产类型</span><svg width="10" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></button>
+              <button class="asel"><span>标签</span><svg width="10" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></button>
+              <button class="asel"><span>上传时间</span><svg width="10" height="6" viewBox="0 0 12 6" fill="none" stroke="currentColor"><path d="M1 1l5 4 5-4"/></svg></button>
+              <div class="viewtoggle">
+                <button class="is-on">▦</button>
+                <button>≣</button>
+              </div>
+            </div>
+
+            <div class="catgrid" id="catGrid">
+              <div class="catcard"><div class="ic"><img src="../assets/miaochang-ui/shots/assets/2.webp" alt=""></div><b>品牌主视觉</b><small>32个资产</small></div>
+              <div class="catcard"><div class="ic"><span class="catword">LOGO</span></div><b>LOGO&amp;标识</b><small>12个资产</small></div>
+              <div class="catcard"><div class="ic"><span class="catword">Aa</span></div><b>字体规范</b><small>8个资产</small></div>
+              <div class="catcard"><div class="ic">
+                <svg width="58" height="58" viewBox="0 0 42 42">
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E86401" stroke-width="7" stroke-dasharray="25 75" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#B14BD8" stroke-width="7" stroke-dasharray="25 75" stroke-dashoffset="0" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#3B82F6" stroke-width="7" stroke-dasharray="25 75" stroke-dashoffset="-25" transform="rotate(-90 21 21)"/>
+                  <circle cx="21" cy="21" r="15.9" fill="none" stroke="#00D8A0" stroke-width="7" stroke-dasharray="25 75" stroke-dashoffset="-50" transform="rotate(-90 21 21)"/>
+                </svg>
+              </div><b>色彩规范</b><small>6个资产</small></div>
+              <div class="catcard"><div class="ic"><img src="../assets/miaochang-ui/shots/assets/3.webp" alt=""></div><b>IP形象</b><small>24个资产</small></div>
+              <div class="catcard"><div class="ic"><img src="../assets/miaochang-ui/shots/assets/4.webp" alt=""></div><b>产品图片</b><small>48个资产</small></div>
+            </div>
+
+            <div class="datelabel">全部资产</div>
+            <div class="assets-grid2" id="assetsGrid"></div>
           </div>
-          <div class="assetsgrid" id="assetsGrid"></div>
+
+          <aside class="assets-detail">
+            <div class="assets-detail__hd"><b>主视觉海报_v2.jpg</b><span>☆ ✕</span></div>
+            <div class="assets-detail__pic"><img src="../assets/miaochang-ui/shots/assets/18.webp" alt="主视觉海报"></div>
+            <div>
+              <div class="pfield__label" style="font-size:16px;margin-bottom:10px">基本信息</div>
+              <dl class="dl">
+                <dt>类型</dt><dd>JPG图片</dd>
+                <dt>尺寸</dt><dd>1920×1080</dd>
+                <dt>大小</dt><dd>2.4MB</dd>
+                <dt>上传时间</dt><dd>2026-05-06 14:08</dd>
+                <dt>上传人</dt><dd>炸脑花的设计日记</dd>
+                <dt>所属项目</dt><dd>未来城市宣传片</dd>
+              </dl>
+            </div>
+            <div>
+              <div class="pfield__label" style="font-size:16px;margin-bottom:10px">标签</div>
+              <div class="tags"><span class="tag">主视觉</span><span class="tag">未来科技</span><span class="tag">2026</span></div>
+            </div>
+            <div>
+              <div class="pfield__label" style="font-size:16px;margin-bottom:10px">描述</div>
+              <p style="font-size:14px;line-height:22px;color:var(--dim)">未来城市宣传片主视觉海报<br>用于官网和线下物料宣传</p>
+            </div>
+            <div>
+              <div class="pfield__label" style="font-size:16px;margin-bottom:10px">操作</div>
+              <div class="actbtns">
+                <button>👁 预览</button><button>↓ 下载</button>
+                <button>↗ 分享</button><button>✎ 编辑</button>
+                <button>⤢ 移动</button><button>⋯ 更多</button>
+              </div>
+            </div>
+            <div>
+              <div class="pfield__label" style="font-size:16px;margin-bottom:10px">历史版本</div>
+              <div class="versions">
+                <div class="ver"><b style="font-size:13px">v1</b><img src="../assets/miaochang-ui/shots/assets/19.webp" alt=""><span>炸脑花设计日记</span><small>2026-05-02 16:20</small></div>
+                <div class="ver"><b style="font-size:13px">v2</b><img src="../assets/miaochang-ui/shots/assets/20.webp" alt=""><span>星辰大海</span><small>2026-05-21 20:32</small></div>
+                <div class="ver"><b style="font-size:13px">v0</b><img src="../assets/miaochang-ui/shots/assets/21.webp" alt=""><span>AI创作小助手</span><small>2026-06-03 19:03</small></div>
+              </div>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -1108,16 +1236,27 @@ if (tc) tc.innerHTML = CHATS.map(([n,where,msg,time,img]) => `
 
 /* ── 资产库 ── */
 const ASSETS = [
-  ['品牌升级 2025','28项','2'],['春季营销活动','28项','3'],['主视觉海报','28项','4'],
-  ['品牌LOGO标准版.svg','28项','5'],['品牌色板2.0','28项','6'],['IP-灵灵-3D.png','28项','7'],
-  ['宣传片片头.pdf','28项','8'],['产品界面设计稿.fig','28项','9'],['启动页背景.psd','28项','10'],
-  ['产品展示图-1.png','28项','11'],['鲜乳口味','28项','12'],['品牌微电影','28项','13'],
-  ['城市之光','28项','14'],['人物肖像','28项','15'],['品牌手册','28项','16'],
+  ['品牌升级 2025','28项 · 2025-05-20 18:50','2', false],
+  ['春季营销活动','28项 · 2026-08-03 17:20','3', false],
+  ['主视觉海报','28项 · 2025-08-20 19:50','18', true],
+  ['品牌LOGO标准版.svg','28项 · 2025-08-26 08:20','5', true],
+  ['品牌色板2.0','28项 · 2025-05-20 18:50','6', true],
+  ['IP-灵灵-3D.png','28项 · 2026-02-12 13:55','7', true],
+  ['宣传片片头.pdf','28项 · 2026-02-17 16:22','8', true],
+  ['产品界面设计稿.fig','28项 · 2026-03-21 11:26','9', true],
+  ['启动页背景.psd','28项 · 2026-04-16 19:51','10', true],
+  ['产品展示图-1.png','28项 · 2025-05-20 18:50','11', true],
+  ['鲜乳口味','28项 · 2026-02-12 12:33','12', true],
+  ['品牌微电影','28项 · 2026-03-21 11:26','13', true],
+  ['城市之光','28项 · 2026-04-16 19:51','14', true],
+  ['人物肖像','28项 · 2026-03-21 11:26','15', true],
+  ['品牌手册','28项 · 2026-02-17 16:22','16', true],
 ];
 const ag = document.getElementById('assetsGrid');
-if (ag) ag.innerHTML = ASSETS.map(([n,cnt,img]) => `
-  <div class="asset"><img src="../assets/miaochang-ui/shots/assets/${img}.webp" alt="">
-    <div>${n}<small>${cnt} · 2025-05-20 18:50</small></div></div>`).join('');
+if (ag) ag.innerHTML = ASSETS.map(([n, meta, img, full]) => `
+  <div class="acard"><div class="acard__img ${full ? 'acard__img--full' : ''}">
+    <img src="../assets/miaochang-ui/shots/assets/${img}.webp" alt="">
+  </div><div class="acard__meta"><b>${n}</b><small>${meta}</small></div></div>`).join('');
 
 /* ── 灵感库 ── */
 const LIB = [
