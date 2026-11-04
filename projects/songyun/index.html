@@ -46,6 +46,26 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 }
 .spot:active{transform:none}
 
+/* 可选手卡（使用目的 / 身体状态 …） */
+.pcard-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.pcard{z-index:1;pointer-events:auto}
+.pcard{
+  position:absolute;border-radius:11px;overflow:hidden;
+  cursor:pointer;transform-origin:center center;
+  transition:transform .55s var(--ease), box-shadow .45s var(--ease);
+  will-change:transform;
+}
+.pcard img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1)}
+.pcard:hover{transform:scale(1.05);box-shadow:0 22px 48px -18px rgba(90,48,20,.45)}
+.pcard:hover img{animation:cardBreath 9s ease-in-out infinite alternate}
+@keyframes cardBreath{from{transform:scale(1)}to{transform:scale(1.09)}}
+.pcard.is-on{box-shadow:0 0 0 2px rgba(156,58,32,.6), 0 18px 40px -20px rgba(90,48,20,.5)}
+.pcard.is-on::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;
+  box-shadow:inset 0 0 0 3px rgba(156,58,32,.32), inset 0 0 26px rgba(156,58,32,.14);
+  pointer-events:none;
+}
+
 /* 加载动画 */
 .loading__bar{
   position:absolute;left:50%;top:52%;
@@ -122,6 +142,12 @@ const SCREENS = [
   { id: 'loading', img: 'img/02-loading.webp', name: '生成中', auto: { go: 'purpose', delay: 2200 }, loading: true },
   {
     id: 'purpose', img: 'img/03-purpose.webp', name: '使用目的',
+    cards: [
+      { key: 'wenfang',  img: 'img/card-purpose-1.webp', x: 13.83, y: 21.94, w: 16.25, h: 46.25 },
+      { key: 'liyi',     img: 'img/card-purpose-2.webp', x: 32.50, y: 34.93, w: 16.45, h: 46.25 },
+      { key: 'jisi',     img: 'img/card-purpose-3.webp', x: 51.56, y: 18.89, w: 16.02, h: 46.74 },
+      { key: 'juanyang', img: 'img/card-purpose-4.webp', x: 72.89, y: 28.75, w: 16.30, h: 46.74 },
+    ],
     spots: [
       { x: 37, y: 79, w: 10, h: 6, go: 'home', label: '上一步' },
       { x: 58.5, y: 79, w: 11, h: 6, go: 'body', label: '下一步' },
@@ -238,6 +264,27 @@ SCREENS.forEach((s, i) => {
   img.loading = i < 3 ? 'eager' : 'lazy';
   el.appendChild(img);
 
+  if (s.cards) {
+    const layer = document.createElement('div');
+    layer.className = 'pcard-layer';
+    s.cards.forEach((c, ci) => {
+      const card = document.createElement('div');
+      card.className = 'pcard';
+      card.dataset.key = c.key;
+      card.style.left = c.x + '%';
+      card.style.top = c.y + '%';
+      card.style.width = c.w + '%';
+      card.style.height = c.h + '%';
+      const ci2 = document.createElement('img');
+      ci2.src = c.img;
+      ci2.alt = '';
+      ci2.draggable = false;
+      card.appendChild(ci2);
+      layer.appendChild(card);
+    });
+    el.appendChild(layer);
+  }
+
   if (s.loading) {
     const bar = document.createElement('div');
     bar.className = 'loading__bar';
@@ -312,6 +359,14 @@ function go(id) {
 
 /* ── 交互 ── */
 stage.addEventListener('click', e => {
+  /* 卡片选择：单选，不跳页 */
+  const card = e.target.closest('.pcard');
+  if (card) {
+    card.parentElement.querySelectorAll('.pcard').forEach(c => c.classList.remove('is-on'));
+    card.classList.add('is-on');
+    return;
+  }
+
   const spot = e.target.closest('.spot');
   if (!spot) return;
 
