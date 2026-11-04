@@ -66,8 +66,8 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   background:#efe3cf;
 }
 /* 图完整保留：只做极小的上下浮动，不裁内容 */
-/* 图片完整保留，一个像素都不裁（contain + 与卡片同比例） */
-.pcard img{display:block;width:100%;height:100%;object-fit:contain}
+/* 卡片内容 = 整屏图原位一块，不缩放不裁切 */
+.pcard{background-repeat:no-repeat;background-color:transparent}
 /* 悬停：整张卡片浮起并轻微上下呼吸，图本身不动 */
 .pcard:hover{
   animation:cardLift 3.2s ease-in-out infinite alternate;
@@ -293,11 +293,11 @@ SCREENS.forEach((s, i) => {
       card.style.top = c.y + '%';
       card.style.width = c.w + '%';
       card.style.height = c.h + '%';
-      const ci2 = document.createElement('img');
-      ci2.src = c.img;
-      ci2.alt = '';
-      ci2.draggable = false;
-      card.appendChild(ci2);
+      /* 直接取同一张整屏图的对应区域，和底图逐像素对齐，不会有任何裁切/错位 */
+      card.style.backgroundImage = 'url(' + s.img + ')';
+      card.style.backgroundSize = '1920px 1080px';
+      card.style.backgroundPosition =
+        (-(1920 * c.x / 100)).toFixed(2) + 'px ' + (-(1080 * c.y / 100)).toFixed(2) + 'px';
       layer.appendChild(card);
 
       const slot = document.createElement('div');
