@@ -54,11 +54,20 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   cursor:pointer;transform-origin:center center;
   transition:transform .55s var(--ease), box-shadow .45s var(--ease);
   will-change:transform;
+  background:#efe3cf;
 }
-.pcard img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1)}
-.pcard:hover{transform:scale(1.05);box-shadow:0 22px 48px -18px rgba(90,48,20,.45)}
-.pcard:hover img{animation:cardBreath 9s ease-in-out infinite alternate}
-@keyframes cardBreath{from{transform:scale(1)}to{transform:scale(1.09)}}
+/* 图完整保留：只做极小的上下浮动，不裁内容 */
+/* 图片完整保留，一个像素都不裁（contain + 与卡片同比例） */
+.pcard img{display:block;width:100%;height:100%;object-fit:contain}
+/* 悬停：整张卡片浮起并轻微上下呼吸，图本身不动 */
+.pcard:hover{
+  animation:cardLift 3.2s ease-in-out infinite alternate;
+  box-shadow:0 34px 58px -24px rgba(90,48,20,.52);
+}
+@keyframes cardLift{
+  from{transform:translateY(-18px)}
+  to{transform:translateY(-6px)}
+}
 .pcard.is-on{box-shadow:0 0 0 2px rgba(156,58,32,.6), 0 18px 40px -20px rgba(90,48,20,.5)}
 .pcard.is-on::after{
   content:"";position:absolute;inset:0;border-radius:inherit;
