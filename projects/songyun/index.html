@@ -54,12 +54,11 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 .pslot{
   position:absolute;border-radius:11px;pointer-events:none;z-index:1;
   background:#e3d5c0;
-  filter:blur(1.2px);
   opacity:0;transition:opacity .3s var(--ease);
 }
 .pcard:hover + .pslot{opacity:1}
 .pcard{
-  position:absolute;border-radius:11px;overflow:hidden;
+  position:absolute;border-radius:13px;overflow:hidden;
   cursor:pointer;transform-origin:center center;
   transition:transform .55s var(--ease), box-shadow .45s var(--ease);
   will-change:transform;
@@ -71,11 +70,11 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 /* 悬停：整张卡片浮起并轻微上下呼吸，图本身不动 */
 .pcard:hover{
   animation:cardLift 3.2s ease-in-out infinite alternate;
-  box-shadow:0 34px 58px -24px rgba(90,48,20,.52);
+  box-shadow:0 38px 62px -26px rgba(90,48,20,.55), 0 8px 18px -8px rgba(90,48,20,.35);
 }
 @keyframes cardLift{
-  from{transform:translateY(-10px)}
-  to{transform:translateY(-3px)}
+  from{transform:translateY(-5px)}
+  to{transform:translateY(-1px)}
 }
 .pcard.is-on{box-shadow:0 0 0 2px rgba(156,58,32,.6), 0 18px 40px -20px rgba(90,48,20,.5)}
 .pcard.is-on::after{
@@ -289,15 +288,17 @@ SCREENS.forEach((s, i) => {
       const card = document.createElement('div');
       card.className = 'pcard';
       card.dataset.key = c.key;
-      card.style.left = c.x + '%';
-      card.style.top = c.y + '%';
-      card.style.width = c.w + '%';
-      card.style.height = c.h + '%';
-      /* 直接取同一张整屏图的对应区域，和底图逐像素对齐，不会有任何裁切/错位 */
+      /* 内缩 1.5px：把卡片框外的那一圈纸色切掉，浮起时不会有浅色描边 */
+      const n = 1.5;
+      card.style.left = 'calc(' + c.x + '% + ' + n + 'px)';
+      card.style.top = 'calc(' + c.y + '% + ' + n + 'px)';
+      card.style.width = 'calc(' + c.w + '% - ' + (n * 2) + 'px)';
+      card.style.height = 'calc(' + c.h + '% - ' + (n * 2) + 'px)';
+      /* 内容取自同一张整屏图的对应区域，与底图逐像素对齐 */
       card.style.backgroundImage = 'url(' + s.img + ')';
       card.style.backgroundSize = '1920px 1080px';
       card.style.backgroundPosition =
-        (-(1920 * c.x / 100)).toFixed(2) + 'px ' + (-(1080 * c.y / 100)).toFixed(2) + 'px';
+        (-(1920 * c.x / 100 + n)).toFixed(2) + 'px ' + (-(1080 * c.y / 100 + n)).toFixed(2) + 'px';
       layer.appendChild(card);
 
       const slot = document.createElement('div');
