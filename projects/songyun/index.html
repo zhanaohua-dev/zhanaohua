@@ -58,15 +58,14 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 }
 .pcard:hover + .pslot{opacity:1}
 .pcard{
-  position:absolute;border-radius:13px;overflow:hidden;
+  position:absolute;border-radius:0;overflow:visible;
   cursor:pointer;transform-origin:center center;
   transition:transform .55s var(--ease), box-shadow .45s var(--ease);
   will-change:transform;
   background:#efe3cf;
 }
 /* 图完整保留：只做极小的上下浮动，不裁内容 */
-/* 卡片内容 = 整屏图原位一块，不缩放不裁切 */
-.pcard{background-repeat:no-repeat;background-color:transparent}
+.pcard img{display:block;width:100%;height:100%;object-fit:cover}
 /* 悬停：整张卡片浮起并轻微上下呼吸，图本身不动 */
 .pcard:hover{
   animation:cardLift 3.2s ease-in-out infinite alternate;
@@ -76,12 +75,8 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   from{transform:translateY(-5px)}
   to{transform:translateY(-1px)}
 }
-.pcard.is-on{box-shadow:0 0 0 2px rgba(156,58,32,.6), 0 18px 40px -20px rgba(90,48,20,.5)}
-.pcard.is-on::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;
-  box-shadow:inset 0 0 0 3px rgba(156,58,32,.32), inset 0 0 26px rgba(156,58,32,.14);
-  pointer-events:none;
-}
+.pcard.is-on{filter:drop-shadow(0 0 0 rgba(0,0,0,0)) drop-shadow(0 14px 26px rgba(90,48,20,.35))}
+.pcard.is-on img{filter:drop-shadow(0 0 3px rgba(156,58,32,.85)) drop-shadow(0 0 1px rgba(156,58,32,.9))}
 
 /* 加载动画 */
 .loading__bar{
@@ -160,12 +155,11 @@ const SCREENS = [
   {
     id: 'purpose', img: 'img/03-purpose.webp', name: '使用目的',
     cards: [
-      { key: 'wenfang',  img: 'img/card-purpose-1.webp', x: 13.83, y: 21.94, w: 16.25, h: 46.25, slot: '#e4d5c1' },
-      { key: 'liyi',     img: 'img/card-purpose-2.webp', x: 32.50, y: 34.93, w: 16.45, h: 46.25, slot: '#e4d6c2' },
-      { key: 'jisi',     img: 'img/card-purpose-3.webp', x: 51.56, y: 18.89, w: 16.02, h: 46.74, slot: '#e4d6c1' },
-      { key: 'juanyang', img: 'img/card-purpose-4.webp', x: 72.89, y: 28.75, w: 16.30, h: 46.74, slot: '#dcccb4' },
-    ],
-    spots: [
+      { key: 'wenfang',  img: 'img/card-purpose-1.webp', x: 13.83, y: 21.94, w: 16.54, h: 46.36, slot: '#e4d5c1' },
+      { key: 'liyi',     img: 'img/card-purpose-2.webp', x: 32.42, y: 34.86, w: 16.54, h: 46.36, slot: '#e4d6c2' },
+      { key: 'jisi',     img: 'img/card-purpose-3.webp', x: 51.02, y: 18.89, w: 16.54, h: 46.36, slot: '#e4d6c2' },
+      { key: 'juanyang', img: 'img/card-purpose-4.webp', x: 69.61, y: 28.75, w: 16.54, h: 46.36, slot: '#e3d5c0' },
+    ],    spots: [
       { x: 37, y: 79, w: 10, h: 6, go: 'home', label: '上一步' },
       { x: 58.5, y: 79, w: 11, h: 6, go: 'body', label: '下一步' },
     ],
@@ -288,17 +282,15 @@ SCREENS.forEach((s, i) => {
       const card = document.createElement('div');
       card.className = 'pcard';
       card.dataset.key = c.key;
-      /* 内缩 1.5px：把卡片框外的那一圈纸色切掉，浮起时不会有浅色描边 */
-      const n = 1.5;
-      card.style.left = 'calc(' + c.x + '% + ' + n + 'px)';
-      card.style.top = 'calc(' + c.y + '% + ' + n + 'px)';
-      card.style.width = 'calc(' + c.w + '% - ' + (n * 2) + 'px)';
-      card.style.height = 'calc(' + c.h + '% - ' + (n * 2) + 'px)';
-      /* 内容取自同一张整屏图的对应区域，与底图逐像素对齐 */
-      card.style.backgroundImage = 'url(' + s.img + ')';
-      card.style.backgroundSize = '1920px 1080px';
-      card.style.backgroundPosition =
-        (-(1920 * c.x / 100 + n)).toFixed(2) + 'px ' + (-(1080 * c.y / 100 + n)).toFixed(2) + 'px';
+      card.style.left = c.x + '%';
+      card.style.top = c.y + '%';
+      card.style.width = c.w + '%';
+      card.style.height = c.h + '%';
+      const im = document.createElement('img');
+      im.src = c.img;
+      im.alt = '';
+      im.draggable = false;
+      card.appendChild(im);
       layer.appendChild(card);
 
       const slot = document.createElement('div');
