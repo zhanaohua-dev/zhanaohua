@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>宋韵寻香 · 数字化制香</title>
+<style>
+:root{
+  --ink:#2b1a12;
+  --paper:#efe3cf;
+  --cinnabar:#9c3a20;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --scale:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#efe3cf}
+body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothing:antialiased}
+
+/* 舞台：1920×1080 等比缩放 */
+.stage{
+  position:absolute;top:50%;left:50%;
+  width:1920px;height:1080px;
+  transform:translate(-50%,-50%) scale(var(--scale,1));
+  transform-origin:center center;
+  overflow:hidden;background:#efe3cf;
+}
+
+/* 屏 */
+.screen{
+  position:absolute;inset:0;
+  opacity:0;visibility:hidden;
+  transition:opacity .7s var(--ease), visibility .7s;
+}
+.screen.is-on{opacity:1;visibility:visible;z-index:2}
+.screen__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
+
+/* 热区 */
+.spot{
+  position:absolute;border:0;background:transparent;padding:0;
+  cursor:pointer;border-radius:10px;
+  transition:background-color .28s var(--ease), box-shadow .28s var(--ease), transform .28s var(--ease);
+}
+.spot:hover{background:rgba(255,246,225,.14);box-shadow:0 0 0 1px rgba(156,58,32,.35), 0 6px 26px rgba(120,60,20,.18)}
+.spot:active{transform:scale(.994)}
+.spot:focus-visible{outline:2px solid #9c3a20;outline-offset:2px}
+
+/* 选择态（卡片/圆点） */
+.pick{cursor:pointer;border-radius:12px}
+.pick:hover{background:rgba(255,244,220,.10)}
+.pick.is-on{background:rgba(156,58,32,.10);box-shadow:0 0 0 2px rgba(156,58,32,.42) inset}
+
+/* 加载动画 */
+.loading__bar{
+  position:absolute;left:50%;top:52%;
+  width:520px;height:2px;transform:translateX(-50%);
+  background:rgba(43,26,18,.18);overflow:hidden;
+}
+.loading__bar i{display:block;height:100%;width:0;background:#9c3a20;animation:fill 2.1s ease-in-out forwards}
+@keyframes fill{from{width:0}to{width:100%}}
+
+/* 控制条 */
+.hud{
+  position:fixed;right:22px;bottom:20px;z-index:50;
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:999px;
+  background:rgba(28,18,12,.55);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(240,225,200,.16);
+  opacity:.35;transition:opacity .3s;
+  color:#f3e8d5;font-size:12px;letter-spacing:.08em;
+}
+.hud:hover{opacity:1}
+.hud button{
+  width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,225,200,.22);
+  background:transparent;color:#f3e8d5;cursor:pointer;line-height:1;font-size:13px;
+  display:grid;place-items:center;transition:background-color .2s,border-color .2s;
+}
+.hud button:hover{background:rgba(240,225,200,.14);border-color:rgba(240,225,200,.4)}
+.hud__page{min-width:64px;text-align:center;font-variant-numeric:tabular-nums}
+.hud__name{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(243,232,213,.7)}
+
+/* 首屏提示 */
+.hint{
+  position:absolute;left:50%;bottom:64px;transform:translateX(-50%);
+  font-size:15px;letter-spacing:.35em;color:rgba(43,26,18,.55);
+  opacity:0;transition:opacity .5s;
+}
+.screen.is-on .hint{opacity:1;animation:hint 2.4s ease-in-out infinite}
+@keyframes hint{0%,100%{opacity:.35}50%{opacity:.75}}
+
+/* 调试网格（?grid=1） */
+.grid-overlay{position:absolute;inset:0;pointer-events:none;z-index:9;display:none}
+.grid-overlay.is-on{display:block}
+.grid-overlay::before{
+  content:"";position:absolute;inset:0;
+  background-image:linear-gradient(to right, rgba(0,0,0,.18) 1px, transparent 1px),
+                   linear-gradient(to bottom, rgba(0,0,0,.18) 1px, transparent 1px);
+  background-size:10% 10%, 10% 10%;
+}
+.grid-overlay .box{position:absolute;border:2px solid #00c2ff;background:rgba(0,194,255,.18);font-size:12px;color:#003b52;font-family:monospace;padding:1px 3px}
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+
+<div class="hud">
+  <button id="hudHome" title="回到首页">⌂</button>
+  <button id="hudPrev" title="上一屏">‹</button>
+  <span class="hud__page" id="hudPage">1 / 1</span>
+  <button id="hudNext" title="下一屏">›</button>
+  <span class="hud__name" id="hudName"></span>
+</div>
+
+<script>
+/* =========================================================================
+   宋韵寻香 · 数字化制香
+   每屏 = 一张 2× 设计稿 + 按设计稿坐标投的热区
+   坐标单位：百分比（相对 1920×1080 舞台）
+   ========================================================================= */
+const SCREENS = [
+  {
+    id: 'home', img: 'img/01-home.webp', name: '首页',
+    spots: [{ x: 49, y: 77.5, w: 18, h: 6.5, go: 'purpose', label: '点击查看更多' }],
+  },
+  { id: 'loading', img: 'img/02-loading.webp', name: '生成中', auto: { go: 'purpose', delay: 2200 }, loading: true },
+  {
+    id: 'purpose', img: 'img/03-purpose.webp', name: '使用目的',
+    spots: [
+      { x: 37, y: 79, w: 10, h: 6, go: 'home', label: '上一步' },
+      { x: 58.5, y: 79, w: 11, h: 6, go: 'body', label: '下一步' },
+    ],
+  },
+  {
+    id: 'body', img: 'img/04-body.webp', name: '身体状态',
+    spots: [
+      { x: 37, y: 79, w: 10, h: 6, go: 'purpose' },
+      { x: 58.5, y: 79, w: 11, h: 6, go: 'scene' },
+    ],
+  },
+  {
+    id: 'scene', img: 'img/05-scene.webp', name: '使用场景',
+    spots: [
+      { x: 37, y: 79, w: 10, h: 6, go: 'body' },
+      { x: 58.5, y: 79, w: 11, h: 6, go: 'tone' },
+    ],
+  },
+  {
+    id: 'tone', img: 'img/06-tone.webp', name: '香气色调',
+    spots: [
+      { x: 37, y: 80, w: 10, h: 6, go: 'scene' },
+      { x: 58.5, y: 80, w: 11, h: 6, go: 'recipe' },
+    ],
+  },
+  {
+    id: 'recipe', img: 'img/07-recipe.webp', name: '个性化配方',
+    spots: [
+      { x: 37, y: 80, w: 10, h: 6, go: 'tone' },
+      { x: 58.5, y: 80, w: 11, h: 6, go: 'daily' },
+    ],
+  },
+  {
+    id: 'daily', img: 'img/09-daily.webp', name: '每日荐香',
+    spots: [
+      { x: 37, y: 81, w: 10, h: 6, go: 'recipe' },
+      { x: 58.5, y: 81, w: 12, h: 6, go: 'print' },
+      { x: 71, y: 81, w: 12, h: 6, go: 'making', label: '定制我的香方' },
+    ],
+  },
+  {
+    id: 'print', img: 'img/12-print-a.webp', name: '打印效果',
+    spots: [
+      { x: 37, y: 81, w: 10, h: 6, go: 'daily' },
+      { x: 58.5, y: 81, w: 12, h: 6, cycle: ['img/12-print-a.webp','img/12-print-b.webp','img/12-print-c.webp','img/12-print-d.webp'], label: '换一款香方' },
+      { x: 71, y: 81, w: 12, h: 6, go: 'making', label: '定制我的香方' },
+    ],
+  },
+  {
+    id: 'making', img: 'img/13-making.webp', name: '香料选择',
+    spots: [
+      { x: 83, y: 80, w: 12, h: 6, go: 'wood' },
+    ],
+  },
+  {
+    id: 'wood', img: 'img/14-wood.webp', name: '木质香',
+    alt: 'img/14-wood-sel.webp',
+    spots: [
+      { x: 32, y: 80, w: 11, h: 6, go: 'making' },
+      { x: 30, y: 30, w: 48, h: 42, alt: 'wood', label: '选择香料' },
+      { x: 77, y: 80, w: 7, h: 6, go: 'wood', label: '重置' },
+      { x: 83.5, y: 80, w: 11, h: 6, go: 'kiln' },
+    ],
+  },
+  {
+    id: 'kiln', img: 'img/18-kiln.webp', name: '香炉选择',
+    alt: 'img/18-kiln-sel.webp',
+    spots: [
+      { x: 32, y: 80, w: 11, h: 6, go: 'wood' },
+      { x: 28, y: 32, w: 50, h: 40, alt: 'kiln', label: '选择香炉' },
+      { x: 77, y: 80, w: 7, h: 6, go: 'kiln', label: '重置' },
+      { x: 83.5, y: 80, w: 11, h: 6, go: 'summary' },
+    ],
+  },
+  {
+    id: 'summary', img: 'img/19-summary.webp', name: '选择汇总',
+    spots: [
+      { x: 32, y: 80, w: 11, h: 6, go: 'kiln' },
+      { x: 77, y: 80, w: 7, h: 6, go: 'summary', label: '重置' },
+      { x: 83.5, y: 80, w: 11, h: 6, go: 'done' },
+    ],
+  },
+  { id: 'done', img: 'img/08-done.webp', name: '生成中', auto: { go: 'end', delay: 2200 }, loading: true },
+  {
+    id: 'end', img: 'img/23-end-b.webp', name: '完成',
+    spots: [
+      { x: 42, y: 71, w: 11, h: 6.5, go: 'making', label: '前往线下体验' },
+      { x: 52.5, y: 71, w: 10, h: 6.5, go: 'home', label: '返回首页' },
+    ],
+  },
+];
+
+const stage = document.getElementById('stage');
+const hud = {
+  page: document.getElementById('hudPage'),
+  name: document.getElementById('hudName'),
+  prev: document.getElementById('hudPrev'),
+  next: document.getElementById('hudNext'),
+  home: document.getElementById('hudHome'),
+};
+
+/* ── 构建 DOM ── */
+const nodes = {};
+SCREENS.forEach((s, i) => {
+  const el = document.createElement('section');
+  el.className = 'screen';
+  el.dataset.screen = s.id;
+
+  const img = document.createElement('img');
+  img.className = 'screen__bg';
+  img.src = s.img;
+  img.alt = s.name;
+  img.draggable = false;
+  img.loading = i < 3 ? 'eager' : 'lazy';
+  el.appendChild(img);
+
+  if (s.loading) {
+    const bar = document.createElement('div');
+    bar.className = 'loading__bar';
+    bar.innerHTML = '<i></i>';
+    el.appendChild(bar);
+  }
+
+  (s.spots || []).forEach(sp => {
+    const b = document.createElement('button');
+    b.className = 'spot';
+    b.style.left = sp.x + '%';
+    b.style.top = sp.y + '%';
+    b.style.width = sp.w + '%';
+    b.style.height = sp.h + '%';
+    b.setAttribute('aria-label', sp.label || (sp.go ? '前往' + s.name : '继续'));
+    if (sp.go) b.dataset.go = sp.go;
+    if (sp.alt) b.dataset.alt = sp.alt;
+    if (sp.cycle) b.dataset.cycle = sp.cycle.join('|');
+    if (sp.target) b.dataset.target = sp.target;
+    el.appendChild(b);
+  });
+
+  if (s.hint) {
+    const h = document.createElement('div');
+    h.className = 'hint';
+    h.textContent = s.hint;
+    el.appendChild(h);
+  }
+
+  stage.appendChild(el);
+  nodes[s.id] = { el, img, spec: s };
+});
+
+/* ── 路由 ── */
+let current = 'home';
+let autoTimer = null;
+const history = [];
+
+function render(id) {
+  const node = nodes[id];
+  if (!node) return;
+  Object.values(nodes).forEach(n => n.el.classList.remove('is-on'));
+  node.el.classList.add('is-on');
+
+  current = id;
+  const idx = SCREENS.findIndex(s => s.id === id);
+  hud.page.textContent = (idx + 1) + ' / ' + SCREENS.length;
+  hud.name.textContent = node.spec.name;
+  history.push(id);
+  if (history.length > 60) history.shift();
+  location.hash = id;
+
+  clearTimeout(autoTimer);
+  if (node.spec.auto) {
+    autoTimer = setTimeout(() => go(node.spec.auto.go), node.spec.auto.delay);
+  }
+
+  /* 预热相邻屏 */
+  const next = SCREENS[(idx + 1) % SCREENS.length];
+  if (next && !nodes[next.id].img.dataset.warm) {
+    const p = new Image();
+    p.src = next.img;
+    nodes[next.id].img.dataset.warm = '1';
+  }
+}
+
+function go(id) {
+  if (!nodes[id]) return;
+  render(id);
+}
+
+/* ── 交互 ── */
+stage.addEventListener('click', e => {
+  const spot = e.target.closest('.spot');
+  if (!spot) return;
+
+  /* 选中态换图 */
+  if (spot.dataset.alt) {
+    const node = nodes[current];
+    const target = node.spec.spots.find(s => s.alt === spot.dataset.alt);
+    if (target && target._on) {
+      target._on = false;
+      node.img.src = node.spec.img;
+    } else if (target) {
+      target._on = true;
+      node.img.src = node.spec.alt;
+    }
+    return;
+  }
+
+  /* 打印效果轮换 */
+  if (spot.dataset.cycle) {
+    const list = spot.dataset.cycle.split('|');
+    const node = nodes[current];
+    let i = list.indexOf(node.img.getAttribute('src'));
+    i = (i + 1) % list.length;
+    node.img.src = list[i];
+    return;
+  }
+
+  if (spot.dataset.go) go(spot.dataset.go);
+});
+
+hud.prev.addEventListener('click', () => {
+  const idx = SCREENS.findIndex(s => s.id === current);
+  go(SCREENS[(idx - 1 + SCREENS.length) % SCREENS.length].id);
+});
+hud.next.addEventListener('click', () => {
+  const idx = SCREENS.findIndex(s => s.id === current);
+  go(SCREENS[(idx + 1) % SCREENS.length].id);
+});
+hud.home.addEventListener('click', () => go('home'));
+
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') hud.next.click();
+  else if (e.key === 'ArrowLeft') hud.prev.click();
+  else if (e.key === 'Escape') go('home');
+});
+
+/* ── 等比缩放 ── */
+function fit() {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  document.documentElement.style.setProperty('--scale', s.toFixed(5));
+}
+addEventListener('resize', fit, { passive: true });
+fit();
+
+/* ── 启动：支持 #screen 直达 ── */
+const startId = location.hash.slice(1);
+render(nodes[startId] ? startId : 'home');
+
+/* hash 变化（前进/后退、手改地址）也要跟着走 */
+addEventListener('hashchange', () => {
+  const id = location.hash.slice(1);
+  if (nodes[id] && id !== current) render(id);
+});
+
+/* ── 调试网格：?grid=1 ── */
+if (new URLSearchParams(location.search).get('grid') === '1') {
+  const ov = document.createElement('div');
+  ov.className = 'grid-overlay is-on';
+  document.getElementById('stage').appendChild(ov);
+  /* 每屏的热区框也要画出来（仅当前屏） */
+  const draw = () => {
+    ov.querySelectorAll('.box').forEach(b => b.remove());
+    const node = nodes[current];
+    (node.spec.spots || []).forEach(sp => {
+      const b = document.createElement('div');
+      b.className = 'box';
+      b.style.left = sp.x + '%'; b.style.top = sp.y + '%';
+      b.style.width = sp.w + '%'; b.style.height = sp.h + '%';
+      b.textContent = sp.go || sp.alt || sp.cycle ? 'click' : '';
+      ov.appendChild(b);
+    });
+  };
+  draw();
+  setInterval(draw, 500);
+}
+</script>
+</body>
+</html>
