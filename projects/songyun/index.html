@@ -48,7 +48,16 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 
 /* 可选手卡（使用目的 / 身体状态 …） */
 .pcard-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
-.pcard{z-index:1;pointer-events:auto}
+.pcard{z-index:2;pointer-events:auto}
+/* 卡片浮起后，原位留一个纸色凹位，不再露出底图里的那一张 */
+/* 卡片浮起后原位只留纸面，不画边框/阴影，避免看起来像第二张卡 */
+.pslot{
+  position:absolute;border-radius:11px;pointer-events:none;z-index:1;
+  background:#e3d5c0;
+  filter:blur(1.2px);
+  opacity:0;transition:opacity .3s var(--ease);
+}
+.pcard:hover + .pslot{opacity:1}
 .pcard{
   position:absolute;border-radius:11px;overflow:hidden;
   cursor:pointer;transform-origin:center center;
@@ -65,8 +74,8 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   box-shadow:0 34px 58px -24px rgba(90,48,20,.52);
 }
 @keyframes cardLift{
-  from{transform:translateY(-18px)}
-  to{transform:translateY(-6px)}
+  from{transform:translateY(-10px)}
+  to{transform:translateY(-3px)}
 }
 .pcard.is-on{box-shadow:0 0 0 2px rgba(156,58,32,.6), 0 18px 40px -20px rgba(90,48,20,.5)}
 .pcard.is-on::after{
@@ -152,10 +161,10 @@ const SCREENS = [
   {
     id: 'purpose', img: 'img/03-purpose.webp', name: '使用目的',
     cards: [
-      { key: 'wenfang',  img: 'img/card-purpose-1.webp', x: 13.83, y: 21.94, w: 16.25, h: 46.25 },
-      { key: 'liyi',     img: 'img/card-purpose-2.webp', x: 32.50, y: 34.93, w: 16.45, h: 46.25 },
-      { key: 'jisi',     img: 'img/card-purpose-3.webp', x: 51.56, y: 18.89, w: 16.02, h: 46.74 },
-      { key: 'juanyang', img: 'img/card-purpose-4.webp', x: 72.89, y: 28.75, w: 16.30, h: 46.74 },
+      { key: 'wenfang',  img: 'img/card-purpose-1.webp', x: 13.83, y: 21.94, w: 16.25, h: 46.25, slot: '#e4d5c1' },
+      { key: 'liyi',     img: 'img/card-purpose-2.webp', x: 32.50, y: 34.93, w: 16.45, h: 46.25, slot: '#e4d6c2' },
+      { key: 'jisi',     img: 'img/card-purpose-3.webp', x: 51.56, y: 18.89, w: 16.02, h: 46.74, slot: '#e4d6c1' },
+      { key: 'juanyang', img: 'img/card-purpose-4.webp', x: 72.89, y: 28.75, w: 16.30, h: 46.74, slot: '#dcccb4' },
     ],
     spots: [
       { x: 37, y: 79, w: 10, h: 6, go: 'home', label: '上一步' },
@@ -290,6 +299,15 @@ SCREENS.forEach((s, i) => {
       ci2.draggable = false;
       card.appendChild(ci2);
       layer.appendChild(card);
+
+      const slot = document.createElement('div');
+      slot.className = 'pslot';
+      slot.style.left = c.x + '%';
+      slot.style.top = c.y + '%';
+      slot.style.width = c.w + '%';
+      slot.style.height = c.h + '%';
+      if (c.slot) slot.style.background = c.slot;
+      layer.appendChild(slot);
     });
     el.appendChild(layer);
   }
