@@ -146,7 +146,7 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
    每屏 = 一张 2× 设计稿 + 按设计稿坐标投的热区
    坐标单位：百分比（相对 1920×1080 舞台）
    ========================================================================= */
-const IMG_V = '20261106b';   /* 换切图时改这里，避免浏览器用旧图缓存 */
+const IMG_V = '20261106c';   /* 换切图时改这里，避免浏览器用旧图缓存 */
 const SCREENS = [
   {
     id: 'home', img: 'img/01-home.webp', name: '首页',
@@ -155,15 +155,15 @@ const SCREENS = [
   {
     id: 'daily', img: 'img/09-daily.webp', name: '每日荐香',
     spots: [
-      { x: 66.5, y: 80.5, w: 13, h: 8, go: 'formula', label: '查看香料配方' },
-      { x: 79.0, y: 80.5, w: 13, h: 8, go: 'intro', label: '打印配方' },
+      { x: 67.0, y: 80.8, w: 11.5, h: 13, go: 'formula', label: '查看香料配方' },
+      { x: 79.2, y: 80.8, w: 11.5, h: 13, go: 'intro', label: '打印配方' },
     ],
   },
   {
     id: 'formula', img: 'img/11-daily-formula.webp', name: '香料配方',
     spots: [
-      { x: 30.5, y: 86.0, w: 9, h: 6, go: 'home', label: '返回首页' },
-      { x: 59.0, y: 85.0, w: 8.5, h: 7, go: 'print', label: '下一步' },
+      { x: 30.8, y: 86.5, w: 9, h: 8, go: 'home', label: '返回首页' },
+      { x: 59.2, y: 85.5, w: 8, h: 8, go: 'print', label: '下一步' },
     ],
   },
   {
@@ -176,8 +176,8 @@ const SCREENS = [
   {
     id: 'intro', img: 'img/10-daily-intro.webp', name: '香方介绍',
     spots: [
-      { x: 47.5, y: 85.0, w: 12.5, h: 9, go: 'print', label: '打印今日香方' },
-      { x: 60.0, y: 85.0, w: 12.5, h: 9, go: 'purpose', label: '定制我的香方' },
+      { x: 48.6, y: 86.5, w: 11.5, h: 12, go: 'print', label: '打印今日香方' },
+      { x: 60.5, y: 86.5, w: 11.5, h: 12, go: 'purpose', label: '定制我的香方' },
     ],
   },
   {
