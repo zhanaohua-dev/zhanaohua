@@ -146,6 +146,7 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
    每屏 = 一张 2× 设计稿 + 按设计稿坐标投的热区
    坐标单位：百分比（相对 1920×1080 舞台）
    ========================================================================= */
+const IMG_V = '20261106a';   /* 换切图时改这里，避免浏览器用旧图缓存 */
 const SCREENS = [
   {
     id: 'home', img: 'img/01-home.webp', name: '首页',
@@ -287,7 +288,7 @@ SCREENS.forEach((s, i) => {
       card.style.width = c.w + '%';
       card.style.height = c.h + '%';
       const im = document.createElement('img');
-      im.src = c.img;
+      im.src = c.img + '?v=' + IMG_V;
       im.alt = '';
       im.draggable = false;
       card.appendChild(im);
