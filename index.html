@@ -451,6 +451,12 @@ html[data-theme="dark"] .i-moon{display:none}
   opacity:0; pointer-events:none;
   transition:opacity .28s var(--ease-out), transform .18s ease-out;
 }
+/* 真实截图预览（案例 03） */
+.case__row-preview--img{aspect-ratio:16/9}
+.case__row-preview--img::before,
+.case__row-preview--img::after{display:none}
+.case__row-preview--img img{display:block; width:100%; height:100%; object-fit:cover}
+
 /* 顶栏 */
 .case__row-preview::before{
   content:""; position:absolute; left:0; right:0; top:0; height:11%;
@@ -915,14 +921,16 @@ html[data-theme="dark"] .board__card{
     </article>
 
     <article class="case case--row reveal">
-      <a class="case__row" href="#" data-soon="案例详情页待补充">
+      <a class="case__row" href="projects/songyun/index.html">
         <div class="case__row-meta">
           <span class="case__num">03</span>
-          <span class="case__row-tags">UX research · UI · E-commerce</span>
+          <span class="case__row-tags">App · UX · UI · Interactive</span>
         </div>
-        <h3 class="case__row-title">零售电商改版</h3>
-        <p class="case__row-desc">研究驱动的电商改版：目录结构、筛选逻辑与结算路径，全部基于真实用户任务重排。</p>
-        <span class="case__row-preview" aria-hidden="true"></span>
+        <h3 class="case__row-title">宋韵寻香</h3>
+        <p class="case__row-desc">宋代香事 × 数字化制香：从香方定制到手工研磨的完整交互流程，33 屏设计稿 1:1 还原成可点击的网站。鼠标移上去看首页，点进去走完整流程。</p>
+        <span class="case__row-preview case__row-preview--img" aria-hidden="true">
+          <img src="projects/songyun/img/01-home.webp" alt="宋韵寻香 · 首页预览" loading="lazy" decoding="async">
+        </span>
       </a>
     </article>
 

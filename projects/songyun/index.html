@@ -167,10 +167,9 @@ const SCREENS = [
     ],
   },
   {
-    id: 'print', img: 'img/12-print-a.webp', name: '打印效果',
+    id: 'print', img: 'img/12-print-a.webp', name: '今日香方',
     spots: [
       { x: 37, y: 81, w: 10, h: 6, go: 'daily' },
-      { x: 58.5, y: 81, w: 12, h: 6, cycle: ['img/12-print-a.webp','img/12-print-b.webp','img/12-print-c.webp','img/12-print-d.webp'], label: '换一款香方' },
       { x: 71, y: 81, w: 12, h: 6, go: 'making', label: '定制我的香方' },
     ],
   },
@@ -212,7 +211,7 @@ const SCREENS = [
   {
     id: 'end', img: 'img/23-end-b.webp', name: '完成',
     spots: [
-      { x: 42, y: 71, w: 11, h: 6.5, go: 'making', label: '前往线下体验' },
+      { x: 42, y: 71, w: 11, h: 6.5, wait: 5000, label: '前往线下体验' },
       { x: 52.5, y: 71, w: 10, h: 6.5, go: 'home', label: '返回首页' },
     ],
   },
@@ -258,6 +257,7 @@ SCREENS.forEach((s, i) => {
     b.style.height = sp.h + '%';
     b.setAttribute('aria-label', sp.label || (sp.go ? '前往' + s.name : '继续'));
     if (sp.go) b.dataset.go = sp.go;
+    if (sp.wait) b.dataset.wait = sp.wait;
     if (sp.alt) b.dataset.alt = sp.alt;
     if (sp.cycle) b.dataset.cycle = sp.cycle.join('|');
     if (sp.target) b.dataset.target = sp.target;
@@ -332,13 +332,10 @@ stage.addEventListener('click', e => {
     return;
   }
 
-  /* 打印效果轮换 */
-  if (spot.dataset.cycle) {
-    const list = spot.dataset.cycle.split('|');
-    const node = nodes[current];
-    let i = list.indexOf(node.img.getAttribute('src'));
-    i = (i + 1) % list.length;
-    node.img.src = list[i];
+  /* 停一会儿再自动回首页（结束页「前往线下体验」） */
+  if (spot.dataset.wait) {
+    clearTimeout(autoTimer);
+    autoTimer = setTimeout(() => go('home'), +spot.dataset.wait);
     return;
   }
 
