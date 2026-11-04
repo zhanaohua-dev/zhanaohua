@@ -95,10 +95,10 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   background:rgba(28,18,12,.55);
   backdrop-filter:blur(10px);
   border:1px solid rgba(240,225,200,.16);
-  opacity:0;transition:opacity .3s;
+  opacity:.5;transition:opacity .3s;
   color:#f3e8d5;font-size:12px;letter-spacing:.08em;
 }
-.hud:hover,.hud:focus-within{opacity:.92}
+.hud:hover,.hud:focus-within{opacity:1}
 .hud button{
   width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,225,200,.22);
   background:transparent;color:#f3e8d5;cursor:pointer;line-height:1;font-size:13px;
@@ -170,6 +170,7 @@ const SCREENS = [
     id: 'print', img: 'img/12-print-a.webp', name: '打印效果',
     spots: [
       { x: 30, y: 85.5, w: 14, h: 7, go: 'intro', label: '打印完成' },
+      { x: 34.3, y: 45.5, w: 31.4, h: 8.5, go: 'intro', label: '打印完成' },
     ],
   },
   {
