@@ -146,13 +146,39 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
    每屏 = 一张 2× 设计稿 + 按设计稿坐标投的热区
    坐标单位：百分比（相对 1920×1080 舞台）
    ========================================================================= */
-const IMG_V = '20261106a';   /* 换切图时改这里，避免浏览器用旧图缓存 */
+const IMG_V = '20261106b';   /* 换切图时改这里，避免浏览器用旧图缓存 */
 const SCREENS = [
   {
     id: 'home', img: 'img/01-home.webp', name: '首页',
-    spots: [{ x: 39.5, y: 84.5, w: 21, h: 5.5, go: 'purpose', label: '点击查看更多' }],
+    spots: [{ x: 42.5, y: 73.5, w: 15, h: 8, go: 'daily', label: '点击查看更多' }],
   },
-  { id: 'loading', img: 'img/02-loading.webp', name: '生成中', auto: { go: 'purpose', delay: 2200 }, loading: true },
+  {
+    id: 'daily', img: 'img/09-daily.webp', name: '每日荐香',
+    spots: [
+      { x: 66.5, y: 80.5, w: 13, h: 8, go: 'formula', label: '查看香料配方' },
+      { x: 79.0, y: 80.5, w: 13, h: 8, go: 'intro', label: '打印配方' },
+    ],
+  },
+  {
+    id: 'formula', img: 'img/11-daily-formula.webp', name: '香料配方',
+    spots: [
+      { x: 30.5, y: 86.0, w: 9, h: 6, go: 'home', label: '返回首页' },
+      { x: 59.0, y: 85.0, w: 8.5, h: 7, go: 'print', label: '下一步' },
+    ],
+  },
+  {
+    id: 'print', img: 'img/12-print-a.webp', name: '打印效果',
+    spots: [
+      { x: 30, y: 85.5, w: 14, h: 7, go: 'intro', label: '打印完成' },
+    ],
+  },
+  {
+    id: 'intro', img: 'img/10-daily-intro.webp', name: '香方介绍',
+    spots: [
+      { x: 47.5, y: 85.0, w: 12.5, h: 9, go: 'print', label: '打印今日香方' },
+      { x: 60.0, y: 85.0, w: 12.5, h: 9, go: 'purpose', label: '定制我的香方' },
+    ],
+  },
   {
     id: 'purpose', img: 'img/03-purpose.webp', name: '使用目的',
     cards: [
@@ -160,8 +186,9 @@ const SCREENS = [
       { key: 'liyi',     img: 'img/card-purpose-2.webp', x: 32.42, y: 34.86, w: 16.54, h: 46.36, slot: '#e4d6c2' },
       { key: 'jisi',     img: 'img/card-purpose-3.webp', x: 51.02, y: 18.89, w: 16.54, h: 46.36, slot: '#e4d6c2' },
       { key: 'juanyang', img: 'img/card-purpose-4.webp', x: 69.61, y: 28.75, w: 16.54, h: 46.36, slot: '#e3d5c0' },
-    ],    spots: [
-      { x: 37, y: 79, w: 10, h: 6, go: 'home', label: '上一步' },
+    ],
+    spots: [
+      { x: 37, y: 79, w: 10, h: 6, go: 'intro', label: '上一步' },
       { x: 58.5, y: 79, w: 11, h: 6, go: 'body', label: '下一步' },
     ],
   },
@@ -190,64 +217,49 @@ const SCREENS = [
     id: 'recipe', img: 'img/07-recipe.webp', name: '个性化配方',
     spots: [
       { x: 37, y: 80, w: 10, h: 6, go: 'tone' },
-      { x: 58.5, y: 80, w: 11, h: 6, go: 'daily' },
-    ],
-  },
-  {
-    id: 'daily', img: 'img/09-daily.webp', name: '每日荐香',
-    spots: [
-      { x: 37, y: 81, w: 10, h: 6, go: 'recipe' },
-      { x: 58.5, y: 81, w: 12, h: 6, go: 'print' },
-      { x: 71, y: 81, w: 12, h: 6, go: 'making', label: '定制我的香方' },
-    ],
-  },
-  {
-    id: 'print', img: 'img/12-print-a.webp', name: '今日香方',
-    spots: [
-      { x: 37, y: 81, w: 10, h: 6, go: 'daily' },
-      { x: 71, y: 81, w: 12, h: 6, go: 'making', label: '定制我的香方' },
+      { x: 58.5, y: 80, w: 11, h: 6, go: 'making' },
     ],
   },
   {
     id: 'making', img: 'img/13-making.webp', name: '香料选择',
     spots: [
-      { x: 83, y: 80, w: 12, h: 6, go: 'wood' },
+      { x: 83, y: 88.5, w: 8, h: 6.5, go: 'wood', label: '下一步' },
     ],
   },
   {
-    id: 'wood', img: 'img/14-wood.webp', name: '木质香',
+    id: 'wood', img: 'img/14-wood.webp', name: '选择香料',
     alt: 'img/14-wood-sel.webp',
     spots: [
-      { x: 32, y: 80, w: 11, h: 6, go: 'making' },
+      { x: 36, y: 88.5, w: 7.5, h: 6.5, go: 'making', label: '上一步' },
       { x: 30, y: 30, w: 48, h: 42, alt: 'wood', label: '选择香料' },
-      { x: 77, y: 80, w: 7, h: 6, go: 'wood', label: '重置' },
-      { x: 83.5, y: 80, w: 11, h: 6, go: 'kiln' },
+      { x: 77, y: 88.5, w: 5.5, h: 6.5, go: 'wood', label: '重置' },
+      { x: 81, y: 88.5, w: 8, h: 6.5, go: 'kiln', label: '下一步' },
     ],
   },
   {
     id: 'kiln', img: 'img/18-kiln.webp', name: '香炉选择',
     alt: 'img/18-kiln-sel.webp',
     spots: [
-      { x: 32, y: 80, w: 11, h: 6, go: 'wood' },
+      { x: 36, y: 88.5, w: 7.5, h: 6.5, go: 'wood' },
       { x: 28, y: 32, w: 50, h: 40, alt: 'kiln', label: '选择香炉' },
-      { x: 77, y: 80, w: 7, h: 6, go: 'kiln', label: '重置' },
-      { x: 83.5, y: 80, w: 11, h: 6, go: 'summary' },
+      { x: 77, y: 88.5, w: 5.5, h: 6.5, go: 'kiln', label: '重置' },
+      { x: 81, y: 88.5, w: 8, h: 6.5, go: 'summary' },
     ],
   },
   {
     id: 'summary', img: 'img/19-summary.webp', name: '选择汇总',
     spots: [
-      { x: 32, y: 80, w: 11, h: 6, go: 'kiln' },
-      { x: 77, y: 80, w: 7, h: 6, go: 'summary', label: '重置' },
-      { x: 83.5, y: 80, w: 11, h: 6, go: 'done' },
+      { x: 19, y: 88.5, w: 7.5, h: 6.5, go: 'kiln' },
+      { x: 77, y: 88.5, w: 5.5, h: 6.5, go: 'summary', label: '重置' },
+      { x: 81, y: 88.5, w: 8, h: 6.5, go: 'done' },
     ],
   },
   { id: 'done', img: 'img/08-done.webp', name: '生成中', auto: { go: 'end', delay: 2200 }, loading: true },
   {
     id: 'end', img: 'img/23-end-b.webp', name: '完成',
     spots: [
-      { x: 42, y: 71, w: 11, h: 6.5, wait: 5000, label: '前往线下体验' },
-      { x: 52.5, y: 71, w: 10, h: 6.5, go: 'home', label: '返回首页' },
+      { x: 28.6, y: 46.0, w: 16.6, h: 10, wait: 5000, label: '前往线下体验' },
+      { x: 54.6, y: 46.0, w: 16.6, h: 10, go: 'home', label: '返回首页' },
     ],
   },
 ];
