@@ -40,14 +40,11 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   cursor:pointer;border-radius:10px;
   transition:background-color .28s var(--ease), box-shadow .28s var(--ease), transform .28s var(--ease);
 }
-.spot:hover{background:rgba(255,246,225,.14);box-shadow:0 0 0 1px rgba(156,58,32,.35), 0 6px 26px rgba(120,60,20,.18)}
-.spot:active{transform:scale(.994)}
-.spot:focus-visible{outline:2px solid #9c3a20;outline-offset:2px}
-
-/* 选择态（卡片/圆点） */
-.pick{cursor:pointer;border-radius:12px}
-.pick:hover{background:rgba(255,244,220,.10)}
-.pick.is-on{background:rgba(156,58,32,.10);box-shadow:0 0 0 2px rgba(156,58,32,.42) inset}
+/* 热区完全不可见：不画底色、不画边框、不画阴影 */
+.spot:hover,.spot:active,.spot:focus,.spot:focus-visible{
+  background:transparent;box-shadow:none;outline:none;border:0;
+}
+.spot:active{transform:none}
 
 /* 加载动画 */
 .loading__bar{
@@ -66,10 +63,10 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   background:rgba(28,18,12,.55);
   backdrop-filter:blur(10px);
   border:1px solid rgba(240,225,200,.16);
-  opacity:.35;transition:opacity .3s;
+  opacity:0;transition:opacity .3s;
   color:#f3e8d5;font-size:12px;letter-spacing:.08em;
 }
-.hud:hover{opacity:1}
+.hud:hover,.hud:focus-within{opacity:.92}
 .hud button{
   width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,225,200,.22);
   background:transparent;color:#f3e8d5;cursor:pointer;line-height:1;font-size:13px;
@@ -120,7 +117,7 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 const SCREENS = [
   {
     id: 'home', img: 'img/01-home.webp', name: '首页',
-    spots: [{ x: 49, y: 77.5, w: 18, h: 6.5, go: 'purpose', label: '点击查看更多' }],
+    spots: [{ x: 39.5, y: 84.5, w: 21, h: 5.5, go: 'purpose', label: '点击查看更多' }],
   },
   { id: 'loading', img: 'img/02-loading.webp', name: '生成中', auto: { go: 'purpose', delay: 2200 }, loading: true },
   {
