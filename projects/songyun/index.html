@@ -239,7 +239,7 @@ const SCREENS = [
   {
     id: 'daily', img: 'img/09-daily.webp', name: '每日荐香',
     spots: [
-      { x: 67.19, y: 85.0, w: 11.05, h: 5.21, go: 'formula', btn: 'img/btn-daily-1.webp', label: '打印配方' },
+      { x: 67.19, y: 85.0, w: 11.05, h: 5.21, go: 'formula', btn: 'img/btn-daily-1.webp', label: '查看今日香方' },
       { x: 79.38, y: 85.0, w: 11.05, h: 5.21, go: 'purpose', btn: 'img/btn-daily-2.webp', label: '定制我的香方' },
     ],
   },
@@ -267,7 +267,7 @@ const SCREENS = [
     ],
     spots: [
       { x: 30.8, y: 86.5, w: 9, h: 8, go: 'home', label: '返回首页' },
-      { x: 59.2, y: 85.5, w: 8, h: 8, go: 'intro', label: '定制我的香方' },
+      { x: 59.2, y: 85.5, w: 8, h: 8, go: 'intro', label: '下一步' },
     ],
   },
   {
@@ -285,13 +285,13 @@ const SCREENS = [
     ],
   },
   {
-    /* 图五：同一张今日香方，按钮隐去；三张香方卡硬切依次出现，3s 后消失回图四 */
+    /* 图五：同一张今日香方，按钮隐去；三张香方卡硬切依次出现，3s 后消失，进入打印效果页 */
     id: 'printing', img: 'img/12-print-b.webp', name: '打印中',
     print: {
       frames: ['img/12-print-card-1.webp', 'img/12-print-card-2.webp', 'img/12-print-card-3.webp'],
       step: 1000,   /* 一秒一张，直接切 */
-      hold: 3000,   /* 3s 时一并消失并回图四 */
-      back: 'intro',
+      hold: 3000,   /* 3s 时一并消失，转到打印效果 */
+      back: 'print',
     },
   },
   {
