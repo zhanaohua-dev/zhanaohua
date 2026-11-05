@@ -87,14 +87,14 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   transition:opacity .28s var(--ease);pointer-events:none;z-index:2;
 }
 .scent-txt{
-  position:absolute;object-fit:contain;opacity:0;pointer-events:none;
+  position:absolute;height:auto;opacity:0;pointer-events:none;
   transition:opacity .28s var(--ease);z-index:3;
 }
 .scent-txt.is-white{filter:brightness(0) invert(1)}
 .scent-tip{
   position:absolute;z-index:4;pointer-events:none;
   display:flex;align-items:center;
-  padding:4px 32px;font-size:38px;line-height:1.55;letter-spacing:.01em;
+  padding:4px 30px;font-size:30px;line-height:1.58;letter-spacing:.01em;
   color:#ffffff;
   opacity:0;transform:translateY(8px);
   transition:opacity .26s var(--ease), transform .26s var(--ease);
@@ -188,7 +188,7 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
    每屏 = 一张 2× 设计稿 + 按设计稿坐标投的热区
    坐标单位：百分比（相对 1920×1080 舞台）
    ========================================================================= */
-const IMG_V = '20261106e';   /* 换切图时改这里，避免浏览器用旧图缓存 */
+const IMG_V = '20261106f';   /* 换切图时改这里，避免浏览器用旧图缓存 */
 const SCREENS = [
   {
     id: 'home', img: 'img/01-home.webp', name: '首页',
@@ -402,7 +402,12 @@ SCREENS.forEach((s, i) => {
         im.className = 'scent-txt';
         im.src = 'img/scent-' + t.k + '.webp?v=' + IMG_V;
         im.alt = '';
-        Object.assign(im.style, { left: (t.x - t.w * 0.015) + '%', top: (t.y - t.h * 0.09) + '%', width: (t.w * 1.03) + '%', height: (t.h * 1.04) + '%' });
+        const twoLine = sc.txt.length > 1;   /* 一个圆里两行字（荔枝壳/腊茶、甘松/茅香）不放大，避免打架 */
+        Object.assign(im.style, {
+          left: t.x + '%',
+          top: (twoLine ? t.y : t.y - t.h * 0.12) + '%',
+          width: (t.w * (twoLine ? 1.0 : 1.10)) + '%'
+        });
         layer.appendChild(im);
         txts[t.k] = im;
       });
