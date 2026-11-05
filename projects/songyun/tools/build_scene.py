@@ -35,6 +35,23 @@ def morph(a, r, kind='close'):
     return np.asarray(im) > 127
 
 
+def box_blur(a, r):
+    a = a.astype(np.float32)
+    k = 2 * r + 1
+    for _ in range(3):
+        for axis in (0, 1):
+            pad = [(0, 0)] * a.ndim
+            pad[axis] = (r, r)
+            ap = np.pad(a, pad, mode='edge')
+            c = np.cumsum(ap, axis=axis)
+            zero_shape = list(c.shape); zero_shape[axis] = 1
+            c = np.concatenate([np.zeros(zero_shape, np.float32), c], axis=axis)
+            hi = [slice(None)] * a.ndim; hi[axis] = slice(k, None)
+            lo = [slice(None)] * a.ndim; lo[axis] = slice(0, -k)
+            a = (c[tuple(hi)] - c[tuple(lo)]) / k
+    return a
+
+
 def dilate(a, r):
     return np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(2 * r + 1))) > 127
 
@@ -155,6 +172,18 @@ for i, c in enumerate(CARDS, 1):
         ins[yy0:yy1, :] = False
 
     alpha = np.asarray(Image.fromarray((fg * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.8))).astype(np.float32)
+
+    # 边缘那一两像素原来的颜色是纸色，提亮后会浮出一圈白边；
+    # 把「明显是纸色」的像素换成邻近实色的颜色（alpha 不变，默认态看不出差别）
+    core = fg & (ds > 10)
+    if core.any():
+        w = core.astype(np.float32)
+        num = box_blur(roi * w[..., None], 5)
+        den = box_blur(w, 5)
+        ok = (~core) & (den > 0.06)
+        fill = num / np.maximum(den, 1e-3)[..., None]
+        roi = np.where(ok[..., None], fill, roi)
+
     Image.fromarray(np.dstack([roi, alpha]).astype(np.uint8), 'RGBA').save(
         f'img/scene-card-{i}.webp', 'WEBP', lossless=True, quality=100, method=6)
 
