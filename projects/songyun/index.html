@@ -148,14 +148,13 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   width:45%;height:56.02%;            /* 864×605 / 1920×1080 */
   transform:translate(-50%,-50%);
   opacity:0;
-  transition:opacity .7s cubic-bezier(.4,0,.2,1);
+  transition:none;                    /* 硬切：不要淡入淡出、不要缩放 */
   border-radius:3px;overflow:hidden;
   box-shadow:0 40px 76px -30px rgba(58,34,14,.5), 0 10px 26px -14px rgba(58,34,14,.32);
-  will-change:opacity;
-  backface-visibility:hidden;
 }
 .print-card.is-on{opacity:1}
 .print-card img{display:block;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none}
+#stage.no-fade .screen{transition:none !important}
 
 /* 加载动画 */
 .loading__bar{
@@ -240,8 +239,8 @@ const SCREENS = [
   {
     id: 'daily', img: 'img/09-daily.webp', name: '每日荐香',
     spots: [
-      { x: 67.19, y: 85.0, w: 11.05, h: 5.21, go: 'formula', btn: 'img/btn-daily-1.webp', label: '查看香料配方' },
-      { x: 79.38, y: 85.0, w: 11.05, h: 5.21, go: 'intro', btn: 'img/btn-daily-2.webp', label: '打印配方' },
+      { x: 67.19, y: 85.0, w: 11.05, h: 5.21, go: 'formula', btn: 'img/btn-daily-1.webp', label: '打印配方' },
+      { x: 79.38, y: 85.0, w: 11.05, h: 5.21, go: 'purpose', btn: 'img/btn-daily-2.webp', label: '定制我的香方' },
     ],
   },
   {
@@ -268,14 +267,14 @@ const SCREENS = [
     ],
     spots: [
       { x: 30.8, y: 86.5, w: 9, h: 8, go: 'home', label: '返回首页' },
-      { x: 59.2, y: 85.5, w: 8, h: 8, go: 'print', label: '下一步' },
+      { x: 59.2, y: 85.5, w: 8, h: 8, go: 'intro', label: '定制我的香方' },
     ],
   },
   {
     id: 'print', img: 'img/12-print-a.webp', name: '打印效果',
     spots: [
-      { x: 30, y: 85.5, w: 14, h: 7, go: 'intro', label: '打印完成' },
-      { x: 34.3, y: 45.5, w: 31.4, h: 8.5, go: 'intro', label: '打印完成' },
+      { x: 30, y: 85.5, w: 14, h: 7, go: 'home', label: '返回首页' },
+      { x: 34.3, y: 45.5, w: 31.4, h: 8.5, go: 'home', label: '返回首页' },
     ],
   },
   {
@@ -286,13 +285,12 @@ const SCREENS = [
     ],
   },
   {
-    /* 图五：同一张今日香方，按钮隐去；打印好的香方卡按序浮出，3s 后消失回到图四 */
+    /* 图五：同一张今日香方，按钮隐去；三张香方卡硬切依次出现，3s 后消失回图四 */
     id: 'printing', img: 'img/12-print-b.webp', name: '打印中',
     print: {
       frames: ['img/12-print-card-1.webp', 'img/12-print-card-2.webp', 'img/12-print-card-3.webp'],
-      step: 1000,   /* 一秒一张 */
-      hold: 3000,   /* 3s 走完，开始整体淡出 */
-      fade: 700,    /* 与 .print-card 的 opacity 过渡时长对齐 */
+      step: 1000,   /* 一秒一张，直接切 */
+      hold: 3000,   /* 3s 时一并消失并回图四 */
       back: 'intro',
     },
   },
@@ -607,22 +605,31 @@ function clearPrintTimers() {
   printTimers = [];
 }
 
-/* 三张图按序浮出，最后一帧停留到 3s，再一起淡出并回到图四 */
+/* 三张图一秒一张直接硬切，不做任何过渡； 3s 时一并消失并硬切回图四 */
 function playPrint(spec, el) {
   const cards = [...el.querySelectorAll('.print-card')];
   cards.forEach(c => c.classList.remove('is-on'));
-  spec.frames.forEach((_, i) => {
-    printTimers.push(setTimeout(() => cards[i] && cards[i].classList.add('is-on'), i * spec.step));
+  /* 第一张立刻出现（不靠定时器，避免第一帧晚到） */
+  if (cards[0]) cards[0].classList.add('is-on');
+  spec.frames.slice(1).forEach((_, i) => {
+    const n = i + 1;
+    printTimers.push(setTimeout(() => cards[n] && cards[n].classList.add('is-on'), n * spec.step));
   });
-  printTimers.push(setTimeout(() => cards.forEach(c => c.classList.remove('is-on')), spec.hold));
-  printTimers.push(setTimeout(() => go(spec.back), spec.hold + spec.fade + 80));
+  printTimers.push(setTimeout(() => {
+    cards.forEach(c => c.classList.remove('is-on'));
+    go(spec.back);
+  }, spec.hold));
 }
 
 function render(id) {
   const node = nodes[id];
   if (!node) return;
+  /* 进/出「打印中」这一屏：屏幕本身也硬切，不跟页面通用的 0.7s 淡入淡出 */
+  const instant = id === 'printing' || current === 'printing';
+  if (instant) stage.classList.add('no-fade');
   Object.values(nodes).forEach(n => n.el.classList.remove('is-on'));
   node.el.classList.add('is-on');
+  if (instant) requestAnimationFrame(() => requestAnimationFrame(() => stage.classList.remove('no-fade')));
 
   current = id;
   const idx = SCREENS.findIndex(s => s.id === id);
