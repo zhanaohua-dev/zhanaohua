@@ -89,7 +89,7 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 .scene-card__art{transition:filter .38s var(--ease)}
 .scene-card:hover .scene-card__art,
 .scene-card.is-on .scene-card__art{
-  filter:brightness(var(--scene-lit,1.12));
+  filter:brightness(var(--scene-lit,1.05));
 }
 
 /* 香料配方：悬停香气出详情（不可点击） */
@@ -139,6 +139,21 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 .btnfill:hover .btnfill__bg{opacity:1}
 .btnfill:hover .btnfill__txt{opacity:1}
 .btnfill:active .btnfill__bg{opacity:.92}
+
+/* 打印完成：三张香方卡依次落在画面正中（864×605，正好压住中轴） */
+.print-layer{position:absolute;inset:0;z-index:5;pointer-events:none}
+.print-card{
+  position:absolute;left:50%;top:50%;
+  width:45%;height:56.02%;            /* 864×605 / 1920×1080 */
+  opacity:0;
+  transform:translate(-50%,-50%) translateY(12px) scale(.985);
+  transition:opacity .42s var(--ease), transform .42s var(--ease);
+  border-radius:3px;overflow:hidden;
+  box-shadow:0 40px 76px -30px rgba(58,34,14,.5), 0 10px 26px -14px rgba(58,34,14,.32);
+  will-change:opacity, transform;
+}
+.print-card.is-on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.print-card img{display:block;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none}
 
 /* 加载动画 */
 .loading__bar{
@@ -264,9 +279,20 @@ const SCREENS = [
   {
     id: 'intro', img: 'img/10-daily-intro.webp', name: '香方介绍',
     spots: [
-      { x: 48.6, y: 86.5, w: 11.5, h: 12, go: 'print', label: '打印今日香方' },
+      { x: 48.6, y: 86.5, w: 11.5, h: 12, go: 'printing', label: '打印今日香方' },
       { x: 60.5, y: 86.5, w: 11.5, h: 12, go: 'purpose', label: '定制我的香方' },
     ],
+  },
+  {
+    /* 图五：同一张今日香方，按钮隐去；打印好的香方卡按序浮出，3s 后消失回到图四 */
+    id: 'printing', img: 'img/12-print-b.webp', name: '打印中',
+    print: {
+      frames: ['img/12-print-card-1.webp', 'img/12-print-card-2.webp', 'img/12-print-card-3.webp'],
+      step: 1000,   /* 一秒一张 */
+      hold: 3000,   /* 3s 走完，开始消失 */
+      fade: 420,    /* 与 .print-card 的淡出时长对齐 */
+      back: 'intro',
+    },
   },
   {
     id: 'purpose', img: 'img/03-purpose.webp', name: '使用目的',
@@ -505,6 +531,22 @@ SCREENS.forEach((s, i) => {
     el.appendChild(layer);
   }
 
+  if (s.print) {
+    const layer = document.createElement('div');
+    layer.className = 'print-layer';
+    s.print.frames.forEach(src => {
+      const card = document.createElement('div');
+      card.className = 'print-card';
+      const im = document.createElement('img');
+      im.src = src + '?v=' + IMG_V;
+      im.alt = '';
+      im.draggable = false;
+      card.appendChild(im);
+      layer.appendChild(card);
+    });
+    el.appendChild(layer);
+  }
+
   if (s.loading) {
     const bar = document.createElement('div');
     bar.className = 'loading__bar';
@@ -552,7 +594,24 @@ SCREENS.forEach((s, i) => {
 /* ── 路由 ── */
 let current = 'home';
 let autoTimer = null;
+let printTimers = [];
 const history = [];
+
+function clearPrintTimers() {
+  printTimers.forEach(clearTimeout);
+  printTimers = [];
+}
+
+/* 三张图按序浮出，最后一帧停留到 3s，再一起淡出并回到图四 */
+function playPrint(spec, el) {
+  const cards = [...el.querySelectorAll('.print-card')];
+  cards.forEach(c => c.classList.remove('is-on'));
+  spec.frames.forEach((_, i) => {
+    printTimers.push(setTimeout(() => cards[i] && cards[i].classList.add('is-on'), i * spec.step));
+  });
+  printTimers.push(setTimeout(() => cards.forEach(c => c.classList.remove('is-on')), spec.hold));
+  printTimers.push(setTimeout(() => go(spec.back), spec.hold + spec.fade + 80));
+}
 
 function render(id) {
   const node = nodes[id];
@@ -569,9 +628,11 @@ function render(id) {
   location.hash = id;
 
   clearTimeout(autoTimer);
+  clearPrintTimers();
   if (node.spec.auto) {
     autoTimer = setTimeout(() => go(node.spec.auto.go), node.spec.auto.delay);
   }
+  if (node.spec.print) playPrint(node.spec.print, node.el);
 
   /* 预热相邻屏 */
   const next = SCREENS[(idx + 1) % SCREENS.length];

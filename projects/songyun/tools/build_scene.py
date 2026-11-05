@@ -191,7 +191,7 @@ for i, c in enumerate(CARDS, 1):
         w = core.astype(np.float32)
         num = box_blur(roi * w[..., None], 4)
         den = box_blur(w, 4)
-        ok = (~core) & fg & (den > 0.10)
+        ok = (~core) & (den > 0.10)          # 连 fg 外那一圈半透明边一起换色，提亮才不会出光晕
         fill = num / np.maximum(den, 1e-3)[..., None]
         roi = np.where(ok[..., None], fill, roi)
 
