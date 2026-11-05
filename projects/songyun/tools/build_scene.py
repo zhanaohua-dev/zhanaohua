@@ -93,6 +93,8 @@ for i, c in enumerate(CARDS, 1):
     lab, areas = label(~fg)
     border = set(lab[0]) | set(lab[-1]) | set(lab[:, 0]) | set(lab[:, -1])
     fg = fg | np.isin(lab, [k for k in areas if k not in border and areas[k] < 6000])
+    # 笔触之间漏掉的浅色小块一律补进素材（宁可多盖，不留白点）
+    fg = fg | np.isin(lab, [k for k, a in areas.items() if a < 3000])
     fg = morph(fg, 4, 'close')
 
     lab, areas = label(fg)
@@ -124,6 +126,22 @@ for i, c in enumerate(CARDS, 1):
         ins = ins | (dilate(ins, 5) & (ds < 28) & ~blocker)
     ins = morph(ins, 2, 'close')
     ins = ins & ~blocker
+    # 收敛成「拱形框内那片纸」：在框内矩形范围里，把所有成片的纸面都算上
+    ins = morph(ins, 6, 'open')
+    ins = morph(ins, 7, 'close')
+    ins = ins & ~blocker
+
+    if ins.any():
+        rows = np.where(ins.any(axis=1))[0]
+        cols = np.where(ins.any(axis=0))[0]
+        bb = np.zeros_like(ins)
+        bb[rows.min():rows.max() + 1, cols.min():cols.max() + 1] = True
+        cand = morph((ds < 8) & bb & ~blocker, 2, 'open')
+        lab, areas = label(cand)
+        ids = [k for k in areas if (ins & (lab == k)).any()]
+        ins = np.isin(lab, ids)
+        ins = morph(ins, 4, 'close')
+        ins = ins & ~blocker
 
     # 素材里把框内挖空
     fg = fg & ~ins
