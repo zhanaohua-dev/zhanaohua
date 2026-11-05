@@ -85,14 +85,15 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   position:absolute;left:0;top:0;width:100%;height:100%;display:block;
   pointer-events:none;user-select:none;-webkit-user-drag:none;
 }
-/* 图后面那层框：框内铺白，默认全透明 */
+/* 图后面那层拱形框：框内铺白 50% */
 .scene-card__paper{opacity:0;transition:opacity .38s var(--ease)}
+/* 图本身：提亮（暗部保持深、浅色被推到接近白） */
 .scene-card__art{transition:filter .38s var(--ease)}
 .scene-card:hover .scene-card__paper,
 .scene-card.is-on .scene-card__paper{opacity:.5}
 .scene-card:hover .scene-card__art,
 .scene-card.is-on .scene-card__art{
-  filter:brightness(var(--scene-lit,1.12));
+  filter:brightness(var(--scene-lit,1.3));
 }
 
 /* 香料配方：悬停香气出详情（不可点击） */
@@ -130,6 +131,18 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   z-index:-1;
 }
 .scent-tip.is-on{opacity:1;transform:none}
+
+/* 胶囊按钮：悬停时底色变深 + 复用原白字 */
+.btnfill{padding:0;border:0;background:transparent;border-radius:10px;overflow:hidden}
+.btnfill__bg{position:absolute;inset:0;background:#88400e;opacity:0;transition:opacity .22s var(--ease)}
+.btnfill__txt{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:78%;height:auto;opacity:0;transition:opacity .22s var(--ease);
+  pointer-events:none;
+}
+.btnfill:hover .btnfill__bg{opacity:1}
+.btnfill:hover .btnfill__txt{opacity:1}
+.btnfill:active .btnfill__bg{opacity:.92}
 
 /* 加载动画 */
 .loading__bar{
@@ -205,7 +218,7 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
    每屏 = 一张 2× 设计稿 + 按设计稿坐标投的热区
    坐标单位：百分比（相对 1920×1080 舞台）
    ========================================================================= */
-const IMG_V = '20261106i';   /* 换切图时改这里，避免浏览器用旧图缓存 */
+const IMG_V = '20261106j';   /* 换切图时改这里，避免浏览器用旧图缓存 */
 const SCREENS = [
   {
     id: 'home', img: 'img/01-home.webp', name: '首页',
@@ -214,8 +227,8 @@ const SCREENS = [
   {
     id: 'daily', img: 'img/09-daily.webp', name: '每日荐香',
     spots: [
-      { x: 67.0, y: 80.8, w: 11.5, h: 13, go: 'formula', label: '查看香料配方' },
-      { x: 79.2, y: 80.8, w: 11.5, h: 13, go: 'intro', label: '打印配方' },
+      { x: 67.19, y: 85.0, w: 11.05, h: 5.21, go: 'formula', btn: 'img/btn-daily-1.webp', label: '查看香料配方' },
+      { x: 79.38, y: 85.0, w: 11.05, h: 5.21, go: 'intro', btn: 'img/btn-daily-2.webp', label: '打印配方' },
     ],
   },
   {
@@ -511,11 +524,21 @@ SCREENS.forEach((s, i) => {
 
   (s.spots || []).forEach(sp => {
     const b = document.createElement('button');
-    b.className = 'spot';
+    b.className = 'spot' + (sp.btn ? ' btnfill' : '');
     b.style.left = sp.x + '%';
     b.style.top = sp.y + '%';
     b.style.width = sp.w + '%';
     b.style.height = sp.h + '%';
+    if (sp.btn) {
+      const bgEl = document.createElement('span');
+      bgEl.className = 'btnfill__bg';
+      b.appendChild(bgEl);
+      const lab = document.createElement('img');
+      lab.className = 'btnfill__txt';
+      lab.src = sp.btn + '?v=' + IMG_V;
+      lab.alt = '';
+      b.appendChild(lab);
+    }
     b.setAttribute('aria-label', sp.label || (sp.go ? '前往' + s.name : '继续'));
     if (sp.go) b.dataset.go = sp.go;
     if (sp.wait) b.dataset.wait = sp.wait;
