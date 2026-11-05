@@ -85,12 +85,8 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
   position:absolute;left:0;top:0;width:100%;height:100%;display:block;
   pointer-events:none;user-select:none;-webkit-user-drag:none;
 }
-/* 图后面那层拱形框：框内铺白 50% */
-.scene-card__paper{opacity:0;transition:opacity .38s var(--ease)}
-/* 图本身：提亮（暗部保持深、浅色被推到接近白） */
+/* 同一张图：选中/悬停只是把它提亮（框内宣纸跟着发白） */
 .scene-card__art{transition:filter .38s var(--ease)}
-.scene-card:hover .scene-card__paper,
-.scene-card.is-on .scene-card__paper{opacity:.5}
 .scene-card:hover .scene-card__art,
 .scene-card.is-on .scene-card__art{
   filter:brightness(var(--scene-lit,1.2));
@@ -295,10 +291,10 @@ const SCREENS = [
   {
     id: 'scene', img: 'img/05-scene.webp', name: '使用场景',
     hotcards: [
-      { key: 'jingxin',  art: 'img/scene-card-1.webp', paper: 'img/scene-card-white-1.webp', x: 3.711,  y: 38.194, w: 19.141, h: 43.403 },
-      { key: 'shufang',  art: 'img/scene-card-2.webp', paper: 'img/scene-card-white-2.webp', x: 23.438, y: 34.028, w: 23.438, h: 47.569 },
-      { key: 'huizuo',   art: 'img/scene-card-3.webp', paper: 'img/scene-card-white-3.webp', x: 48.242, y: 36.111, w: 28.906, h: 45.486 },
-      { key: 'shuiqian', art: 'img/scene-card-4.webp', paper: 'img/scene-card-white-4.webp', x: 77.930, y: 38.542, w: 20.898, h: 45.833 },
+      { key: 'jingxin',  art: 'img/scene-card-1.webp', x: 3.711,  y: 38.194, w: 19.141, h: 43.403 },
+      { key: 'shufang',  art: 'img/scene-card-2.webp', x: 23.438, y: 34.028, w: 23.438, h: 47.569 },
+      { key: 'huizuo',   art: 'img/scene-card-3.webp', x: 48.242, y: 36.111, w: 28.906, h: 45.486 },
+      { key: 'shuiqian', art: 'img/scene-card-4.webp', x: 77.930, y: 38.542, w: 20.898, h: 45.833 },
     ],
     spots: [
       { x: 37, y: 79, w: 10, h: 6, go: 'body' },
@@ -497,19 +493,13 @@ SCREENS.forEach((s, i) => {
       card.dataset.key = c.key;
       Object.assign(card.style, { left: c.x + '%', top: c.y + '%', width: c.w + '%', height: c.h + '%' });
 
-      const paper = document.createElement('img');
-      paper.className = 'scene-card__paper';
-      paper.src = c.paper + '?v=' + IMG_V;
-      paper.alt = '';
-      paper.draggable = false;
-
       const art = document.createElement('img');
       art.className = 'scene-card__art';
       art.src = c.art + '?v=' + IMG_V;
       art.alt = '';
       art.draggable = false;
 
-      card.append(paper, art);
+      card.append(art);
       layer.appendChild(card);
     });
     el.appendChild(layer);

@@ -161,9 +161,13 @@ for i, c in enumerate(CARDS, 1):
         ins = np.isin(lab, ids)
         ins = morph(ins, 4, 'close')
         ins = ins & ~blocker
+        # 逐行补满：架空里人物挡出来的缺口也并进来，提亮时框内是一整片
+        for y in np.where(ins.any(axis=1))[0]:
+            xs = np.where(ins[y])[0]
+            ins[y, xs.min():xs.max() + 1] = True
 
-    # 素材里把框内挖空
-    fg = fg & ~ins
+    # 框内纸面并入素材：提亮时框里自然发白，不用再加一层白
+    fg = fg | ins
 
     ly0, ly1 = LINE_BAND
     yy0, yy1 = max(ly0 - y0, 0), min(ly1 - y0, fg.shape[0])
@@ -171,26 +175,28 @@ for i, c in enumerate(CARDS, 1):
         fg[yy0:yy1, :] = False
         ins[yy0:yy1, :] = False
 
-    alpha = np.asarray(Image.fromarray((fg * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.8))).astype(np.float32)
+    # 轮廓收 1px：把沿边那一圈"纸色"裁掉，提亮时才不会浮出白边
+    fg_in = np.asarray(Image.fromarray((fg * 255).astype(np.uint8)).filter(ImageFilter.MinFilter(3))) > 127
+    alpha_fg = np.asarray(Image.fromarray((fg_in * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.7))).astype(np.float32)
+    # 框内纸面那一块边缘要柔，提亮后是宣纸渐亮而不是一条白边
+    # 边缘硬化一点：半透明带越窄，提亮后人物周围越不会有灰晕
+    a8 = np.asarray(Image.fromarray((fg_in * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.6))).astype(np.float32)
+    alpha = np.where(a8 > 140, 255.0, 0.0).astype(np.float32)
+    alpha = np.asarray(Image.fromarray(alpha.astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.55))).astype(np.float32)
 
     # 边缘那一两像素原来的颜色是纸色，提亮后会浮出一圈白边；
     # 把「明显是纸色」的像素换成邻近实色的颜色（alpha 不变，默认态看不出差别）
-    core = fg & (ds > 10)
+    core = np.asarray(Image.fromarray((fg * 255).astype(np.uint8)).filter(ImageFilter.MinFilter(5))) > 127
     if core.any():
         w = core.astype(np.float32)
-        num = box_blur(roi * w[..., None], 5)
-        den = box_blur(w, 5)
-        ok = (~core) & (den > 0.06)
+        num = box_blur(roi * w[..., None], 4)
+        den = box_blur(w, 4)
+        ok = (~core) & fg & (den > 0.10)
         fill = num / np.maximum(den, 1e-3)[..., None]
         roi = np.where(ok[..., None], fill, roi)
 
     Image.fromarray(np.dstack([roi, alpha]).astype(np.uint8), 'RGBA').save(
         f'img/scene-card-{i}.webp', 'WEBP', lossless=True, quality=100, method=6)
-
-    wa = np.asarray(Image.fromarray((ins * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.4))).astype(np.float32)
-    white = np.dstack([np.full(roi.shape, 255, np.float32), wa]).astype(np.uint8)
-    Image.fromarray(white, 'RGBA').save(
-        f'img/scene-card-white-{i}.webp', 'WEBP', lossless=True, quality=100, method=6)
 
     meta.append(dict(n=i, left=x0, top=y0, w=x1 - x0, h=y1 - y0))
     print(i, 'fg', int(fg.sum()), 'ins', int(ins.sum()))
