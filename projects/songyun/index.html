@@ -78,6 +78,30 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 .pcard.is-on{filter:drop-shadow(0 0 0 rgba(0,0,0,0)) drop-shadow(0 14px 26px rgba(90,48,20,.35))}
 .pcard.is-on img{filter:drop-shadow(0 0 3px rgba(156,58,32,.85)) drop-shadow(0 0 1px rgba(156,58,32,.9))}
 
+/* 香料配方：悬停香气出详情（不可点击） */
+.scent-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.scent-hit{pointer-events:auto}
+.scent-hit{position:absolute;border-radius:50%;cursor:default}
+.scent-disc{
+  position:absolute;border-radius:50%;background:#8b5a3d;opacity:0;
+  transition:opacity .28s var(--ease);pointer-events:none;z-index:2;
+}
+.scent-txt{
+  position:absolute;object-fit:contain;opacity:0;pointer-events:none;
+  transition:opacity .28s var(--ease);z-index:3;
+}
+.scent-txt.is-white{filter:brightness(0) invert(1)}
+.scent-tip{
+  position:absolute;z-index:4;pointer-events:none;
+  background:#8b5a3d;border:4px solid #f8f1e5;border-radius:16px;
+  color:#fdf7ee;display:flex;align-items:center;
+  padding:4px 18px;font-size:31px;line-height:1.62;letter-spacing:.01em;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .26s var(--ease), transform .26s var(--ease);
+  box-shadow:0 12px 28px rgba(80,45,20,.28);
+}
+.scent-tip.is-on{opacity:1;transform:none}
+
 /* 加载动画 */
 .loading__bar{
   position:absolute;left:50%;top:52%;
@@ -146,7 +170,7 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
    每屏 = 一张 2× 设计稿 + 按设计稿坐标投的热区
    坐标单位：百分比（相对 1920×1080 舞台）
    ========================================================================= */
-const IMG_V = '20261106c';   /* 换切图时改这里，避免浏览器用旧图缓存 */
+const IMG_V = '20261106d';   /* 换切图时改这里，避免浏览器用旧图缓存 */
 const SCREENS = [
   {
     id: 'home', img: 'img/01-home.webp', name: '首页',
@@ -161,6 +185,26 @@ const SCREENS = [
   },
   {
     id: 'formula', img: 'img/11-daily-formula.webp', name: '香料配方',
+    scents: [
+      { key:'lizhi',   hit:{x:18.3,y:28.8,w:13.6,h:12.2}, disc:{x:18.3,y:28.8,w:13.6,h:24.2},
+        txt:[{k:'lizhi',x:18.7,y:32.9,w:12.7,h:9.2},{k:'la',x:18.7,y:39.5,w:12.7,h:9.2}],
+        tip:{x:34.5,y:32.5,w:43.8,h:13.1}, text:'荔枝壳：清苦回甘，去腥辟浊、敛香锁韵，中和香方燥热，使香气清逸不腻，层次更清雅。' },
+      { key:'la',      hit:{x:18.3,y:41.0,w:13.6,h:12.0}, disc:{x:18.3,y:28.8,w:13.6,h:24.2},
+        txt:[{k:'lizhi',x:18.7,y:32.9,w:12.7,h:9.2},{k:'la',x:18.7,y:39.5,w:12.7,h:9.2}],
+        tip:{x:34.5,y:38.2,w:43.9,h:13.1}, text:'腊茶：清苦敛凉、涤烦清心，压燥去火气，收敛香氛浮散之气，增古雅清寂之韵。' },
+      { key:'baitan',  hit:{x:67.1,y:29.9,w:15.9,h:28.2}, disc:{x:67.1,y:29.9,w:15.9,h:28.2},
+        txt:[{k:'baitan',x:69.2,y:37.1,w:11.4,h:13.1}],
+        tip:{x:30.1,y:51.7,w:37.3,h:13.1}, text:'白檀：香气温润清甜，理气和中、清心安神，能柔化众香燥气，稳底定香，令香韵雅致绵长。' },
+      { key:'zaorou',  hit:{x:15.4,y:65.0,w:12.7,h:22.6}, disc:{x:15.4,y:65.0,w:12.7,h:22.6},
+        txt:[{k:'zaorou',x:14.6,y:69.5,w:13.7,h:13.2}],
+        tip:{x:30.5,y:70.1,w:37.8,h:13.1}, text:'枣肉：甘温柔润，调和诸香辛辣燥性，缓香和韵、黏合成团，令香气温润醇和内敛。' },
+      { key:'gansong', hit:{x:74.1,y:63.9,w:12.8,h:11.4}, disc:{x:74.1,y:63.9,w:12.8,h:22.8},
+        txt:[{k:'gansong',x:74.5,y:68.6,w:11.9,h:7.1},{k:'maoxiang',x:74.5,y:74.2,w:11.9,h:8.8}],
+        tip:{x:25.5,y:70.0,w:46.5,h:13.1}, text:'甘松：理气开郁、醒脾辟秽，能调和香性、缓和燥烈，辅助君香安神散郁，使香气温润绵长。' },
+      { key:'maoxiang',hit:{x:74.1,y:75.3,w:12.8,h:11.4}, disc:{x:74.1,y:63.9,w:12.8,h:22.8},
+        txt:[{k:'gansong',x:74.5,y:68.6,w:11.9,h:7.1},{k:'maoxiang',x:74.5,y:74.2,w:11.9,h:8.8}],
+        tip:{x:25.5,y:70.3,w:46.6,h:12.8}, text:'茅香：温中散寒、辟秽化浊，可调和诸香气味，清透助香发散，兼具驱虫净气、温润和中之功。' },
+    ],
     spots: [
       { x: 30.8, y: 86.5, w: 9, h: 8, go: 'home', label: '返回首页' },
       { x: 59.2, y: 85.5, w: 8, h: 8, go: 'print', label: '下一步' },
@@ -316,6 +360,68 @@ SCREENS.forEach((s, i) => {
       if (c.slot) slot.style.background = c.slot;
       layer.appendChild(slot);
     });
+    el.appendChild(layer);
+  }
+
+  /* 香料配方：悬停香气 → 圆变深 + 字变白 + 弹详情（不可点击） */
+  if (s.scents) {
+    const layer = document.createElement('div');
+    layer.className = 'scent-layer';
+    const discs = {}, txts = {}, tips = {};
+
+    s.scents.forEach(sc => {
+      const dk = sc.disc.x + '_' + sc.disc.y;
+      if (!discs[dk]) {
+        const d = document.createElement('div');
+        d.className = 'scent-disc';
+        Object.assign(d.style, { left: sc.disc.x + '%', top: sc.disc.y + '%', width: sc.disc.w + '%', height: sc.disc.h + '%' });
+        layer.appendChild(d);
+        discs[dk] = d;
+      }
+      sc.txt.forEach(t => {
+        if (txts[t.k]) return;
+        const im = document.createElement('img');
+        im.className = 'scent-txt';
+        im.src = 'img/scent-' + t.k + '.webp?v=' + IMG_V;
+        im.alt = '';
+        Object.assign(im.style, { left: (t.x - t.w * 0.015) + '%', top: (t.y - t.h * 0.09) + '%', width: (t.w * 1.03) + '%', height: (t.h * 1.04) + '%' });
+        layer.appendChild(im);
+        txts[t.k] = im;
+      });
+      const tip = document.createElement('div');
+      tip.className = 'scent-tip';
+      Object.assign(tip.style, { left: sc.tip.x + '%', top: sc.tip.y + '%', width: sc.tip.w + '%', height: sc.tip.h + '%' });
+      tip.textContent = sc.text;
+      layer.appendChild(tip);
+      tips[sc.key] = tip;
+    });
+
+    const reset = () => {
+      Object.values(discs).forEach(d => d.style.opacity = 0);
+      Object.values(txts).forEach(t => { t.style.opacity = 0; t.classList.remove('is-white'); });
+      Object.values(tips).forEach(t => t.classList.remove('is-on'));
+    };
+
+    s.scents.forEach(sc => {
+      const hit = document.createElement('div');
+      hit.className = 'scent-hit';
+      Object.assign(hit.style, { left: sc.hit.x + '%', top: sc.hit.y + '%', width: sc.hit.w + '%', height: sc.hit.h + '%' });
+      hit.addEventListener('mouseenter', () => {
+        reset();
+        const d = discs[sc.disc.x + '_' + sc.disc.y];
+        if (d) d.style.opacity = 1;
+        sc.txt.forEach(t => {
+          const im = txts[t.k];
+          if (!im) return;
+          im.style.opacity = 1;
+          im.classList.toggle('is-white', t.k === sc.key);
+        });
+        if (tips[sc.key]) tips[sc.key].classList.add('is-on');
+      });
+      layer.appendChild(hit);
+    });
+
+    layer.addEventListener('mouseleave', reset);
     el.appendChild(layer);
   }
 
