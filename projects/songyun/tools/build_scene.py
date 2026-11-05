@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """拆「使用场景」四个可动卡片：透明人像素材 + 框内白板（两层叠放）。
 
+用法：cd projects/songyun && python3 tools/build_scene.py
+
 输出 img/
   scene-card-N.webp        透明素材（框线 + 人物 + 竖牌），框内纸面已挖空
   scene-card-white-N.webp  框内白板（纯白，alpha = 拱形框内区域）
@@ -153,15 +155,16 @@ for i, c in enumerate(CARDS, 1):
         ins[yy0:yy1, :] = False
 
     alpha = np.asarray(Image.fromarray((fg * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.8))).astype(np.float32)
-    Image.fromarray(np.dstack([roi, alpha]).astype(np.uint8), 'RGBA').save(f'/tmp/scene-card-{i}.png')
+    Image.fromarray(np.dstack([roi, alpha]).astype(np.uint8), 'RGBA').save(
+        f'img/scene-card-{i}.webp', 'WEBP', lossless=True, quality=100, method=6)
 
     wa = np.asarray(Image.fromarray((ins * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.4))).astype(np.float32)
     white = np.dstack([np.full(roi.shape, 255, np.float32), wa]).astype(np.uint8)
-    Image.fromarray(white, 'RGBA').save(f'/tmp/scene-card-white-{i}.png')
+    Image.fromarray(white, 'RGBA').save(
+        f'img/scene-card-white-{i}.webp', 'WEBP', lossless=True, quality=100, method=6)
 
     meta.append(dict(n=i, left=x0, top=y0, w=x1 - x0, h=y1 - y0))
     print(i, 'fg', int(fg.sum()), 'ins', int(ins.sum()))
 
-json.dump(meta, open('/tmp/scene-meta.json', 'w'), indent=1)
 for m in meta:
     print(f'card{m["n"]}: {m["left"]/W*100:.3f}% {m["top"]/H*100:.3f}% {m["w"]/W*100:.3f}% {m["h"]/H*100:.3f}%')
