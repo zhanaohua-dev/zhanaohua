@@ -78,6 +78,23 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
 .pcard.is-on{filter:drop-shadow(0 0 0 rgba(0,0,0,0)) drop-shadow(0 14px 26px rgba(90,48,20,.35))}
 .pcard.is-on img{filter:drop-shadow(0 0 3px rgba(156,58,32,.85)) drop-shadow(0 0 1px rgba(156,58,32,.9))}
 
+/* 使用场景：悬停/选中 → 拱形框内宣纸亮起，人物随之更清晰 */
+.scene-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.scene-card{position:absolute;pointer-events:auto;cursor:pointer}
+.scene-card img{
+  position:absolute;left:0;top:0;width:100%;height:100%;display:block;
+  pointer-events:none;user-select:none;-webkit-user-drag:none;
+}
+/* 白板：拱形框内的那层纸，平时不显示 */
+.scene-card__paper{opacity:0;transition:opacity .38s var(--ease)}
+.scene-card__art{transition:filter .38s var(--ease)}
+.scene-card:hover .scene-card__paper,
+.scene-card.is-on .scene-card__paper{opacity:.95}
+.scene-card:hover .scene-card__art,
+.scene-card.is-on .scene-card__art{
+  filter:brightness(1.02) contrast(1.06) saturate(1.06);
+}
+
 /* 香料配方：悬停香气出详情（不可点击） */
 .scent-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
 .scent-hit{pointer-events:auto}
@@ -188,7 +205,7 @@ body{font-family:"Songti SC","STSong","Noto Serif SC",serif;-webkit-font-smoothi
    每屏 = 一张 2× 设计稿 + 按设计稿坐标投的热区
    坐标单位：百分比（相对 1920×1080 舞台）
    ========================================================================= */
-const IMG_V = '20261106f';   /* 换切图时改这里，避免浏览器用旧图缓存 */
+const IMG_V = '20261106h';   /* 换切图时改这里，避免浏览器用旧图缓存 */
 const SCREENS = [
   {
     id: 'home', img: 'img/01-home.webp', name: '首页',
@@ -264,6 +281,12 @@ const SCREENS = [
   },
   {
     id: 'scene', img: 'img/05-scene.webp', name: '使用场景',
+    hotcards: [
+      { key: 'jingxin',  art: 'img/scene-card-1.webp', paper: 'img/scene-card-white-1.webp', x: 3.711,  y: 38.194, w: 19.141, h: 43.403 },
+      { key: 'shufang',  art: 'img/scene-card-2.webp', paper: 'img/scene-card-white-2.webp', x: 23.438, y: 34.028, w: 23.438, h: 47.569 },
+      { key: 'huizuo',   art: 'img/scene-card-3.webp', paper: 'img/scene-card-white-3.webp', x: 48.242, y: 36.111, w: 28.906, h: 45.486 },
+      { key: 'shuiqian', art: 'img/scene-card-4.webp', paper: 'img/scene-card-white-4.webp', x: 77.930, y: 38.542, w: 20.898, h: 45.833 },
+    ],
     spots: [
       { x: 37, y: 79, w: 10, h: 6, go: 'body' },
       { x: 58.5, y: 79, w: 11, h: 6, go: 'tone' },
@@ -402,12 +425,15 @@ SCREENS.forEach((s, i) => {
         im.className = 'scent-txt';
         im.src = 'img/scent-' + t.k + '.webp?v=' + IMG_V;
         im.alt = '';
-        const twoLine = sc.txt.length > 1;   /* 一个圆里两行字（荔枝壳/腊茶、甘松/茅香）不放大，避免打架 */
-        Object.assign(im.style, {
-          left: t.x + '%',
-          top: (twoLine ? t.y : t.y - t.h * 0.12) + '%',
-          width: (t.w * (twoLine ? 1.0 : 1.10)) + '%'
-        });
+        /* 与设计稿完全同尺寸：宽度对齐原字，高度按图片比例，垂直居中到原 bbox */
+        im.style.left = t.x + '%';
+        im.style.width = t.w + '%';
+        im.onload = () => {
+          const hr = im.naturalHeight / im.naturalWidth;
+          const dh = (t.w * 1920 * hr) / 1080;      /* 显示高度（%） */
+          im.style.height = dh.toFixed(2) + '%';
+          im.style.top = (t.y + (t.h - dh) / 2).toFixed(2) + '%';
+        };
         layer.appendChild(im);
         txts[t.k] = im;
       });
@@ -445,6 +471,34 @@ SCREENS.forEach((s, i) => {
     });
 
     layer.addEventListener('mouseleave', reset);
+    el.appendChild(layer);
+  }
+
+  /* 使用场景：框内宣纸 + 人物素材两层，悬停/选中时亮起 */
+  if (s.hotcards) {
+    const layer = document.createElement('div');
+    layer.className = 'scene-layer';
+    s.hotcards.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'scene-card';
+      card.dataset.key = c.key;
+      Object.assign(card.style, { left: c.x + '%', top: c.y + '%', width: c.w + '%', height: c.h + '%' });
+
+      const paper = document.createElement('img');
+      paper.className = 'scene-card__paper';
+      paper.src = c.paper + '?v=' + IMG_V;
+      paper.alt = '';
+      paper.draggable = false;
+
+      const art = document.createElement('img');
+      art.className = 'scene-card__art';
+      art.src = c.art + '?v=' + IMG_V;
+      art.alt = '';
+      art.draggable = false;
+
+      card.append(paper, art);
+      layer.appendChild(card);
+    });
     el.appendChild(layer);
   }
 
@@ -522,6 +576,15 @@ function go(id) {
 
 /* ── 交互 ── */
 stage.addEventListener('click', e => {
+  /* 使用场景：单选，再点一下取消 */
+  const hc = e.target.closest('.scene-card');
+  if (hc) {
+    const wasOn = hc.classList.contains('is-on');
+    hc.parentElement.querySelectorAll('.scene-card').forEach(c => c.classList.remove('is-on'));
+    if (!wasOn) hc.classList.add('is-on');
+    return;
+  }
+
   /* 卡片选择：单选，不跳页 */
   const card = e.target.closest('.pcard');
   if (card) {
@@ -590,6 +653,17 @@ addEventListener('hashchange', () => {
   const id = location.hash.slice(1);
   if (nodes[id] && id !== current) render(id);
 });
+
+/* ── 调试：?pick=huizuo 直接点亮某张场景卡（截图/对稿用） ── */
+const pickKey = new URLSearchParams(location.search).get('pick');
+if (pickKey) {
+  addEventListener('load', () => {
+    setTimeout(() => {
+      const c = document.querySelector('.scene-card[data-key="' + pickKey + '"]');
+      if (c) c.classList.add('is-on');
+    }, 260);
+  });
+}
 
 /* ── 调试网格：?grid=1 ── */
 if (new URLSearchParams(location.search).get('grid') === '1') {

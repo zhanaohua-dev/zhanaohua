@@ -33,6 +33,10 @@ def morph(a, r, kind='close'):
     return np.asarray(im) > 127
 
 
+def dilate(a, r):
+    return np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(2 * r + 1))) > 127
+
+
 def label(mask):
     h, w = mask.shape
     lab = np.zeros((h, w), np.int32)
@@ -84,15 +88,23 @@ for i, c in enumerate(CARDS, 1):
     passable = morph(ds < 12, 3, 'open')
     edges = [(x, 1) for x in range(0, ww, 2)] + [(x, hh - 2) for x in range(0, ww, 2)] + \
             [(1, y) for y in range(0, hh, 2)] + [(ww - 2, y) for y in range(0, hh, 2)]
-    fg = reachable(passable, edges)
+    fg = ~reachable(passable, edges)
 
     lab, areas = label(~fg)
     border = set(lab[0]) | set(lab[-1]) | set(lab[:, 0]) | set(lab[:, -1])
-    fg = fg | np.isin(lab, [k for k in areas if k not in border and areas[k] < 400])
+    fg = fg | np.isin(lab, [k for k in areas if k not in border and areas[k] < 6000])
     fg = morph(fg, 4, 'close')
 
     lab, areas = label(fg)
     fg = np.isin(lab, [k for k, a in areas.items() if a >= 400])
+
+    # 只留贴着主体（人物+框）的块，扫掉远处纸纹噪点
+    lab, areas = label(fg)
+    if areas:
+        main = max(areas, key=areas.get)
+        near = dilate(lab == main, 80)
+        keep = [k for k in areas if k == main or ((lab == k) & near).any()]
+        fg = np.isin(lab, keep)
 
     for (dx0, dy0, dx1, dy1) in c['drop']:
         fg[dy0:dy1, dx0:dx1] = False
@@ -103,6 +115,15 @@ for i, c in enumerate(CARDS, 1):
     border = set(lab[0]) | set(lab[-1]) | set(lab[:, 0]) | set(lab[:, -1])
     ids = [k for k, a in areas.items() if k not in border and a > 5000]
     ins = morph(np.isin(lab, ids), 2, 'close')
+    # 推向框线内沿：贴着框线的那几像素 ds 偏大，单独补一层
+    # 沿着框内纸面向框线推，遇到棕红框线就停
+    R, G, Bl = roi[..., 0], roi[..., 1], roi[..., 2]
+    frame_line = morph((R - Bl > 52) & (R < 232), 2, 'close')
+    blocker = dilate(frame_line, 3)
+    for _ in range(4):
+        ins = ins | (dilate(ins, 5) & (ds < 28) & ~blocker)
+    ins = morph(ins, 2, 'close')
+    ins = ins & ~blocker
 
     # 素材里把框内挖空
     fg = fg & ~ins
